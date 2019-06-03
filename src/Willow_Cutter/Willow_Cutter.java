@@ -5,10 +5,8 @@ import org.rspeer.runetek.adapter.scene.Player;
 import org.rspeer.runetek.adapter.scene.SceneObject;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.component.tab.Inventory;
-import org.rspeer.runetek.api.input.Keyboard;
 import org.rspeer.runetek.api.movement.Movement;
 import org.rspeer.runetek.api.movement.position.Area;
-import org.rspeer.runetek.api.movement.position.Position;
 import org.rspeer.runetek.api.scene.Players;
 import org.rspeer.runetek.api.scene.SceneObjects;
 import org.rspeer.script.Script;
@@ -16,11 +14,10 @@ import org.rspeer.script.ScriptCategory;
 import org.rspeer.script.ScriptMeta;
 import org.rspeer.ui.Log;
 
-import java.util.regex.Pattern;
-
 @ScriptMeta(desc = "Cuts Willow trees, duh.", developer = "Shteve", name = "Willow Cutter", category = ScriptCategory.WOODCUTTING, version = 1)
 public class Willow_Cutter extends Script {
 
+    //TODO Set as customisable
     private static Area area = Area.rectangular(2983, 3191, 2994, 3181);
 
     private static Player localPlayer = Players.getLocal();
