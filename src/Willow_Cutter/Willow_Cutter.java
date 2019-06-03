@@ -17,7 +17,7 @@ import org.rspeer.ui.Log;
 
 import java.text.NumberFormat;
 
-@ScriptMeta(desc = "Cuts Willow trees, duh.", developer = "Shteve", name = "Willow Cutter", category = ScriptCategory.WOODCUTTING, version = 0.1)
+@ScriptMeta(desc = "Cuts Willow trees, duh.", developer = "Shteve", name = "Willow Cutter", category = ScriptCategory.WOODCUTTING, version = 1)
 public class Willow_Cutter extends Script {
 
     //TODO Set as customisable
