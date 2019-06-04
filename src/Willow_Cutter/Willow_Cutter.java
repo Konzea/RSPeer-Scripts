@@ -1,10 +1,13 @@
 package Willow_Cutter;
 
+import org.rspeer.runetek.adapter.component.InterfaceComponent;
 import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.adapter.scene.Player;
 import org.rspeer.runetek.adapter.scene.SceneObject;
 import org.rspeer.runetek.api.Game;
+import org.rspeer.runetek.api.Login;
 import org.rspeer.runetek.api.commons.Time;
+import org.rspeer.runetek.api.component.Interfaces;
 import org.rspeer.runetek.api.component.tab.*;
 import org.rspeer.runetek.api.movement.Movement;
 import org.rspeer.runetek.api.movement.position.Area;
@@ -87,6 +90,19 @@ public class Willow_Cutter extends Script {
         int i = 0;
         while (i < 3) {
             if (Game.isLoggedIn()) {
+                /*
+                //Attempted fix for below code executing before logged in
+                InterfaceComponent loginPlayBtn = Interfaces.getComponent(378,81);
+                if (loginPlayBtn != null && loginPlayBtn.isVisible()) {
+                    Log.info("Login bot fucked us, just correcting it's shit.");
+                    loginPlayBtn.click();
+                    Time.sleepUntil(()->Interfaces.getComponent(378,81) == null, 5000);
+                }
+                */
+
+                //Lazy man fix, just wait for login bot to do it's shit.
+                Time.sleep(3000);
+
                 START_TIME = System.currentTimeMillis();
                 START_XP = Skills.getExperience(Skill.WOODCUTTING);
 
