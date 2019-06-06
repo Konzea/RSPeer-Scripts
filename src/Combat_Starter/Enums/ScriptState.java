@@ -39,7 +39,7 @@ public enum ScriptState {
 
     WALKING{
         @Override
-        public void execute() { Walking.excecute(); }
+        public void execute() { Walking.execute(); }
     };
 
 
