@@ -7,6 +7,7 @@ import org.rspeer.runetek.api.commons.ArrayUtils;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.component.Bank;
 import org.rspeer.runetek.api.component.tab.*;
+import org.rspeer.runetek.api.movement.Movement;
 
 import java.util.Arrays;
 import java.util.stream.Stream;
@@ -20,6 +21,9 @@ public class Starting {
     public static void execute(){
         //Starting
         //TODO Grab starting xp
+
+        if (!Movement.isRunEnabled())
+            Movement.toggleRun(true);
 
         //Set target npc based on levels
         //Set attack style
