@@ -4,18 +4,13 @@ import Combat_Starter.Enums.ScriptState;
 import Combat_Starter.Enums.Target;
 import Combat_Starter.Executes.Fighting;
 import Combat_Starter.Helpers.CombatStyle;
-import org.rspeer.RSPeer;
-import org.rspeer.runetek.adapter.component.Item;
-import org.rspeer.runetek.adapter.scene.Player;
 import org.rspeer.runetek.api.Game;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.component.tab.*;
 import org.rspeer.runetek.api.movement.Movement;
-import org.rspeer.runetek.api.scene.Players;
 import org.rspeer.runetek.event.listeners.ChatMessageListener;
 import org.rspeer.runetek.event.types.ChatMessageEvent;
 import org.rspeer.runetek.event.types.ChatMessageType;
-import org.rspeer.script.GameAccount;
 import org.rspeer.script.Script;
 import org.rspeer.script.ScriptCategory;
 import org.rspeer.script.ScriptMeta;
@@ -24,25 +19,32 @@ import org.rspeer.ui.Log;
 import java.text.NumberFormat;
 
 @ScriptMeta(desc = "Kills NPCs around Lumbridge", developer = "Shteve", name = "Combat Starter", category = ScriptCategory.COMBAT, version = 0.1)
-    public class Combat_Starter extends Script implements ChatMessageListener {
+public class Combat_Starter extends Script implements ChatMessageListener {
 
-        private static ScriptState currentState = ScriptState.STARTING;
-        public static void updateScriptState(ScriptState inState){
-            if (inState == null){
-                Log.severe("Error: updateScriptState was passed a null ref");
-            }
+    private static ScriptState currentState = ScriptState.STARTING;
+    public static void updateScriptState(ScriptState inState){
+        if (inState == null){
+            Log.severe("Error: updateScriptState was passed a null ref");
+        }else {
+            previousState = currentState;
             if (inState == currentState)
                 Log.severe("Error: New script state same as previous.");
             else
                 currentState = inState;
         }
+    }
 
-        private static Target currentTarget;
-        public static void updateTarget(Target inTarget){
+    private static ScriptState previousState;
+    public static ScriptState getPreviousScriptState(){
+        return previousState;
+    }
+
+    private static Target currentTarget;
+    public static void updateTarget(Target inTarget){
             currentTarget = inTarget;
         }
 
-        private static long START_TIME;
+    private static long START_TIME;
     private static int START_XP;
 
 
@@ -55,9 +57,8 @@ import java.text.NumberFormat;
     @Override
     public int loop() {
 
-        //currentState.execute();
-
-        return 1000;
+        currentState.execute();
+        return 150;
     }
 
     @Override
