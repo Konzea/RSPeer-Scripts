@@ -1,4 +1,4 @@
-package PowerCutter;
+package Powercutter;
 
 import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.adapter.scene.Player;
@@ -17,8 +17,8 @@ import org.rspeer.ui.Log;
 
 import java.text.NumberFormat;
 
-@ScriptMeta(desc = "Chops any tree, anywhere and drops the logs.", developer = "Shteve", name = "PowerCutter", category = ScriptCategory.WOODCUTTING, version = 0.1)
-public class PowerCutter extends Script {
+@ScriptMeta(desc = "Chops any tree, anywhere and drops the logs.", developer = "Shteve", name = "Powercutter", category = ScriptCategory.WOODCUTTING, version = 0.1)
+public class Powercutter extends Script {
 
     //TODO Set as customisable
     private static Area area = Area.rectangular(2983, 3191, 2994, 3181);
