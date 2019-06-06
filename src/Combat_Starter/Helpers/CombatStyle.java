@@ -10,7 +10,7 @@ import java.util.List;
 public class CombatStyle {
 
     //Interfaces for all 4 possible attack styles
-    private static InterfaceComponent[] attackStyleInterfaces = {
+    private final static InterfaceComponent[] attackStyleInterfaces = {
             Interfaces.getComponent(593, 4),
             Interfaces.getComponent(593, 8),
             Interfaces.getComponent(593, 12),
