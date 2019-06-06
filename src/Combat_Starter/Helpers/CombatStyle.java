@@ -71,6 +71,8 @@ public class CombatStyle {
                 String processedString = rawString
                         .replace('(',' ')
                         .replace(')',' ').trim().toUpperCase();
+
+                //Credit to 2baad4u2 for this bit
                 try {
                     //Converts the processed string into an AttackStyle enum and returns it
                     return Combat.AttackStyle.valueOf(processedString);
