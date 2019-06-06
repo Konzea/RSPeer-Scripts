@@ -5,6 +5,8 @@ import Combat_Starter.Executes.*;
 import org.rspeer.runetek.api.commons.Time;
 
 public enum ScriptState {
+    //TODO Look at inheriting from a 'State' class instead of enums pointing to classes
+
     STARTING{
         @Override
         public void execute() {
