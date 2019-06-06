@@ -3,6 +3,7 @@ package Combat_Starter.Helpers;
 import org.rspeer.runetek.adapter.component.InterfaceComponent;
 import org.rspeer.runetek.api.component.Interfaces;
 import org.rspeer.runetek.api.component.tab.Combat;
+import org.rspeer.ui.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,31 +70,14 @@ public class CombatStyle {
                 String rawString = o.toString().split("<")[0];
                 String processedString = rawString
                         .replace('(',' ')
-                        .replace(')',' ').trim();
-
-                //Convert the processed attack style string into an AttackStyle enum
-                switch (processedString.toUpperCase()){
-                    case "DEFENSIVE":
-                        return Combat.AttackStyle.DEFENSIVE;
-                    case "ACCURATE":
-                        return Combat.AttackStyle.ACCURATE;
-                    case "CASTING":
-                        return Combat.AttackStyle.CASTING;
-                    case "RAPID":
-                        return Combat.AttackStyle.RAPID;
-                    case "DEFENSIVE_CASTING":
-                        return Combat.AttackStyle.DEFENSIVE_CASTING;
-                    case "CONTROLLED":
-                        return Combat.AttackStyle.CONTROLLED;
-                    case "AGGRESSIVE":
-                        return Combat.AttackStyle.AGGRESSIVE;
-                    case "OTHER":
-                        return Combat.AttackStyle.OTHER;
-                    case "LONGRANGE":
-                        return Combat.AttackStyle.LONGRANGE;
-
-                        default:
-                            return null;
+                        .replace(')',' ').trim().toUpperCase();
+                try {
+                    //Converts the processed string into an AttackStyle enum and returns it
+                    return Combat.AttackStyle.valueOf(processedString);
+                }catch (IllegalArgumentException e){
+                    //If could not find matching enum return null
+                    Log.severe(e);
+                    return null;
                 }
             }
         }
