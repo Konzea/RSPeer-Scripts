@@ -34,6 +34,10 @@ public class Main extends Script implements ChatMessageListener {
 
     @Override
     public int loop() {
+        if (currentState == null) {
+            Log.severe("Null script state, stopping.");
+            setStopping(true);
+        }
 
         currentState.execute();
         return 150;
@@ -57,9 +61,6 @@ public class Main extends Script implements ChatMessageListener {
 
     //region Getters & Setters
     public static void updateScriptState(ScriptState inState){
-        if (inState == null){
-            Log.severe("Error: updateScriptState was passed a null ref");
-        }else {
             previousState = currentState;
             if (inState == currentState)
                 Log.severe("Error: New script state same as previous.");
@@ -124,7 +125,7 @@ public class Main extends Script implements ChatMessageListener {
             if (currentTarget != null)
                 updateScriptState(ScriptState.WALKING);
 
-            Log.info("New target NPC found.");
+            Log.info("New target NPC set.");
             updateTarget(bestTarget);
         }
     }
