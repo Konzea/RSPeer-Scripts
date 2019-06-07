@@ -3,22 +3,41 @@ package Combat_Starter.Enums;
 import org.rspeer.runetek.api.component.tab.Skill;
 import org.rspeer.runetek.api.component.tab.Skills;
 import org.rspeer.runetek.api.movement.position.Area;
+import org.rspeer.runetek.api.movement.position.Position;
 
 public enum Target{
     //Must be in order of target level, low to high
-    GOBLINS(new String[]{"Goblin"}, null, 5),
-    COWS(new String[]{"Cow", "Cow calf"}, null, 10),
-    RATS(new String[]{"Giant rat"}, new int[]{6}, null, 18),
-    FROGS(new String[]{"Giant frog", "Big frog"}, null, 100);
+    GOBLINS(new String[]{"Goblin"},
+            Area.polygonal(0, new Position( 3237, 3254), new Position( 3268, 3254), new Position( 3268, 3210), new Position( 3247, 3223), new Position( 3239, 3237)),
+            5),
 
+    COWS(new String[]{"Cow", "Cow calf"},
+            Area.polygonal(0, new Position (3240, 3298), new Position (3266, 3301 ), new Position (3266, 3255 ), new Position (3253, 3255 ), new Position (3253, 3272 ), new Position (3248, 3278 ), new Position (3245, 3278 ), new Position (3240, 3284 ), new Position (3241, 3291 )),
+            10),
 
-    Target(String[] inNames, org.rspeer.runetek.api.movement.position.Area inArea, int inTargetLevel){
-        this(inNames, null, inArea, inTargetLevel);
+    RATS(new String[]{"Giant rat"},
+            new int[]{6},
+            Area.polygonal(0, new Position( 3190, 3197 ), new Position( 3199, 3198 ), new Position( 3223, 3198 ), new Position( 3236, 3193 ), new Position( 3231, 3174 ), new Position( 3207, 3174 )),
+            18),
+
+    FROGS(new String[]{"Giant frog", "Big frog"},
+            Area.polygonal(0, new Position( 3173, 3200) , new Position( 3227, 3199 ), new Position( 3230, 3166 ), new Position( 3191, 3168 ), new Position( 3179, 3176 )),
+            100);
+
+    Area bob = Area.polygonal(0,
+            new Position( 3173, 3200) ,
+            new Position( 3227, 3199 ),
+            new Position( 3230, 3166 ),
+            new Position( 3191, 3168 ),
+            new Position( 3179, 3176 ));
+
+    Target(String[] inNames, Area inZone, int inTargetLevel){
+        this(inNames, null, inZone, inTargetLevel);
     }
 
-    Target(String[] inNames, int[] inAttackableCmbLvls, org.rspeer.runetek.api.movement.position.Area inArea, int inTargetLevel){
+    Target(String[] inNames, int[] inAttackableCmbLvls, Area inZone, int inTargetLevel){
         Names = inNames;
-        Area = inArea;
+        Zone = inZone;
         attackableCmbLvls = inAttackableCmbLvls;
         targetLevel = inTargetLevel;
     }
@@ -34,8 +53,8 @@ public enum Target{
     public String[] getNames(){ return this.Names; }
 
     //Returns he area in which to stay when fighting this target
-    private final Area Area;
-    public Area getArea(){ return Area; }
+    private final Area Zone;
+    public Area getZone(){ return Zone; }
 
      //The level at which you no longer want to be killing this target.
      //e.g. Cows have a target level of 5, after level 5 we will kill the next target
