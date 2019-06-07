@@ -19,6 +19,7 @@ public class Banking {
         //Private Default Constructor
     }
 
+    //TODO Potentially store this in Main, to allow for customising. Or just store wep name
     private final static Predicate<Item> weapon = x->x.getName().contains("sword");
     private final static Predicate<Item> shield = x->x.getName().contains("shield");
 
