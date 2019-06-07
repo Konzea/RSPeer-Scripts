@@ -40,6 +40,7 @@ public class Main extends Script implements ChatMessageListener {
         }
 
         currentState.execute();
+        Log.info("Current state: " + currentState.name());
         return 150;
     }
 
@@ -60,13 +61,22 @@ public class Main extends Script implements ChatMessageListener {
     }
 
     //region Getters & Setters
+
+    /**
+     * Handles updating current script state and updating previousState.
+     * @param inState The state you wish to set or null to stop script.
+     */
     public static void updateScriptState(ScriptState inState){
             previousState = currentState;
             if (inState == currentState)
                 Log.severe("Error: New script state same as previous.");
-            else
+            else {
                 currentState = inState;
-        }
+                if (currentState == ScriptState.FIGHTING){
+                    if (!Fighting.gearEquipped())
+                        Fighting.equipGear();
+                }
+            }
     }
 
     public static ScriptState getPreviousScriptState(){
