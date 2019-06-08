@@ -7,6 +7,7 @@ import Combat_Starter.Executes.Fighting;
 import Combat_Starter.Helpers.CombatStyle;
 import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.api.component.tab.*;
+import org.rspeer.runetek.api.movement.Movement;
 import org.rspeer.runetek.event.listeners.ChatMessageListener;
 import org.rspeer.runetek.event.types.ChatMessageEvent;
 import org.rspeer.runetek.event.types.ChatMessageType;
@@ -132,6 +133,7 @@ public class Main extends Script implements ChatMessageListener {
         //Update combat style to give even levels
         Combat.AttackStyle currentAttackStyle = Combat.getAttackStyle();
         Combat.AttackStyle bestAttackStyle = Fighting.getBestAttackStyle();
+
         if (bestAttackStyle != currentAttackStyle) {
             Log.info("New best attack style set: " + bestAttackStyle);
             if (!CombatStyle.setAttackStyle(bestAttackStyle)) {
@@ -156,6 +158,9 @@ public class Main extends Script implements ChatMessageListener {
             Log.info("New target NPC set: " + bestTarget.toString());
             updateTarget(bestTarget);
         }
+
+        if (!Movement.isRunEnabled())
+            Movement.toggleRun(true);
     }
     //endregion
 }
