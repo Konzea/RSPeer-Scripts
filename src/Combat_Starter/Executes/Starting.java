@@ -2,6 +2,7 @@ package Combat_Starter.Executes;
 
 import Combat_Starter.Main;
 import Combat_Starter.Enums.ScriptState;
+import org.rspeer.runetek.api.component.tab.Combat;
 import org.rspeer.runetek.api.movement.Movement;
 
 public class Starting {
@@ -13,6 +14,9 @@ public class Starting {
     public static void execute(){
         //Starting
         //TODO Grab starting xp
+
+        if (!Combat.isAutoRetaliateOn())
+            Combat.toggleAutoRetaliate(true);
 
         if (!Movement.isRunEnabled())
             Movement.toggleRun(true);
