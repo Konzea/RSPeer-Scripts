@@ -18,7 +18,7 @@ import org.rspeer.ui.Log;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-@ScriptMeta(desc = "Kills NPCs around Lumbridge", developer = "Shteve", name = "Combat Starter", category = ScriptCategory.COMBAT, version = 0.1)
+@ScriptMeta(desc = "Kills NPCs around Lumbridge", developer = "Shteve", name = "Combat Starter", category = ScriptCategory.COMBAT, version = 1)
 public class Main extends Script implements ChatMessageListener {
 
     private static ScriptState currentState = ScriptState.STARTING;
