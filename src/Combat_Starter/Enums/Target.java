@@ -63,6 +63,33 @@ public enum Target{
 
 
     /**
+     * Checks the inputted npc to see if it matches the target profiles name(s) and level(s).
+     * @param npc The npc to check as a potential target.
+     * @return Returns true if the npc matches target profile.
+     */
+    public final boolean matches(Npc npc){
+        boolean combatLvlMatch = false;
+        if (attackableCmbLvls != null){
+            for (int lvl : attackableCmbLvls){
+                if (npc.getCombatLevel() == lvl){
+                    combatLvlMatch = true;
+                    break;
+                }
+            }
+        }else
+            combatLvlMatch = true;
+
+        if (!combatLvlMatch)
+            return false;
+
+        for (String n : Names){
+            if (npc.getName().equals(n))
+                return true;
+        }
+        return false;
+    }
+
+    /**
      * Using lowest melee combat level calculates the best target.
      * @return  Returns the best target for your level.
      */
