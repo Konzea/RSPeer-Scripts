@@ -1,0 +1,38 @@
+package Account_Starter.Executes;
+
+import Account_Starter.Enums.ScriptState;
+import Account_Starter.Main;
+import org.rspeer.runetek.api.component.tab.Combat;
+import org.rspeer.runetek.api.movement.Movement;
+
+public class Starting {
+
+    private Starting(){
+        //Private Default Constructor
+    }
+
+    public static void execute(){
+        //Starting
+        //TODO Grab starting xp
+
+        if (!Combat.isAutoRetaliateOn())
+            Combat.toggleAutoRetaliate(true);
+
+        if (!Movement.isRunEnabled())
+            Movement.toggleRun(true);
+
+        //Set target npc based on levels
+        //Set attack style
+        Main.onLevelUpEvent();
+
+        //Make sure player has just wep and shield
+        if (Main.onlyHasEquipment())
+            Main.updateScriptState(ScriptState.FIGHTING);
+        else
+            Main.updateScriptState(ScriptState.BANKING);
+
+
+    }
+
+
+}
