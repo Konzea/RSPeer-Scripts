@@ -24,10 +24,10 @@ public class Equipping_Gear {
                 while (true) {
                     if (equipGear())
                         break;
-                    else if (attempt <= 3)
+                    else if (attempt <= 5)
                         attempt++;
                     else{
-                        Log.info("Attempted to equip gear 3 times but failed.");
+                        Log.info("Attempted to equip gear 5 times but failed.");
                         Main.updateScriptState(null);
                         break;
                     }
