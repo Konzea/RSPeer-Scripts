@@ -134,7 +134,15 @@ public class Main extends Script implements ChatMessageListener {
         Combat.AttackStyle bestAttackStyle = Fighting.getBestAttackStyle();
         if (bestAttackStyle != currentAttackStyle) {
             Log.info("New best attack style set: " + bestAttackStyle);
-            CombatStyle.setAttackStyle(bestAttackStyle);
+            if (!CombatStyle.setAttackStyle(bestAttackStyle)) {
+                Log.severe("Failed to set " + bestAttackStyle);
+                Log.info("Current Attack style" + currentAttackStyle);
+                Combat.AttackStyle[] availableStyles = CombatStyle.getAvailableAttackStyles();
+                String allStyles = "";
+                for (Combat.AttackStyle c : availableStyles)
+                    allStyles = allStyles + " |" + c.getName();
+                Log.info("All Styles: " + allStyles);
+            }
         }
 
         //Update target to give best xp based on levels
