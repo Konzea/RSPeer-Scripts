@@ -31,10 +31,7 @@ public class Walking {
             case FIGHTING:
                 Area zone = Main.getCurrentTarget().getZone();
                 if (!zone.contains(local)){
-                    if (Main.getCurrentTarget() == Target.COWS)
-                        walkToCows(local, zone);
-                    else
-                        Movement.walkTo(zone.getCenter());
+                    Movement.walkTo(zone.getCenter());
                     Time.sleep(400, 1400);
                 }else{
                     Main.updateScriptState(ScriptState.FIGHTING);
@@ -50,13 +47,5 @@ public class Walking {
                         Time.sleep(400, 1400);
                     }
         }
-    }
-
-    private static void walkToCows(Positionable localPos, Area endTarget){
-        //So it doesn't get stuck in some fucking special hut...
-        if (localPos.getX() < 3242 && localPos.getY() < 3244)
-            Movement.walkTo(new Position(3254, 3251, 0));
-        else
-            Movement.walkTo(endTarget.getCenter());
     }
 }
