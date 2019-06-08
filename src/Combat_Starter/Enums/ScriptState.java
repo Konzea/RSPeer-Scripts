@@ -30,6 +30,13 @@ public enum ScriptState {
         }
     },
 
+    EQUIPPING_GEAR{
+        @Override
+        public void execute() {
+            Equipping_Gear.execute();
+        }
+    },
+
     FIGHTING{
         @Override
         public void execute() {
