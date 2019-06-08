@@ -2,6 +2,7 @@ package Combat_Starter;
 
 import Combat_Starter.Enums.ScriptState;
 import Combat_Starter.Enums.Target;
+import Combat_Starter.Executes.Equipping_Gear;
 import Combat_Starter.Executes.Fighting;
 import Combat_Starter.Helpers.CombatStyle;
 import org.rspeer.runetek.adapter.component.Item;
@@ -40,7 +41,7 @@ public class Main extends Script implements ChatMessageListener {
         }
 
         currentState.execute();
-        Log.info("Current state: " + currentState.name());
+        //Log.info("Current state: " + currentState.name());
         return 150;
     }
 
@@ -56,8 +57,15 @@ public class Main extends Script implements ChatMessageListener {
         if (chatMessageEvent.getType() == ChatMessageType.SERVER){
             if (Message.contains("Congratulations, ")){
                onLevelUpEvent();
+            }else if (Message.equals("Oh dear, you are dead!")){
+                onDeathEvent();
             }
         }
+    }
+
+    private static void onDeathEvent(){
+        Log.info("You died my dude, getting back to killing shit.");
+        updateScriptState(ScriptState.EQUIPPING_GEAR);
     }
 
     //region Getters & Setters
@@ -73,8 +81,8 @@ public class Main extends Script implements ChatMessageListener {
             else {
                 currentState = inState;
                 if (currentState == ScriptState.FIGHTING){
-                    if (!Fighting.gearEquipped())
-                        Fighting.equipGear();
+                    if (!Equipping_Gear.gearEquipped())
+                        updateScriptState(ScriptState.EQUIPPING_GEAR);
                 }
             }
     }
@@ -124,8 +132,10 @@ public class Main extends Script implements ChatMessageListener {
         //Update combat style to give even levels
         Combat.AttackStyle currentAttackStyle = Combat.getAttackStyle();
         Combat.AttackStyle bestAttackStyle = Fighting.getBestAttackStyle();
-        if (bestAttackStyle != currentAttackStyle)
+        if (bestAttackStyle != currentAttackStyle) {
+            Log.info("New best attack style set: " + bestAttackStyle);
             CombatStyle.setAttackStyle(bestAttackStyle);
+        }
 
         //Update target to give best xp based on levels
         Target bestTarget = Target.getBestTarget();
@@ -135,7 +145,7 @@ public class Main extends Script implements ChatMessageListener {
             if (currentTarget != null)
                 updateScriptState(ScriptState.WALKING);
 
-            Log.info("New target NPC set.");
+            Log.info("New target NPC set: " + bestTarget.toString());
             updateTarget(bestTarget);
         }
     }
