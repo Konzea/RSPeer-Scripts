@@ -13,12 +13,12 @@ public enum Target{
 
     COWS(new String[]{"Cow", "Cow calf"},
             Area.polygonal(0, new Position (3240, 3298), new Position (3266, 3301 ), new Position (3266, 3255 ), new Position (3253, 3255 ), new Position (3253, 3272 ), new Position (3248, 3278 ), new Position (3245, 3278 ), new Position (3240, 3284 ), new Position (3241, 3291 )),
-            10),
+            15),
 
-    RATS(new String[]{"Giant rat"},
-            new int[]{6},
+    RATS(new String[]{"Giant rat", "Frog"},
+            new int[]{6, 5},
             Area.polygonal(0, new Position( 3190, 3197 ), new Position( 3199, 3198 ), new Position( 3223, 3198 ), new Position( 3236, 3193 ), new Position( 3231, 3174 ), new Position( 3207, 3174 )),
-            18),
+            20),
 
     FROGS(new String[]{"Giant frog", "Big frog"},
             Area.polygonal(0, new Position( 3173, 3200) , new Position( 3227, 3199 ), new Position( 3230, 3166 ), new Position( 3191, 3168 ), new Position( 3179, 3176 )),
