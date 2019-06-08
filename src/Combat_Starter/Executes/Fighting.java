@@ -3,7 +3,6 @@ package Combat_Starter.Executes;
 import Combat_Starter.Enums.ScriptState;
 import Combat_Starter.Enums.Target;
 import Combat_Starter.Main;
-import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.adapter.scene.Npc;
 import org.rspeer.runetek.adapter.scene.Player;
 import org.rspeer.runetek.api.commons.Time;
@@ -11,7 +10,6 @@ import org.rspeer.runetek.api.component.tab.*;
 import org.rspeer.runetek.api.movement.Movement;
 import org.rspeer.runetek.api.scene.Npcs;
 import org.rspeer.runetek.api.scene.Players;
-import org.rspeer.ui.Log;
 
 import java.util.function.Predicate;
 
