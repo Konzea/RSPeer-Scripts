@@ -1,5 +1,6 @@
 package Combat_Starter.Enums;
 
+import org.rspeer.runetek.adapter.scene.Npc;
 import org.rspeer.runetek.api.component.tab.Skill;
 import org.rspeer.runetek.api.component.tab.Skills;
 import org.rspeer.runetek.api.movement.position.Area;
@@ -24,12 +25,6 @@ public enum Target{
             Area.polygonal(0, new Position( 3173, 3200) , new Position( 3227, 3199 ), new Position( 3230, 3166 ), new Position( 3191, 3168 ), new Position( 3179, 3176 )),
             100);
 
-    Area bob = Area.polygonal(0,
-            new Position( 3173, 3200) ,
-            new Position( 3227, 3199 ),
-            new Position( 3230, 3166 ),
-            new Position( 3191, 3168 ),
-            new Position( 3179, 3176 ));
 
     Target(String[] inNames, Area inZone, int inTargetLevel){
         this(inNames, null, inZone, inTargetLevel);
@@ -109,10 +104,10 @@ public enum Target{
 
         //Assumes targets are in order of max level
         for (Target t:allPossibleTargets){
-            if (lowestCMBLevel <= t.getTargetLevel())
+            if (lowestCMBLevel <= t.getTargetLevel()) {
                 bestTarget = t;
-            else
                 break;
+            }
         }
 
         return bestTarget;
