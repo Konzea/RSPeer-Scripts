@@ -55,7 +55,10 @@ public class Banking {
                         }
                     }else {
                         Log.info("Invent full of crap, depositing all");
+                        //The bank isn't as fast as the bot.
+                        Time.sleep(50,400);
                         Bank.depositInventory();
+                        Time.sleep(50,400);
                         Bank.depositEquipment();
                         Time.sleepUntil(()->Equipment.getItems().length == 0 && Inventory.isEmpty(), 2000);
                     }
