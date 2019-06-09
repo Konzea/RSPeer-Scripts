@@ -3,7 +3,6 @@ package Combat_Starter.Executes;
 import Combat_Starter.Main;
 import Combat_Starter.Enums.ScriptState;
 import org.rspeer.runetek.adapter.component.Item;
-import org.rspeer.runetek.adapter.scene.Player;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.component.Bank;
 import org.rspeer.runetek.api.component.tab.Equipment;
@@ -23,6 +22,7 @@ public class Banking {
     private final static Predicate<Item> weapon = x->x.getName().contains("sword");
     private final static Predicate<Item> shield = x->x.getName().contains("shield");
 
+    //TODO Potentially cache bank to look for upgrades upon level up
 
     public static void execute(){
         if (Players.getLocal().getPosition().getFloorLevel() != 2) {
