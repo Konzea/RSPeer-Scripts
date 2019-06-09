@@ -18,12 +18,17 @@ public enum Target{
 
     RATS(new String[]{"Giant rat", "Frog"},
             new int[]{6, 5},
-            Area.polygonal(0, new Position( 3190, 3197 ), new Position( 3199, 3198 ), new Position( 3223, 3198 ), new Position( 3236, 3193 ), new Position( 3231, 3174 ), new Position( 3207, 3174 )),
+            Area.polygonal(new Position (3173, 3206, 0 ), new Position (3186, 3206, 0 ), new Position (3194, 3198, 0 ), new Position (3236, 3197, 0 ), new Position (3235, 3166, 0 ), new Position (3205, 3166, 0 ), new Position (3173, 3166, 0 )),
             20),
 
-    FROGS(new String[]{"Giant frog", "Big frog"},
-            Area.polygonal(0, new Position( 3173, 3200) , new Position( 3227, 3199 ), new Position( 3230, 3166 ), new Position( 3191, 3168 ), new Position( 3179, 3176 )),
+    FROGS(new String[]{"Big frog", "Frog", "Rats"},
+            Area.polygonal(new Position (3173, 3206, 0 ), new Position (3186, 3206, 0 ), new Position (3194, 3198, 0 ), new Position (3236, 3197, 0 ), new Position (3235, 3166, 0 ), new Position (3205, 3166, 0 ), new Position (3173, 3166, 0 )),
+            30),
+
+    GIANT_FROGS(new String[]{"Giant frog", "Big frog", "Frog", "Rats"},
+            Area.polygonal(new Position (3173, 3206, 0 ), new Position (3186, 3206, 0 ), new Position (3194, 3198, 0 ), new Position (3236, 3197, 0 ), new Position (3235, 3166, 0 ), new Position (3205, 3166, 0 ), new Position (3173, 3166, 0 )),
             100);
+
 
 
     Target(String[] inNames, Area inZone, int inTargetLevel){
@@ -104,7 +109,7 @@ public enum Target{
 
         //Assumes targets are in order of max level
         for (Target t:allPossibleTargets){
-            if (lowestCMBLevel <= t.getTargetLevel()) {
+            if (lowestCMBLevel < t.getTargetLevel()) {
                 bestTarget = t;
                 break;
             }
