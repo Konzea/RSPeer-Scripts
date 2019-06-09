@@ -41,10 +41,17 @@ public class Fighting {
 
     //Fights an npc that matches the given predicate
     private static void fightNPC(Predicate<Npc> targetPredicate) {
-        Npc npc = Npcs.getNearest(targetPredicate);
-        if (npc != null && npc.interact("Attack"))
-            Time.sleep(200, 600);
-
+        Npc[] targetingUser = Npcs.getLoaded(x-> x.getTarget() != null && x.getTarget().equals(Players.getLocal()));
+        //If we have a fucker trying to attack us, kill it first.
+        if (targetingUser.length > 0) {
+            if (targetingUser[0] != null && targetingUser[0].interact("Attack"))
+                Time.sleep(200, 600);
+        }else {
+            //If no fuckers attacking us. Fuck the closest one up.
+            Npc npc = Npcs.getNearest(targetPredicate);
+            if (npc != null && npc.interact("Attack"))
+                Time.sleep(200, 600);
+        }
     }
 
 
