@@ -4,12 +4,18 @@ import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.adapter.scene.Player;
 import org.rspeer.runetek.adapter.scene.SceneObject;
 import org.rspeer.runetek.api.Game;
+import org.rspeer.runetek.api.Worlds;
 import org.rspeer.runetek.api.commons.Time;
+import org.rspeer.runetek.api.component.chatter.ClanChat;
 import org.rspeer.runetek.api.component.tab.*;
 import org.rspeer.runetek.api.movement.Movement;
 import org.rspeer.runetek.api.movement.position.Area;
 import org.rspeer.runetek.api.scene.Players;
 import org.rspeer.runetek.api.scene.SceneObjects;
+import org.rspeer.runetek.event.listeners.ChatMessageListener;
+import org.rspeer.runetek.event.types.ChatMessageEvent;
+import org.rspeer.runetek.event.types.ChatMessageType;
+import org.rspeer.runetek.providers.RSClanMember;
 import org.rspeer.script.Script;
 import org.rspeer.script.ScriptCategory;
 import org.rspeer.script.ScriptMeta;
@@ -18,7 +24,7 @@ import org.rspeer.ui.Log;
 import java.text.NumberFormat;
 
 @ScriptMeta(desc = "Chops any tree, anywhere and drops the logs.", developer = "Shteve", name = "Powercutter", category = ScriptCategory.WOODCUTTING, version = 0.1)
-public class Powercutter extends Script {
+public class Powercutter extends Script implements ChatMessageListener {
 
     //TODO Set as customisable
     private static Area area = Area.rectangular(2983, 3191, 2994, 3181);
@@ -39,6 +45,8 @@ public class Powercutter extends Script {
     @Override
     public int loop() {
 
+        Log.info(Worlds.getCurrent());
+/*
         if (!initialised){
             if (attemptInitialisation())
                 initialised = true;
@@ -67,7 +75,7 @@ public class Powercutter extends Script {
                 }
             }
         }
-
+*/
         return 988;
     }
 
@@ -168,4 +176,17 @@ public class Powercutter extends Script {
         return String.format("%02d:%02d:%02d", hour, minute, second);
     }
 
+    @Override
+    public void notify(ChatMessageEvent chatMessageEvent) {
+        String message = chatMessageEvent.getMessage();
+        if (chatMessageEvent.getType() == ChatMessageType.CLAN_CHANNEL) {
+            String muleName = chatMessageEvent.getSource();
+            int muleWorld = -1;
+
+            RSClanMember[] member = ClanChat.getMembers(x->x.getDisplayName().getClean().equals(muleName));
+            if (member.length > 0 && member[0] != null){
+                muleWorld = member[0].getWorld();
+            }
+        }
+    }
 }
