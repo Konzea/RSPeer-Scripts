@@ -2,8 +2,11 @@ package Master_Thiever;
 
 import Master_Thiever.Enums.ScriptState;
 import Master_Thiever.Enums.Target;
+import Master_Thiever.Executes.Muling;
 import org.rspeer.runetek.adapter.component.Item;
+import org.rspeer.runetek.api.Worlds;
 import org.rspeer.runetek.api.commons.Time;
+import org.rspeer.runetek.api.component.chatter.ClanChat;
 import org.rspeer.runetek.api.component.tab.EquipmentSlot;
 import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.runetek.api.component.tab.Skill;
@@ -14,6 +17,7 @@ import org.rspeer.runetek.api.scene.Players;
 import org.rspeer.runetek.event.listeners.ChatMessageListener;
 import org.rspeer.runetek.event.types.ChatMessageEvent;
 import org.rspeer.runetek.event.types.ChatMessageType;
+import org.rspeer.runetek.providers.RSClanMember;
 import org.rspeer.script.Script;
 import org.rspeer.script.ScriptCategory;
 import org.rspeer.script.ScriptMeta;
@@ -46,12 +50,10 @@ public class Main extends Script implements ChatMessageListener {
         return seedsToKeep;
     }
 
-    private static final String mulePhrase = "boiii call me daddy";
+    private static final String mulePhrase = "Big Tbow";
 
     private static final int lowestAllowedHP = 4;
     public static int getLowestAllowedHP(){ return lowestAllowedHP; }
-
-
 
 
     @Override
@@ -89,7 +91,22 @@ public class Main extends Script implements ChatMessageListener {
             }
         }else if (chatMessageEvent.getType() == ChatMessageType.CLAN_CHANNEL){
             if (Message.contains(mulePhrase)){
-                updateScriptState(ScriptState.MULING);
+                String muleName = chatMessageEvent.getSource();
+                int muleWorld = -1;
+
+                RSClanMember[] member = ClanChat.getMembers(x->x.getDisplayName().getClean().equals(muleName));
+                if (member.length > 0 && member[0] != null){
+                    muleWorld = member[0].getWorld();
+                }
+
+                if (muleWorld != -1){
+                    Log.fine("Muling has been triggered by " + muleName);
+                    Muling.setStartWorld(Worlds.getCurrent());
+                    Muling.setMuleName(muleName);
+                    Muling.setMuleWorld(muleWorld);
+                    updateScriptState(ScriptState.MULING);
+                }else
+                    Log.info("Mule world not found");
             }
         }
     }
