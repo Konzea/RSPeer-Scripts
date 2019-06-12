@@ -103,7 +103,6 @@ public class Main extends Script implements ChatMessageListener {
     }
 
     //region Getters & Setters
-    //
     /**
      * Handles updating current script state and updating previousState.
      * @param inState The state you wish to set or null to stop script.
