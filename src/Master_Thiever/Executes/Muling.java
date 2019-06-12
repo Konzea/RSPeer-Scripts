@@ -1,8 +1,6 @@
 package Master_Thiever.Executes;
 
-import Master_Thiever.Enums.ScriptState;
 import Master_Thiever.Main;
-import jdk.nashorn.internal.runtime.Timing;
 import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.adapter.scene.Player;
 import org.rspeer.runetek.api.Worlds;
@@ -31,6 +29,7 @@ public class Muling {
 
     private static boolean gotAllItems = false;
     private static int failiureCount = 0;
+    private static boolean finishedMuling = false;
 
 
     //TODO Add timeout
@@ -49,29 +48,34 @@ public class Muling {
         }else {
             if (Worlds.getCurrent() == muleWorld) {
                 if (gotAllItems) {
-                    if (!Trade.isOpen() && Inventory.getCount() == 0) {
-                        Log.fine("Muling Successful");
+                    if (!Trade.isOpen()) {
+                        if (!finishedMuling)
+                            Log.fine("Muling Successful");
                         finishMuling();
                     } else
                         handleTrade();
                 } else {
-                    Log.info("Handling bank");
                     handleBank();
                 }
             } else {
-                //Hops to mule world, closes bank if it has to
-                if (!Bank.isOpen()) {
-                    WorldHopper.hopTo(muleWorld);
-                    Time.sleepUntil(() -> Worlds.getCurrent() == muleWorld, 4000);
-                } else {
-                    if (Bank.close())
-                        Time.sleepUntil(Bank::isClosed, 2000);
+                if (!finishedMuling){
+                    //Hops to mule world, closes bank if it has to
+                    if (!Bank.isOpen()) {
+                        WorldHopper.hopTo(muleWorld);
+                        Time.sleepUntil(() -> Worlds.getCurrent() == muleWorld, 4000);
+                    } else {
+                        if (Bank.close())
+                            Time.sleepUntil(Bank::isClosed, 2000);
+                    }
+                }else{
+                    finishMuling();
                 }
             }
         }
     }
 
     private static void finishMuling(){
+        finishedMuling = true;
         if (Bank.isOpen()){
             if (Bank.close())
                 Time.sleepUntil(Bank::isClosed, 2000);
@@ -84,6 +88,7 @@ public class Muling {
             startWorld = -1;
             gotAllItems = false;
             failiureCount = 0;
+            finishedMuling = false;
             Main.updateScriptState(Main.getPreviousScriptState());
         }else{
             if (WorldHopper.hopTo(startWorld))
@@ -122,8 +127,9 @@ public class Muling {
                 }
             }
         }else{
-            if (Bank.open())
-                Time.sleepUntil(Bank::isOpen, 3000);
+            Bank.open();
+            Time.sleep(123,407);
+            Time.sleepUntil(Bank::isOpen, 2553);
         }
     }
 
