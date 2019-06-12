@@ -27,6 +27,8 @@ public class Main extends Script implements ChatMessageListener {
 
     private static Target currentTarget;
 
+    private static Boolean justLeveledUp = false;
+
 
     @Override
     public void onStart() {
@@ -39,6 +41,11 @@ public class Main extends Script implements ChatMessageListener {
         if (currentState == null) {
             Log.severe("Null script state, stopping.");
             setStopping(true);
+        }
+
+        if (justLeveledUp) {
+            onLevelUpEvent();
+            justLeveledUp = false;
         }
 
         currentState.execute();
@@ -57,7 +64,7 @@ public class Main extends Script implements ChatMessageListener {
         String Message = chatMessageEvent.getMessage();
         if (chatMessageEvent.getType() == ChatMessageType.SERVER){
             if (Message.contains("Congratulations, ")){
-               onLevelUpEvent();
+               justLeveledUp = true;
             }else if (Message.equals("Oh dear, you are dead!")){
                 onDeathEvent();
             }
@@ -135,16 +142,15 @@ public class Main extends Script implements ChatMessageListener {
         Combat.AttackStyle bestAttackStyle = Fighting.getBestAttackStyle();
 
         if (bestAttackStyle != currentAttackStyle) {
+            CombatStyle.setAttackStyle(bestAttackStyle);
             Log.info("New best attack style set: " + bestAttackStyle);
-            if (!CombatStyle.setAttackStyle(bestAttackStyle)) {
-                Log.severe("Failed to set " + bestAttackStyle);
-                Log.info("Current Attack style" + currentAttackStyle);
-                Combat.AttackStyle[] availableStyles = CombatStyle.getAvailableAttackStyles();
-                String allStyles = "";
-                for (Combat.AttackStyle c : availableStyles)
-                    allStyles = allStyles + " |" + c.getName();
-                Log.info("All Styles: " + allStyles);
-            }
+            Log.info("Previous Attack style: " + currentAttackStyle);
+            Log.info("Current Attack style: " + CombatStyle.getAttackStyle());
+            Combat.AttackStyle[] availableStyles = CombatStyle.getAvailableAttackStyles();
+            String allStyles = "";
+            for (Combat.AttackStyle c : availableStyles)
+                allStyles = allStyles + " |" + c.getName();
+            Log.info("All Styles: " + allStyles);
         }
 
         //Update target to give best xp based on levels
