@@ -11,6 +11,7 @@ import org.rspeer.runetek.api.component.tab.EquipmentSlot;
 import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.runetek.api.component.tab.Skill;
 import org.rspeer.runetek.api.component.tab.Skills;
+import org.rspeer.runetek.api.input.Keyboard;
 import org.rspeer.runetek.api.local.Health;
 import org.rspeer.runetek.api.movement.Movement;
 import org.rspeer.runetek.api.scene.Players;
@@ -18,10 +19,13 @@ import org.rspeer.runetek.event.listeners.ChatMessageListener;
 import org.rspeer.runetek.event.types.ChatMessageEvent;
 import org.rspeer.runetek.event.types.ChatMessageType;
 import org.rspeer.runetek.providers.RSClanMember;
+import org.rspeer.runetek.providers.RSWorld;
 import org.rspeer.script.Script;
 import org.rspeer.script.ScriptCategory;
 import org.rspeer.script.ScriptMeta;
 import org.rspeer.ui.Log;
+
+import java.util.function.Predicate;
 
 @ScriptMeta(desc = "Thieving", developer = "Shteve", name = "Master Thiever", category = ScriptCategory.THIEVING, version = 0.1)
 public class Main extends Script implements ChatMessageListener {
@@ -50,10 +54,18 @@ public class Main extends Script implements ChatMessageListener {
         return seedsToKeep;
     }
 
-    private static final String mulePhrase = "Big Tbow";
+    private static final String mulePhrase = "Big tbow";
 
     private static final int lowestAllowedHP = 4;
     public static int getLowestAllowedHP(){ return lowestAllowedHP; }
+
+    private static final Predicate<RSWorld> worldPred =
+            x->x.isMembers()
+            && !x.isDeadman()
+            && !x.isPVP()
+            && !x.isSeasonDeadman()
+            && !x.isSkillTotal()
+            && !x.isTournament();
 
 
     @Override
@@ -90,23 +102,31 @@ public class Main extends Script implements ChatMessageListener {
                 onDeathEvent();
             }
         }else if (chatMessageEvent.getType() == ChatMessageType.CLAN_CHANNEL){
-            if (Message.contains(mulePhrase) && currentTarget == Target.MASTER_FARMERS){
+            if (Message.contains(mulePhrase) && currentTarget == Target.MASTER_FARMERS) {
                 String muleName = chatMessageEvent.getSource();
                 int muleWorld = -1;
 
-                RSClanMember[] member = ClanChat.getMembers(x->x.getDisplayName().getClean().equals(muleName));
-                if (member.length > 0 && member[0] != null){
+                Log.fine("Muling has been triggered by " + muleName);
+
+                RSClanMember[] member = ClanChat.getMembers(x -> x.getDisplayName().getClean().equals(muleName));
+                if (member.length > 0 && member[0] != null) {
                     muleWorld = member[0].getWorld();
                 }
 
-                if (muleWorld != -1){
-                    Log.fine("Muling has been triggered by " + muleName);
-                    Muling.setStartWorld(Worlds.getCurrent());
-                    Muling.setMuleName(muleName);
-                    Muling.setMuleWorld(muleWorld);
-                    updateScriptState(ScriptState.MULING);
-                }else
-                    Log.info("Mule world not found");
+                if (muleWorld != -1) {
+                    if (worldPred.test(Worlds.get(muleWorld))) {
+                        Log.info("Muling Starting");
+                        Muling.setStartWorld(Worlds.getCurrent());
+                        Muling.setMuleName(muleName);
+                        Muling.setMuleWorld(muleWorld);
+                        updateScriptState(ScriptState.MULING);
+
+                    }else{
+                        Log.severe("The mule's world is inaccessible. Muling Cancelled");
+                        Log.info("This could be because the mule is in a dangerous or F2P world");
+                    }
+                } else
+                    Log.severe("Mule world not found. Muling Cancelled");
             }
         }
     }
