@@ -2,6 +2,7 @@ package Master_Thiever.Executes;
 
 import Master_Thiever.Enums.ScriptState;
 import Master_Thiever.Main;
+import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.component.Bank;
 import org.rspeer.runetek.api.component.tab.Inventory;
@@ -26,8 +27,9 @@ public class Banking {
             int adjustedFoodAmount = foodAmount + Main.getFoodToFullHP();
             int adjustedNecklaceAmount = (Main.necklaceEquipped()) ? necklaceAmount:necklaceAmount + 1;
 
-            if (Inventory.getItems(x->x.getName().contains("seed")).length > 0){
-                //If we have seeds in invent, deposit all
+            Item[] notedItems = Inventory.getItems(Item::isNoted);
+            if (Inventory.getItems(x->x.getName().contains("seed")).length > 0 || notedItems.length > 0){
+                //If we have seeds in invent or noted items, deposit all
                 //TODO Potentially change this as it could cause issues. Works so far tho
                 if (Bank.depositInventory())
                     Time.sleepUntil(()->Inventory.getItems().length == 0, 2000);
