@@ -39,6 +39,8 @@ public class CombatStyle {
      * @return Returns an ordered AttackStyle enum array.
      */
     public static Combat.AttackStyle[] getAvailableAttackStyles(){
+        //TODO Fix
+        //Sometimes returns 3 attack styles instead of 4
         List<Combat.AttackStyle> output = new ArrayList();
         for (InterfaceComponent i: attackStyleInterfaces) {
             //If it is a valid available attack style
