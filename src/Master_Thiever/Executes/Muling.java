@@ -7,6 +7,7 @@ import org.rspeer.runetek.adapter.scene.Player;
 import org.rspeer.runetek.api.Worlds;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.component.Bank;
+import org.rspeer.runetek.api.component.EnterInput;
 import org.rspeer.runetek.api.component.Trade;
 import org.rspeer.runetek.api.component.WorldHopper;
 import org.rspeer.runetek.api.component.tab.Inventory;
@@ -112,8 +113,10 @@ public class Muling {
                         if (Bank.close()){
                             Time.sleepUntil(Bank::isClosed, 2000);
                             if (Bank.isClosed()) {
-                                if (bankedFood != null && bankedNecklaces != null)
+                                if (bankedFood != null && bankedNecklaces != null) {
                                     Keyboard.sendText("/Food Left: " + bankedFood.getStackSize() + ", Necklaces Left: " + bankedNecklaces.getStackSize());
+                                    Keyboard.pressEnter();
+                                }
                                 gotAllItems = true;
                             }
                         }
