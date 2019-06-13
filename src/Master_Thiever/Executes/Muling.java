@@ -1,5 +1,6 @@
 package Master_Thiever.Executes;
 
+import Master_Thiever.Enums.ScriptState;
 import Master_Thiever.Main;
 import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.adapter.scene.Player;
@@ -9,6 +10,7 @@ import org.rspeer.runetek.api.component.Bank;
 import org.rspeer.runetek.api.component.Trade;
 import org.rspeer.runetek.api.component.WorldHopper;
 import org.rspeer.runetek.api.component.tab.Inventory;
+import org.rspeer.runetek.api.input.Keyboard;
 import org.rspeer.runetek.api.scene.Players;
 import org.rspeer.ui.Log;
 
@@ -31,7 +33,6 @@ public class Muling {
     private static int failiureCount = 0;
     private static boolean finishedMuling = false;
 
-
     //TODO Add timeout
 
     private Muling(){
@@ -48,7 +49,8 @@ public class Muling {
         }else {
             if (Worlds.getCurrent() == muleWorld) {
                 if (gotAllItems) {
-                    if (!Trade.isOpen()) {
+                    Item[] goodInventItems = Inventory.getItems(x->arrayContainsName(x, Main.getSeedsToKeep()));
+                    if (!Trade.isOpen() && goodInventItems.length == 0) {
                         if (!finishedMuling)
                             Log.fine("Muling Successful");
                         finishMuling();
@@ -89,7 +91,7 @@ public class Muling {
             gotAllItems = false;
             failiureCount = 0;
             finishedMuling = false;
-            Main.updateScriptState(Main.getPreviousScriptState());
+            Main.updateScriptState(ScriptState.BANKING);
         }else{
             if (WorldHopper.hopTo(startWorld))
                 Time.sleepUntil(()->Worlds.getCurrent() == startWorld, 4000);
@@ -105,10 +107,15 @@ public class Muling {
                 if (goodBankItems.length == 0){
                     if (goodInventItems.length > 0){
                         //No good items in bank and got some stuff in invent
+                        Item bankedFood = Bank.getFirst(Main.getFoodName());
+                        Item bankedNecklaces = Bank.getFirst(Main.getNecklaceName());
                         if (Bank.close()){
                             Time.sleepUntil(Bank::isClosed, 2000);
-                            if (Bank.isClosed())
+                            if (Bank.isClosed()) {
+                                if (bankedFood != null && bankedNecklaces != null)
+                                    Keyboard.sendText("/Food Left: " + bankedFood.getStackSize() + ", Necklaces Left: " + bankedNecklaces.getStackSize());
                                 gotAllItems = true;
+                            }
                         }
                     }else{
                         Log.severe("Muling initiated but no items to mule found.");
