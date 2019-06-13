@@ -90,7 +90,7 @@ public class Main extends Script implements ChatMessageListener {
                 onDeathEvent();
             }
         }else if (chatMessageEvent.getType() == ChatMessageType.CLAN_CHANNEL){
-            if (Message.contains(mulePhrase)){
+            if (Message.contains(mulePhrase) && currentTarget == Target.MASTER_FARMERS){
                 String muleName = chatMessageEvent.getSource();
                 int muleWorld = -1;
 
