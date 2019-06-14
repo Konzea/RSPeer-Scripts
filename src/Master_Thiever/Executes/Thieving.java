@@ -70,6 +70,12 @@ public class Thieving {
             droppableItems = Inventory.getItems(x -> !x.getName().equals(Main.getFoodName())
                     && !x.getName().equals(Main.getNecklaceName())
                     && !arrayContainsName(x, Main.getSeedsToKeep()));
+
+            //In the rare case invent is full of good stuff, bank
+            if (Inventory.isFull() && droppableItems.length == 0){
+                Main.updateScriptState(ScriptState.BANKING);
+                return;
+            }
         }else if (target == Target.MEN) {
                 Item goldPouches = Inventory.getFirst("Coin pouch");
                 if (goldPouches != null && goldPouches.getStackSize() >= 17 && goldPouches.interact("Open-all"))
