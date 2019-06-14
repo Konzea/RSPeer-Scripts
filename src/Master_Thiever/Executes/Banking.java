@@ -56,7 +56,7 @@ public class Banking {
             int adjustedNecklaceAmount = (Main.necklaceEquipped()) ? necklaceAmount:necklaceAmount + 1;
 
             Item[] notedItems = Inventory.getItems(Item::isNoted);
-            if (Inventory.getItems(x->x.getName().contains("seed")).length > 0 || notedItems.length > 0){
+            if (Inventory.getItems(x->x.getName().contains("seed")).length > 0 || notedItems.length > 0 || Inventory.isFull()){
                 //If we have seeds in invent or noted items, deposit all
                 //TODO Potentially change this as it could cause issues. Works so far tho
                 if (Bank.depositInventory())
