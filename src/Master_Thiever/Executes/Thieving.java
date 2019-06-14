@@ -41,7 +41,7 @@ public class Thieving {
         }
 
         //Main Logic
-        if (target != Target.MEN && mustEatFood()) {
+        if (target == Target.MASTER_FARMERS && mustEatFood()) {
             if (Main.userHasFood())
                 Main.eatFood();
             else
@@ -70,7 +70,11 @@ public class Thieving {
             droppableItems = Inventory.getItems(x -> !x.getName().equals(Main.getFoodName())
                     && !x.getName().equals(Main.getNecklaceName())
                     && !arrayContainsName(x, Main.getSeedsToKeep()));
-        }else{
+        }else if (target == Target.MEN) {
+                Item goldPouches = Inventory.getFirst("Coin pouch");
+                if (goldPouches != null && goldPouches.getStackSize() >= 17 && goldPouches.interact("Open-all"))
+                    Time.sleep(200, 600);
+            }else{
             Log.severe("Attempting to drop with no dropping list setup.");
             Main.updateScriptState(null);
         }
@@ -109,7 +113,7 @@ public class Thieving {
     private static void performStunnedChecks(Target target) {
         Time.sleep(400, 1000);
 
-        if ( target != Target.MEN && Main.userHasFood()){
+        if (target == Target.MASTER_FARMERS && Main.userHasFood()){
             if (mustEatFood() || Main.canEatFood()) {
                 Main.eatToFull();
             }
@@ -117,13 +121,6 @@ public class Thieving {
 
         if (Random.nextInt(0, 8) == 1)
             performDropping(target);
-
-        //Handle coin pouches
-        if (target.dropsCoinPouches()) {
-            Item goldPouches = Inventory.getFirst("Coin pouch");
-            if (goldPouches != null && goldPouches.getStackSize() >= 17 && goldPouches.interact("Open-all"))
-                Time.sleep(200, 600);
-        }
 
 
         //Handle necklaces
