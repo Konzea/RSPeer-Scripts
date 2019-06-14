@@ -1,6 +1,7 @@
 package Master_Thiever.Executes;
 
 import Master_Thiever.Enums.ScriptState;
+import Master_Thiever.Enums.Target;
 import Master_Thiever.Main;
 import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.api.commons.Time;
@@ -18,6 +19,33 @@ public class Banking {
     }
 
     public static void execute(){
+
+        Target target = Main.getCurrentTarget();
+
+        if (target == Target.MASTER_FARMERS)
+            masterFarmerBanking();
+        else{
+            if (Bank.isOpen()){
+                if (Inventory.getCount() > 0){
+                    if (Bank.depositInventory())
+                        Time.sleepUntil(Inventory::isEmpty, 2000);
+                }else{
+                    if (Bank.close())
+                        Time.sleepUntil(Bank::isClosed, 2000);
+                }
+            }else{
+                if (Inventory.isEmpty())
+                    Main.updateScriptState(ScriptState.THIEVING);
+                else{
+                    if (Bank.open())
+                        Time.sleepUntil(Bank::isOpen, 2000);
+                }
+            }
+        }
+
+    }
+
+    private static void masterFarmerBanking(){
         int inventFoodCount = Inventory.getCount(Main.getFoodName());
         int inventNeckCount = Inventory.getCount(Main.getNecklaceName());
 
