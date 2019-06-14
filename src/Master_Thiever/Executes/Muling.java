@@ -7,7 +7,6 @@ import org.rspeer.runetek.adapter.scene.Player;
 import org.rspeer.runetek.api.Worlds;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.component.Bank;
-import org.rspeer.runetek.api.component.EnterInput;
 import org.rspeer.runetek.api.component.Trade;
 import org.rspeer.runetek.api.component.WorldHopper;
 import org.rspeer.runetek.api.component.tab.Inventory;
@@ -149,7 +148,7 @@ public class Muling {
                 Trade.accept();
                 Time.sleepUntil(()->!Trade.isOpen(), 12056);
                 if (Trade.isOpen())
-                    muleFailiure("Mule did not accept second trade screen");
+                    muleFailure("Mule did not accept second trade screen");
             }else {
                 Item[] goodInventItems = Inventory.getItems(x->arrayContainsName(x, Main.getSeedsToKeep()));
                 if (goodInventItems.length > 0) {
@@ -162,7 +161,7 @@ public class Muling {
                     Trade.accept();
                     Time.sleepUntil(()->Trade.isOpen(true), 11694);
                     if (Trade.isOpen(false))
-                        muleFailiure(" Mule did not accept first trade screen");
+                        muleFailure(" Mule did not accept first trade screen");
                 }
             }
         }else{
@@ -172,16 +171,16 @@ public class Muling {
                 if (mule.interact("Trade with")) {
                     Time.sleepUntil(Trade::isOpen, 15000);
                     if (!Trade.isOpen())
-                        muleFailiure("Mule did not accept trade offer.");
+                        muleFailure("Mule did not accept trade offer.");
                 }
             }else{
-                muleFailiure("Mule could not be found");
+                muleFailure("Mule could not be found");
                 Time.sleep(5222,10531);
             }
         }
     }
 
-    private static void muleFailiure(String error){
+    private static void muleFailure(String error){
         failiureCount++;
         Log.info("(Muling Fail #" + failiureCount + ") " + error);
     }
