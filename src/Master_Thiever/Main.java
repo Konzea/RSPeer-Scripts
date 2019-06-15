@@ -49,7 +49,7 @@ public class Main extends Script implements ChatMessageListener {
         return foodName;
     }
 
-    private static final String[] seedsToKeep = {"Snape grass", "Ranarr", "Snapdragon", "Torstol", "Avantoe", "Lantadyme", "Wildblood", "Yanillian", "Strawberry"};
+    private static final String[] seedsToKeep = {"Snape grass", "Ranarr", "Snapdragon", "Torstol", "Avantoe", "Lantadyme"};
     public static String[] getSeedsToKeep(){
         return seedsToKeep;
     }
