@@ -101,6 +101,9 @@ public enum Target {
         if (!npc.containsAction(Action))
             return false;
 
+        if (!npc.getPosition().isPositionInteractable())
+            return false;
+
         for (String n : Names){
             if (npc.getName().equals(n))
                 return true;
