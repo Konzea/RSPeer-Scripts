@@ -1,6 +1,7 @@
 package Chin_Hunter.Executes;
 
 import Chin_Hunter.Main;
+import Chin_Hunter.States.ScriptState;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -28,16 +29,16 @@ import java.nio.file.Paths;
 
 public class MuseumQuiz {
 
-    private static final int globalTrackerVarp = 1010;
-    private static final int individualTrackerVarp = 1014;
+    private static final int GLOBAL_TRACKER_VARP = 1010;
+    private static final int INDIVIDUAL_TRACKER_VARP = 1014;
 
-    private static final int quizInterfaceID = 533;
-    private static final int questionChildID = 28;
-    private static final int[] answerChildIDs = {29, 30, 31};
+    private static final int QUIZ_INTERFACE_ID = 533;
+    private static final int QUESTION_CHILD_ID = 28;
+    private static final int[] ANSWER_CHILD_IDS = {29, 30, 31};
 
-    private static final Area museumBasement = Area.rectangular(1724, 4993, 1794, 4927);
-    private static final Position stairsDown = new Position(3255,3451,0);
-    private static final Position stairsUp = new Position(1758,4959,0);
+    private static final Area MUSEUM_BASEMENT = Area.rectangular(1724, 4993, 1794, 4927);
+    private static final Position STAIRS_DOWN_TILE = new Position(3255,3451,0);
+    private static final Position STAIRS_UP_TILE = new Position(1758,4959,0);
 
     private static JsonObject quizData;
 
@@ -64,7 +65,7 @@ public class MuseumQuiz {
     public static void execute() {
         Player local = Players.getLocal();
         if (!hasClaimedReward()) {
-            if (museumBasement.contains(local)) {
+            if (MUSEUM_BASEMENT.contains(local)) {
                 if (!hasCompletedQuiz()) {
                     if (hasStartedQuiz())
                         solveAllQuizzes(quizData);
@@ -78,31 +79,30 @@ public class MuseumQuiz {
                 }
             } else {
                 //Enter basement
-                SceneObject stairs = SceneObjects.getFirstAt(stairsDown);
+                SceneObject stairs = SceneObjects.getFirstAt(STAIRS_DOWN_TILE);
                 if (stairs == null) {
-                    Movement.walkTo(stairsDown);
+                    Movement.walkTo(STAIRS_DOWN_TILE);
                     Time.sleep(219, 612);
                 } else {
                     if (stairs.interact("Walk-down"))
-                        Time.sleepUntil(()->museumBasement.contains(local), 4000);
+                        Time.sleepUntil(()-> MUSEUM_BASEMENT.contains(local), 4000);
                 }
             }
         }else{
             //Done with the quiz
-            if (museumBasement.contains(local)){
+            if (MUSEUM_BASEMENT.contains(local)){
                 //Leave
-                SceneObject stairs = SceneObjects.getFirstAt(stairsUp);
+                SceneObject stairs = SceneObjects.getFirstAt(STAIRS_UP_TILE);
                 if (stairs == null) {
-                    Movement.walkTo(stairsUp);
+                    Movement.walkTo(STAIRS_UP_TILE);
                     Time.sleep(219, 612);
                 } else {
                     if (stairs.interact("Walk-up"))
-                        Time.sleepUntil(()->!museumBasement.contains(local), 2000);
+                        Time.sleepUntil(()->!MUSEUM_BASEMENT.contains(local), 2000);
                 }
             }else{
-                Log.fine("Finished");
-                Time.sleep(2000);
-                //TODO Update State
+                Log.fine("Museum Quiz Complete");
+                Main.updateScriptState(ScriptState.BANKING);
             }
         }
 
@@ -172,7 +172,7 @@ public class MuseumQuiz {
             return;
         }
         if (quizInterfaceIsOpen()) {
-            InterfaceComponent questionInterface = Interfaces.getComponent(quizInterfaceID, questionChildID);
+            InterfaceComponent questionInterface = Interfaces.getComponent(QUIZ_INTERFACE_ID, QUESTION_CHILD_ID);
             if (questionInterface == null)
                 return;
             String question = questionInterface.getText();
@@ -180,8 +180,8 @@ public class MuseumQuiz {
 
             Boolean answerFound = false;
             //Loop through all answers and click the one that matches above string parsed from json
-            for (int i = 0; i < answerChildIDs.length; i++) {
-                InterfaceComponent answerInterface = Interfaces.getComponent(quizInterfaceID, answerChildIDs[i]);
+            for (int i = 0; i < ANSWER_CHILD_IDS.length; i++) {
+                InterfaceComponent answerInterface = Interfaces.getComponent(QUIZ_INTERFACE_ID, ANSWER_CHILD_IDS[i]);
                 //Have to use contains and not equals because the quizes have '.' at the end
                 if (answerInterface != null && answerInterface.getText().contains(answer)) {
                     if (answerInterface.interact("Ok")) {
@@ -222,11 +222,11 @@ public class MuseumQuiz {
     }
 
     private static boolean hasStartedQuiz() {
-        return Varps.get(individualTrackerVarp) != 0;
+        return Varps.get(INDIVIDUAL_TRACKER_VARP) != 0;
     }
 
     private static boolean hasCompletedQuiz() {
-        return Varps.get(globalTrackerVarp) == 2076;
+        return Varps.get(GLOBAL_TRACKER_VARP) == 2076;
     }
 
     private static boolean hasClaimedReward() {
@@ -234,6 +234,6 @@ public class MuseumQuiz {
     }
 
     private static boolean quizInterfaceIsOpen() {
-        return Interfaces.getComponent(quizInterfaceID, questionChildID) != null;
+        return Interfaces.getComponent(QUIZ_INTERFACE_ID, QUESTION_CHILD_ID) != null;
     }
 }
