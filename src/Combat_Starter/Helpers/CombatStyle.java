@@ -3,6 +3,8 @@ package Combat_Starter.Helpers;
 import org.rspeer.runetek.adapter.component.InterfaceComponent;
 import org.rspeer.runetek.api.component.Interfaces;
 import org.rspeer.runetek.api.component.tab.Combat;
+import org.rspeer.runetek.api.component.tab.Tab;
+import org.rspeer.runetek.api.component.tab.Tabs;
 import org.rspeer.ui.Log;
 
 import java.util.ArrayList;
@@ -39,8 +41,10 @@ public class CombatStyle {
      * @return Returns an ordered AttackStyle enum array.
      */
     public static Combat.AttackStyle[] getAvailableAttackStyles(){
-        //TODO Fix
-        //Sometimes returns 3 attack styles instead of 4
+        //This is required to update combat style interfaces for some annoying reason.
+        if (!Tabs.isOpen(Tab.COMBAT))
+            Tabs.open(Tab.COMBAT);
+
         List<Combat.AttackStyle> output = new ArrayList();
         for (InterfaceComponent i: attackStyleInterfaces) {
             //If it is a valid available attack style
