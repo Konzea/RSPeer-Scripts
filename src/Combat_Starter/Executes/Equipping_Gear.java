@@ -4,9 +4,7 @@ import Combat_Starter.Enums.ScriptState;
 import Combat_Starter.Main;
 import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.api.commons.Time;
-import org.rspeer.runetek.api.component.tab.Equipment;
-import org.rspeer.runetek.api.component.tab.EquipmentSlot;
-import org.rspeer.runetek.api.component.tab.Inventory;
+import org.rspeer.runetek.api.component.tab.*;
 import org.rspeer.ui.Log;
 
 public class Equipping_Gear {
