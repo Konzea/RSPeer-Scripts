@@ -30,11 +30,11 @@ public class Starting {
     }
 
     public static void populateItemHashmaps(){
-        Chinchompas.populateHashMaps();
+        Longtails.populateHashMaps();
+        Butterflies.populateHashMaps();
         DeadfallKebbits.populateHashMaps();
         FalconKebbits.populateHashMaps();
-        Butterflies.populateHashMaps();
-        Longtails.populateHashMaps();
+        Chinchompas.populateHashMaps();
         EaglesPeakQuest.populateHashMap();
         PurchaseItems.populateHashMap();
     }
