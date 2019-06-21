@@ -4,6 +4,7 @@ package Chin_Hunter.States;
 import Chin_Hunter.Executes.*;
 import Chin_Hunter.Executes.Hunting.*;
 import org.rspeer.runetek.api.commons.Time;
+import org.rspeer.runetek.api.movement.Movement;
 
 public enum ScriptState {
     //TODO Look at inheriting from a 'State' class instead of enums pointing to classes
@@ -30,7 +31,8 @@ public enum ScriptState {
 
         @Override
         public void onStart() {
-
+            if (Movement.isRunEnabled())
+                Movement.toggleRun(true);
         }
     },
 
@@ -42,7 +44,8 @@ public enum ScriptState {
 
         @Override
         public void onStart() {
-
+            if (Movement.isRunEnabled())
+                Movement.toggleRun(true);
         }
     },
 
@@ -55,6 +58,8 @@ public enum ScriptState {
         @Override
         public void onStart() {
             MuseumQuiz.onStart();
+            if (Movement.isRunEnabled())
+                Movement.toggleRun(true);
         }
     },
 
@@ -66,7 +71,8 @@ public enum ScriptState {
 
         @Override
         public void onStart() {
-
+            if (Movement.isRunEnabled())
+                Movement.toggleRun(true);
         }
     },
 
@@ -78,17 +84,19 @@ public enum ScriptState {
 
         @Override
         public void onStart() {
-
+            if (Movement.isRunEnabled())
+                Movement.toggleRun(true);
         }
     },
 
-    TRAPFALL_KEBBITS{
+    DEADFALL_KEBBITS {
         @Override
         public void execute() { DeadfallKebbits.execute(); }
 
         @Override
         public void onStart() {
-
+            if (Movement.isRunEnabled())
+                Movement.toggleRun(true);
         }
     },
 
@@ -98,7 +106,8 @@ public enum ScriptState {
 
         @Override
         public void onStart() {
-
+            if (Movement.isRunEnabled())
+                Movement.toggleRun(true);
         }
     },
 
@@ -108,7 +117,8 @@ public enum ScriptState {
 
         @Override
         public void onStart() {
-
+            if (Movement.isRunEnabled())
+                Movement.toggleRun(true);
         }
     },
 
@@ -118,7 +128,8 @@ public enum ScriptState {
 
         @Override
         public void onStart() {
-
+            if (Movement.isRunEnabled())
+                Movement.toggleRun(true);
         }
     };
 
