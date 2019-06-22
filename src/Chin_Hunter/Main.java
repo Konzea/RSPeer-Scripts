@@ -1,8 +1,11 @@
 package Chin_Hunter;
 
+import Chin_Hunter.Executes.MuseumQuiz;
 import Chin_Hunter.States.ScriptState;
 import Chin_Hunter.Executes.EaglesPeakQuest;
 import org.rspeer.runetek.adapter.component.Item;
+import org.rspeer.runetek.adapter.scene.Player;
+import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.component.tab.*;
 import org.rspeer.runetek.api.movement.Movement;
 import org.rspeer.runetek.api.movement.position.Area;
@@ -24,6 +27,7 @@ import java.util.stream.Stream;
 @ScriptMeta(desc = "Hunts your mums numerous chins", developer = "Shteve", name = "Chin Hunter", category = ScriptCategory.HUNTER, version = 0.1)
 public class Main extends Script implements ChatMessageListener {
 
+    private static boolean onStartCalled = false;
     private static ScriptState currentState = ScriptState.STARTING;
     private static ScriptState previousState;
 
@@ -41,6 +45,11 @@ public class Main extends Script implements ChatMessageListener {
                     new Position(2662, 2955, 0),
                     new Position(2613, 2868, 0),
                     new Position(2464, 2880, 0));
+
+    private static final Area VARROCK_AREA = Area.rectangular(3071, 3518, 3295, 3334);
+    private static final Area LUMBRIDGE_AREA = Area.rectangular(3210, 3233, 3234, 3204);
+    private static final Area CAMELOT_AREA = Area.rectangular(2688, 3517, 2780, 3465);
+
 
 
     @Override
@@ -91,12 +100,14 @@ public class Main extends Script implements ChatMessageListener {
     public static boolean isAtFeldipHills(){
         return FELDIP_HILLS_AREA.contains(Players.getLocal());
     }
-
     public static boolean isAtPiscatoris(){
         return PISCATORIS_AREA.contains(Players.getLocal());
     }
+    public static boolean isInVarrock(){return VARROCK_AREA.contains(Players.getLocal()); }
+    public static boolean isInLumbridge(){ return LUMBRIDGE_AREA.contains(Players.getLocal());  }
+    public static boolean isInCamelot(){ return CAMELOT_AREA.contains(Players.getLocal()); }
 
-    private static boolean onStartCalled = false;
+
     /**
      * Handles updating current script state and updating previousState.
      * @param inState The state you wish to set or null to stop script.
@@ -108,6 +119,7 @@ public class Main extends Script implements ChatMessageListener {
             else {
                 currentState = inState;
                 onStartCalled = false;
+                Log.info("State Updated to: " + currentState.name());
             }
     }
 
@@ -115,46 +127,35 @@ public class Main extends Script implements ChatMessageListener {
         return previousState;
     }
 
-    public static int getMaxTrapCount(){
-        int hunterLevel = Skills.getLevel(Skill.HUNTER);
-        if (hunterLevel < 20)
-            return 1;
-        if (hunterLevel < 40)
-            return 2;
-        if (hunterLevel < 60)
-            return 3;
-        if (hunterLevel < 80)
-            return 4;
-        return 5;
-    }
+
 
     public static boolean hasItems(Map<String, Integer> map){
-        Iterator iterator = map.entrySet().iterator();
         Item[] items;
-        while (iterator.hasNext()){
-            Map.Entry mapItem = (Map.Entry)iterator.next();
-            Item[] invent = Inventory.getItems(x->x.getName().toLowerCase().contains(mapItem.getKey().toString().toLowerCase())
+        for (Map.Entry<String, Integer> mapItem : map.entrySet()) {
+            Item[] invent = Inventory.getItems(x->x.getName().toLowerCase().contains(mapItem.getKey().toLowerCase())
             && !x.isNoted());
-            Item[] equipped = Equipment.getItems(x->x.getName().toLowerCase().contains(mapItem.getKey().toString().toLowerCase()));
+            Item[] equipped = Equipment.getItems(x->x.getName().toLowerCase().contains(mapItem.getKey().toLowerCase()));
 
             //Equipped items and items in invent.
             items = Stream.concat(Arrays.stream(invent), Arrays.stream(equipped)).toArray(Item[]::new);
-            if (items.length > 0){
-                //Item found
-                if (items[0].isStackable()){
-                    if (items[0].getStackSize() < (Integer) mapItem.getValue())
-                        return false;
-                }else{
-                    if (items.length < (Integer) mapItem.getValue())
-                        return false;
-                }
-            }else
+            if (getCount(items) < mapItem.getValue())
                 return false;
-            iterator.remove();
         }
         return true;
     }
 
+    public static int getCount(Item... items){
+            int count = 0;
+            if (items == null || items.length == 0)
+                return count;
+            for (Item item : items) {
+                if (item.isStackable())
+                    count = count + item.getStackSize();
+                else
+                    count = count + 1;
+            }
+            return count;
+    }
 
     /**
      * Checks for the best attack style and best target and updates if necessary.
@@ -166,8 +167,18 @@ public class Main extends Script implements ChatMessageListener {
             Movement.toggleRun(true);
 
         ScriptState bestState = getBestHuntingState();
-        if (currentState != bestState)
+        //If we're level 9 hunter we've just finished the quiz
+        //Leave it on the current state so it can switch to banking manually.
+        if (Skills.getLevel(Skill.HUNTER) == 9){
+            if (currentState == ScriptState.MUSEUM_QUIZ)
+                return;
+            updateScriptState(ScriptState.BANKING);
+            return;
+        }
+
+        if (currentState != bestState) {
             updateScriptState(bestState);
+        }
     }
 
 
@@ -176,17 +187,12 @@ public class Main extends Script implements ChatMessageListener {
 
         if (hunterLevel < 9)
             return ScriptState.MUSEUM_QUIZ;
-        if (hunterLevel == 9){
-            if (currentState == ScriptState.MUSEUM_QUIZ)
-                return currentState;
-            return ScriptState.BANKING;
-        }
         if (hunterLevel < 15)
             return ScriptState.LONGTAILS;
         if (hunterLevel < 37)
             return ScriptState.BUTTERFLIES;
         if (hunterLevel < 43)
-            return ScriptState.TRAPFALL_KEBBITS;
+            return ScriptState.DEADFALL_KEBBITS;
         if (hunterLevel < 63)
             return ScriptState.FALCON_KEBBITS;
 
