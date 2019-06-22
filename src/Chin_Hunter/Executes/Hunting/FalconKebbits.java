@@ -29,6 +29,14 @@ public class FalconKebbits {
         }
     }
 
+    public static Map<String, Integer> getMinimumRequiredItems(){
+        return MINIMUM_REQUIRED_ITEMS;
+    }
+
+    public static Map<String, Integer> getRequiredItems(){
+        return REQUIRED_ITEMS;
+    }
+
     public static boolean haveMinimumRequiredItems(){
         if (MINIMUM_REQUIRED_ITEMS.isEmpty()) {
             Log.severe("Hashmap not populated.");

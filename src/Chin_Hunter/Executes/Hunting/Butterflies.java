@@ -23,12 +23,23 @@ public class Butterflies {
         if (MINIMUM_REQUIRED_ITEMS.isEmpty()) {
             MINIMUM_REQUIRED_ITEMS.put("Butterfly net", 1);
             MINIMUM_REQUIRED_ITEMS.put("Butterfly jar", 1);
+            Longtails.getMinimumRequiredItems().forEach(MINIMUM_REQUIRED_ITEMS::put);
+
         }
         if (REQUIRED_ITEMS.isEmpty()){
             REQUIRED_ITEMS.put("Butterfly net", 1);
             REQUIRED_ITEMS.put("Butterfly jar", 4);
             REQUIRED_ITEMS.put("Piscatoris teleport", 1);
+            Longtails.getRequiredItems().forEach(REQUIRED_ITEMS::put);
         }
+    }
+
+    public static Map<String, Integer> getMinimumRequiredItems(){
+        return MINIMUM_REQUIRED_ITEMS;
+    }
+
+    public static Map<String, Integer> getRequiredItems(){
+        return REQUIRED_ITEMS;
     }
 
     public static boolean haveMinimumRequiredItems(){

@@ -16,19 +16,35 @@ public class DeadfallKebbits {
     }
 
     public static void execute(){
+        if (!Main.isAtPiscatoris()){
 
+        }
+
+        if (!haveMinimumRequiredItems()){
+            Log.severe("Don't have minimum required items");
+        }
     }
 
     public static void populateHashMaps(){
         if (MINIMUM_REQUIRED_ITEMS.isEmpty()) {
             MINIMUM_REQUIRED_ITEMS.put("Knife", 1);
             MINIMUM_REQUIRED_ITEMS.put("Axe", 1);
+            Butterflies.getMinimumRequiredItems().forEach(MINIMUM_REQUIRED_ITEMS::put);
         }
         if (REQUIRED_ITEMS.isEmpty()){
             REQUIRED_ITEMS.put("Knife", 1);
-            REQUIRED_ITEMS.put("Axe", 1);
+            REQUIRED_ITEMS.put("Bronze Axe", 1);
             REQUIRED_ITEMS.put("Piscatoris teleport", 1);
+            Butterflies.getRequiredItems().forEach(REQUIRED_ITEMS::put);
         }
+    }
+
+    public static Map<String, Integer> getMinimumRequiredItems(){
+        return MINIMUM_REQUIRED_ITEMS;
+    }
+
+    public static Map<String, Integer> getRequiredItems(){
+        return REQUIRED_ITEMS;
     }
 
     public static boolean haveMinimumRequiredItems(){

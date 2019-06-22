@@ -1,5 +1,6 @@
 package Chin_Hunter.Executes.Hunting;
 
+import Chin_Hunter.Helpers.Hunter;
 import Chin_Hunter.Main;
 import Chin_Hunter.States.ScriptState;
 import org.rspeer.ui.Log;
@@ -28,13 +29,17 @@ public class Chinchompas {
 
     public static void populateHashMaps(){
         if (MINIMUM_REQUIRED_ITEMS.isEmpty()) {
-            MINIMUM_REQUIRED_ITEMS.put("Box trap", Main.getMaxTrapCount());
+            MINIMUM_REQUIRED_ITEMS.put("Box trap", Hunter.getMaxTrapCount());
         }
         if (REQUIRED_ITEMS.isEmpty()){
             REQUIRED_ITEMS.put("Box trap", 24);
             REQUIRED_ITEMS.put("Varrock teleport", 1);
             REQUIRED_ITEMS.put("Feldip hills teleport", 1);
         }
+    }
+
+    public static Map<String, Integer> getRequiredItems(){
+        return REQUIRED_ITEMS;
     }
 
     public static boolean haveMinimumRequiredItems(){
