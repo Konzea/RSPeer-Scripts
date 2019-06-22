@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class EaglesPeakQuest {
 
-    private static final Map<String, Integer> requiredItems = new HashMap<>();
+    private static final Map<String, Integer> REQUIRED_ITEMS = new HashMap<>();
 
     private EaglesPeakQuest(){
         //Private default constructor
@@ -18,23 +18,28 @@ public class EaglesPeakQuest {
 
     }
 
+    public static Map<String, Integer> getRequiredItems(){
+        return REQUIRED_ITEMS;
+    }
+
+
     public static void populateHashMap(){
-        if (requiredItems.isEmpty()) {
-            requiredItems.put("Yellow dye", 1);
-            requiredItems.put("Swamp tar", 1);
-            requiredItems.put("Coins", 50);
-            requiredItems.put("Necklace of passage", 1);
-            requiredItems.put("Camelot teleport", 5);
+        if (REQUIRED_ITEMS.isEmpty()) {
+            REQUIRED_ITEMS.put("Yellow dye", 1);
+            REQUIRED_ITEMS.put("Swamp tar", 1);
+            REQUIRED_ITEMS.put("Coins", 50);
+            REQUIRED_ITEMS.put("Necklace of passage(5)", 1);
+            REQUIRED_ITEMS.put("Camelot teleport", 5);
         }
     }
 
     public static boolean hasAllRequiredItems(){
-        if (requiredItems.isEmpty()) {
+        if (REQUIRED_ITEMS.isEmpty()) {
             Log.severe("Hashmap not populated.");
             Main.updateScriptState(null);
             return false;
         }
-        return Main.hasItems(requiredItems);
+        return Main.hasItems(REQUIRED_ITEMS);
     }
 
 
