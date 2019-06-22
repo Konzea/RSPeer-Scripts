@@ -1,7 +1,11 @@
 package Chin_Hunter.Executes;
 
+import Chin_Hunter.Executes.Hunting.Chinchompas;
+import Chin_Hunter.Executes.Hunting.DeadfallKebbits;
+import Chin_Hunter.Executes.Hunting.FalconKebbits;
 import Chin_Hunter.Main;
 import Chin_Hunter.States.ScriptState;
+import jdk.nashorn.internal.runtime.Timing;
 import org.rspeer.runetek.adapter.component.InterfaceComponent;
 import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.adapter.scene.Npc;
@@ -36,23 +40,25 @@ public class PurchaseItems {
 
     private static final Area GE_AREA = Area.rectangular(3150, 3502, 3179, 3472);
 
-    private PurchaseItems(){
+    private PurchaseItems() {
         //Private default constructor
     }
 
-    public static void execute(){
+    public static void execute() {
 
         //Update items to buy
-        if (allItemsToBuy == null){
+        if (allItemsToBuy == null) {
             if (Bank.isOpen()) {
                 allItemsToBuy = getItemsToBuy(REQUIRED_ITEMS);
                 itemsLeftToBuy = getItemsToBuy(REQUIRED_ITEMS);
-            }
-            else{
-                if (GrandExchange.isOpen()){
+                Log.fine("Need to buy the following items: ");
+                allItemsToBuy.forEach((k,v)->Log.info(k + ": " + v));
+            } else {
+                if (GrandExchange.isOpen()) {
                     if (closeGE())
-                        Time.sleepUntil(()->!GrandExchange.isOpen(), 2000);
+                        Time.sleepUntil(() -> !GrandExchange.isOpen(), 2000);
                 }
+                //No need to handle walking here as purchaseItems can only be called from Banking
                 if (Bank.open())
                     Time.sleepUntil(Bank::isOpen, 2000);
                 return;
@@ -60,56 +66,75 @@ public class PurchaseItems {
         }
 
         if (allItemsToBuy.size() == 0) {
-            Log.fine("Got all items");
-            if (GrandExchange.isOpen()){
+            if (GrandExchange.isOpen()) {
                 if (closeGE())
-                    Time.sleepUntil(()->!GrandExchange.isOpen(), 2000);
+                    Time.sleepUntil(() -> !GrandExchange.isOpen(), 2000);
                 return;
             }
+            Log.fine("All items purchased");
             Main.updateScriptState(ScriptState.BANKING);
             return;
         }
 
-        if (Bank.isOpen())
+        if (Bank.isOpen()) {
             handleBanking();
+            return;
+        }
 
         if (GrandExchange.isOpen()) {
             buyItems(itemsLeftToBuy);
-        }else{
-            if (!GE_AREA.contains(Players.getLocal())) {
-                Movement.walkTo(GE_AREA.getCenter());
-                Time.sleep(200,400);
-                return;
-            }
-            if (openGE()) {
-                justOpenedGE = true;
-                Time.sleepUntil(GrandExchange::isOpen, 2000);
-            }
+            return;
         }
+
+        if (!isAtGrandExchange()) {
+            goToGrandExchange();
+            return;
+        }
+
+        if (openGE()) {
+            justOpenedGE = true;
+            Time.sleepUntil(GrandExchange::isOpen, 2000);
+        }
+
     }
 
-    private static boolean openGE(){
+    private static void goToGrandExchange(){
+        //Tele to varrock if we have one, otherwise walk.
+        Item varrockTele = Inventory.getFirst("Varrock teleport");
+        if (!Main.isInVarrock() && varrockTele != null){
+            if (varrockTele.interact("Break"))
+                Time.sleepUntil(Main::isInVarrock, 10000);
+            return;
+        }
+        Movement.walkTo(GE_AREA.getCenter());
+        Time.sleep(300, 666);
+    }
+
+    private static boolean openGE() {
         Npc ge = Npcs.getNearest("Grand Exchange Clerk");
         if (ge == null)
             return false;
         return ge.interact("Exchange");
-
     }
 
-    private static void handleBanking(){
+    private static boolean isAtGrandExchange(){
+        return GE_AREA.contains(Players.getLocal());
+    }
+
+    private static void handleBanking() {
         //Deposit all and withdraw extra gp to buy stuff
         int bankedGP = Bank.getCount("Coins");
         int gpNeeded = REQUIRED_ITEMS.get("Coins");
 
-        if (bankedGP > gpNeeded){
-            if (Bank.withdraw("Coins", bankedGP-gpNeeded))
-                Time.sleepUntil(()->Bank.getCount("Coins") == gpNeeded, 2000);
-        }else if (bankedGP < gpNeeded){
-            if (getCount(Inventory.getItems(x->x.getName().equals("Coins"))) < (gpNeeded - bankedGP)){
+        if (bankedGP > gpNeeded) {
+            if (Bank.withdraw("Coins", bankedGP - gpNeeded))
+                Time.sleepUntil(() -> Bank.getCount("Coins") == gpNeeded, 2000);
+        } else if (bankedGP < gpNeeded) {
+            if (Main.getCount(Inventory.getItems(x -> x.getName().equals("Coins"))) < (gpNeeded - bankedGP)) {
                 Log.severe("We do not have enough gp");
                 Main.updateScriptState(null);
-            }else if (Bank.deposit("Coins", gpNeeded - bankedGP))
-                Time.sleepUntil(()->Bank.getCount("Coins") == gpNeeded, 2000);
+            } else if (Bank.deposit("Coins", gpNeeded - bankedGP))
+                Time.sleepUntil(() -> Bank.getCount("Coins") == gpNeeded, 2000);
             return;
         }
         if (Inventory.containsAnyExcept("Coins")) {
@@ -117,29 +142,23 @@ public class PurchaseItems {
                 Time.sleepUntil(() -> Inventory.getCount() == 0 || Inventory.getCount() == 1, 2000);
             return;
         }
+        if (!Main.isInVarrock() && Bank.contains("Varrock teleport") && !Inventory.contains("Varrock teleport")){
+            if (Bank.withdraw("Varrock teleport", 1))
+                Time.sleepUntil(()->Inventory.contains("Varrock teleport"), 2000);
+            return;
+        }
         if (Bank.close())
             Time.sleepUntil(Bank::isClosed, 2000);
     }
 
-    private static int getCount(Item[] items){
-        int count = 0;
-        for (Item item: items){
-            if (item.isStackable())
-                count = count + item.getStackSize();
-            else
-                count = count + 1;
-        }
-        return count;
-    }
-
-    private static void buyItems(Map<String, Integer> items){
-        RSGrandExchangeOffer[] completeOffers = GrandExchange.getOffers(x->x.getProgress() == RSGrandExchangeOffer.Progress.FINISHED);
-        if ((GrandExchange.getOffers(RSGrandExchangeOffer::isEmpty).length == 0 || items.size() == 0 || justOpenedGE) && (!GrandExchangeSetup.isOpen() && completeOffers.length > 0)){
+    private static void buyItems(Map<String, Integer> items) {
+        RSGrandExchangeOffer[] completeOffers = GrandExchange.getOffers(x -> x.getProgress() == RSGrandExchangeOffer.Progress.FINISHED);
+        if ((GrandExchange.getOffers(RSGrandExchangeOffer::isEmpty).length == 0 || items.size() == 0 || justOpenedGE) && (!GrandExchangeSetup.isOpen() && completeOffers.length > 0)) {
             int inventCount = Inventory.getCount();
             //This cheeky sleep is here so offers that are complete but not fully processed are collected.
             Time.sleep(800, 1500);
             if (GrandExchange.collectAll()) {
-                Time.sleepUntil(()->Inventory.getCount() != inventCount, 2000);
+                Time.sleepUntil(() -> Inventory.getCount() != inventCount, 2000);
                 //This will update items to buy and assume we never lose items
                 allItemsToBuy = getItemsToBuy(allItemsToBuy);
                 itemsLeftToBuy = getItemsToBuy(allItemsToBuy);
@@ -164,67 +183,62 @@ public class PurchaseItems {
 
     }
 
-    private static boolean buySingleItem(String name, int amount){
-        if (GrandExchangeSetup.getItem() == null){
+    private static boolean buySingleItem(String name, int amount) {
+        if (name.equals("Coins"))
+            return true;
+        if (GrandExchangeSetup.getItem() == null) {
             if (GrandExchangeSetup.setItem(name))
-                Time.sleepUntil(()->GrandExchangeSetup.getItem() != null, 2000);
+                Time.sleepUntil(() -> GrandExchangeSetup.getItem() != null, 2000);
             return false;
-        }else GrandExchangeSetup.getItem();
+        } else GrandExchangeSetup.getItem();
 
-        if (GrandExchangeSetup.getQuantity() != amount){
+        if (GrandExchangeSetup.getQuantity() != amount) {
             if (GrandExchangeSetup.setQuantity(amount))
-                Time.sleepUntil(()->GrandExchangeSetup.getQuantity() == amount, 2000);
+                Time.sleepUntil(() -> GrandExchangeSetup.getQuantity() == amount, 2000);
             return false;
         }
-        if (GrandExchangeSetup.getPricePerItem() < 200)
-            GrandExchangeSetup.setPrice(250);
-        else
-            GrandExchangeSetup.increasePrice(5);
+        if (name.equals("Yellow dye"))
+            GrandExchangeSetup.setPrice(2000);
+        else {
+            if (GrandExchangeSetup.getPricePerItem() < 200)
+                GrandExchangeSetup.setPrice(250);
+            else
+                GrandExchangeSetup.increasePrice(5);
+        }
         Time.sleep(500, 1000);
 
         if (GrandExchangeSetup.confirm())
-            Time.sleepUntil(()->!GrandExchangeSetup.isOpen(), 3000);
+            Time.sleepUntil(() -> !GrandExchangeSetup.isOpen(), 3000);
         return !GrandExchangeSetup.isOpen();
     }
 
-    static void populateHashMap(){
-        if (REQUIRED_ITEMS.isEmpty()) {
-            int hunterLevel = Skills.getLevel(Skill.HUNTER);
-            if (hunterLevel < 43){
-                REQUIRED_ITEMS.put("Butterfly net", 1);
-                REQUIRED_ITEMS.put("Butterfly jar", 4);
-                REQUIRED_ITEMS.put("Bird snare", 8);
-                REQUIRED_ITEMS.put("Bronze axe", 1);
-                REQUIRED_ITEMS.put("Knife", 1);
-            }
-            if (hunterLevel < 63){
-                REQUIRED_ITEMS.put("Coins", 7500);
-            }else if (!EaglesPeakQuest.questComplete())
-                REQUIRED_ITEMS.put("Coins", 50);
+    static void populateHashMap() {
+        REQUIRED_ITEMS.clear();
 
-            if (!EaglesPeakQuest.questComplete()){
-                REQUIRED_ITEMS.put("Yellow dye", 1);
-                REQUIRED_ITEMS.put("Swamp tar", 5);
-                REQUIRED_ITEMS.put("Necklace of passage(5)", 2);
-                REQUIRED_ITEMS.put("Camelot teleport", 5);
-            }
-            REQUIRED_ITEMS.put("Box trap", 24);
-            REQUIRED_ITEMS.put("Feldip hills teleport", 2);
-            REQUIRED_ITEMS.put("Piscatoris teleport", 2);
-            REQUIRED_ITEMS.put("Varrock teleport", 5);
-        }
+        int hunterLevel = Skills.getLevel(Skill.HUNTER);
+        if (!EaglesPeakQuest.questComplete())
+            EaglesPeakQuest.getRequiredItems().forEach(REQUIRED_ITEMS::put);
+        if (hunterLevel < 43)
+            DeadfallKebbits.getRequiredItems().forEach(REQUIRED_ITEMS::put);
+        if (hunterLevel < 63)
+            FalconKebbits.getRequiredItems().forEach(REQUIRED_ITEMS::put);
+
+        Chinchompas.getRequiredItems().forEach(REQUIRED_ITEMS::put);
+
+        REQUIRED_ITEMS.put("Varrock teleport", 5);
+
     }
 
-    public static Map<String, Integer> getAllItemsToBuy(){
+    public static Map<String, Integer> getAllItemsToBuy() {
         return getItemsToBuy(REQUIRED_ITEMS);
     }
 
-    private static Map<String, Integer> getItemsToBuy(Map<String, Integer> items){
+    private static Map<String, Integer> getItemsToBuy(Map<String, Integer> items) {
         Map<String, Integer> itemsToBuy = new HashMap<>();
 
         for (Map.Entry<String, Integer> reqItem : items.entrySet()) {
 
-            Predicate<Item> itemPredicate = x->x.getName().toLowerCase().equals(reqItem.getKey().toLowerCase());
+            Predicate<Item> itemPredicate = x -> x.getName().toLowerCase().equals(reqItem.getKey().toLowerCase());
             int requiredAmount = reqItem.getValue();
 
             //Check invent, bank and equipped
@@ -235,7 +249,7 @@ public class PurchaseItems {
             int amountToBuy = requiredAmount;
 
             if (invent.length > 0)
-                amountToBuy = requiredAmount - getCount(invent);
+                amountToBuy = requiredAmount - Main.getCount(invent);
             if (equipped.length > 0)
                 amountToBuy = requiredAmount - 1;
             if (bank.length > 0)
@@ -243,13 +257,13 @@ public class PurchaseItems {
 
 
             if (amountToBuy > 0)
-                itemsToBuy.put(reqItem.getKey().toString(), amountToBuy);
+                itemsToBuy.put(reqItem.getKey(), amountToBuy);
         }
         return itemsToBuy;
     }
 
-    private static boolean closeGE(){
-        InterfaceComponent closeBtn = Interfaces.getComponent(465,2).getComponent(11);
+    private static boolean closeGE() {
+        InterfaceComponent closeBtn = Interfaces.getComponent(465, 2).getComponent(11);
         if (closeBtn == null) return false;
         return closeBtn.interact("Close");
     }
