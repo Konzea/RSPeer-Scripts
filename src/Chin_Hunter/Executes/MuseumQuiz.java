@@ -63,9 +63,8 @@ public class MuseumQuiz {
     }
 
     public static void execute() {
-        Player local = Players.getLocal();
         if (!hasClaimedReward()) {
-            if (MUSEUM_BASEMENT.contains(local)) {
+            if (isInBasement()) {
                 if (!hasCompletedQuiz()) {
                     if (hasStartedQuiz())
                         solveAllQuizzes(quizData);
@@ -85,12 +84,12 @@ public class MuseumQuiz {
                     Time.sleep(219, 612);
                 } else {
                     if (stairs.interact("Walk-down"))
-                        Time.sleepUntil(()-> MUSEUM_BASEMENT.contains(local), 4000);
+                        Time.sleepUntil(MuseumQuiz::isInBasement, 4000);
                 }
             }
         }else{
             //Done with the quiz
-            if (MUSEUM_BASEMENT.contains(local)){
+            if (isInBasement()){
                 //Leave
                 SceneObject stairs = SceneObjects.getFirstAt(STAIRS_UP_TILE);
                 if (stairs == null) {
@@ -98,7 +97,7 @@ public class MuseumQuiz {
                     Time.sleep(219, 612);
                 } else {
                     if (stairs.interact("Walk-up"))
-                        Time.sleepUntil(()->!MUSEUM_BASEMENT.contains(local), 2000);
+                        Time.sleepUntil(()->!isInBasement() || Dialog.isOpen(), 2000);
                 }
             }else{
                 Log.fine("Museum Quiz Complete");
@@ -106,6 +105,10 @@ public class MuseumQuiz {
             }
         }
 
+    }
+
+    public static boolean isInBasement(){
+        return MUSEUM_BASEMENT.contains(Players.getLocal());
     }
 
     private static void startQuiz(){
@@ -178,10 +181,10 @@ public class MuseumQuiz {
             String question = questionInterface.getText();
             String answer = displayCaseData.get("Questions").getAsJsonObject().get(question).getAsString();
 
-            Boolean answerFound = false;
+            boolean answerFound = false;
             //Loop through all answers and click the one that matches above string parsed from json
-            for (int i = 0; i < ANSWER_CHILD_IDS.length; i++) {
-                InterfaceComponent answerInterface = Interfaces.getComponent(QUIZ_INTERFACE_ID, ANSWER_CHILD_IDS[i]);
+            for (int answerChildId : ANSWER_CHILD_IDS) {
+                InterfaceComponent answerInterface = Interfaces.getComponent(QUIZ_INTERFACE_ID, answerChildId);
                 //Have to use contains and not equals because the quizes have '.' at the end
                 if (answerInterface != null && answerInterface.getText().contains(answer)) {
                     if (answerInterface.interact("Ok")) {
