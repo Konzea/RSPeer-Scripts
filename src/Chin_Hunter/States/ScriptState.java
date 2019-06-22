@@ -31,8 +31,7 @@ public enum ScriptState {
 
         @Override
         public void onStart() {
-            if (Movement.isRunEnabled())
-                Movement.toggleRun(true);
+            Banking.onStart();
         }
     },
 
@@ -44,8 +43,7 @@ public enum ScriptState {
 
         @Override
         public void onStart() {
-            if (Movement.isRunEnabled())
-                Movement.toggleRun(true);
+            PurchaseItems.onStart();
         }
     },
 
@@ -58,8 +56,6 @@ public enum ScriptState {
         @Override
         public void onStart() {
             MuseumQuiz.onStart();
-            if (Movement.isRunEnabled())
-                Movement.toggleRun(true);
         }
     },
 
@@ -71,8 +67,7 @@ public enum ScriptState {
 
         @Override
         public void onStart() {
-            if (Movement.isRunEnabled())
-                Movement.toggleRun(true);
+            Longtails.onStart();
         }
     },
 
@@ -84,8 +79,7 @@ public enum ScriptState {
 
         @Override
         public void onStart() {
-            if (Movement.isRunEnabled())
-                Movement.toggleRun(true);
+            Butterflies.onStart();
         }
     },
 
@@ -95,8 +89,7 @@ public enum ScriptState {
 
         @Override
         public void onStart() {
-            if (Movement.isRunEnabled())
-                Movement.toggleRun(true);
+            DeadfallKebbits.onStart();
         }
     },
 
@@ -106,8 +99,7 @@ public enum ScriptState {
 
         @Override
         public void onStart() {
-            if (Movement.isRunEnabled())
-                Movement.toggleRun(true);
+            FalconKebbits.onStart();
         }
     },
 
@@ -117,8 +109,7 @@ public enum ScriptState {
 
         @Override
         public void onStart() {
-            if (Movement.isRunEnabled())
-                Movement.toggleRun(true);
+            EaglesPeakQuest.onStart();
         }
     },
 
@@ -128,8 +119,7 @@ public enum ScriptState {
 
         @Override
         public void onStart() {
-            if (Movement.isRunEnabled())
-                Movement.toggleRun(true);
+            Chinchompas.onStart();
         }
     };
 
