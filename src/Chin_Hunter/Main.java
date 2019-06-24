@@ -4,8 +4,7 @@ import Chin_Hunter.Executes.MuseumQuiz;
 import Chin_Hunter.States.ScriptState;
 import Chin_Hunter.Executes.EaglesPeakQuest;
 import org.rspeer.runetek.adapter.component.Item;
-import org.rspeer.runetek.adapter.scene.Player;
-import org.rspeer.runetek.api.commons.Time;
+import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.component.tab.*;
 import org.rspeer.runetek.api.movement.Movement;
 import org.rspeer.runetek.api.movement.position.Area;
@@ -73,7 +72,7 @@ public class Main extends Script implements ChatMessageListener {
             currentState.execute();
             //Log.info("Current state: " + currentState.name());
         }
-        return 150;
+        return Random.nextInt(100,350);
     }
 
     @Override
@@ -132,9 +131,9 @@ public class Main extends Script implements ChatMessageListener {
     public static boolean hasItems(Map<String, Integer> map){
         Item[] items;
         for (Map.Entry<String, Integer> mapItem : map.entrySet()) {
-            Item[] invent = Inventory.getItems(x->x.getName().toLowerCase().contains(mapItem.getKey().toLowerCase())
+            Item[] invent = Inventory.getItems(x->x.getName().equalsIgnoreCase(mapItem.getKey())
             && !x.isNoted());
-            Item[] equipped = Equipment.getItems(x->x.getName().toLowerCase().contains(mapItem.getKey().toLowerCase()));
+            Item[] equipped = Equipment.getItems(x->x.getName().equalsIgnoreCase(mapItem.getKey()));
 
             //Equipped items and items in invent.
             items = Stream.concat(Arrays.stream(invent), Arrays.stream(equipped)).toArray(Item[]::new);
@@ -156,6 +155,7 @@ public class Main extends Script implements ChatMessageListener {
             }
             return count;
     }
+
 
     /**
      * Checks for the best attack style and best target and updates if necessary.
@@ -184,7 +184,7 @@ public class Main extends Script implements ChatMessageListener {
 
     public static ScriptState getBestHuntingState(){
         int hunterLevel = Skills.getLevel(Skill.HUNTER);
-
+//TODO BUTTERFLIES
         if (hunterLevel < 9)
             return ScriptState.MUSEUM_QUIZ;
         if (hunterLevel < 15)
