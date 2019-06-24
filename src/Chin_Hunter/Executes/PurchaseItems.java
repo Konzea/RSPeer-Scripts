@@ -9,6 +9,7 @@ import jdk.nashorn.internal.runtime.Timing;
 import org.rspeer.runetek.adapter.component.InterfaceComponent;
 import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.adapter.scene.Npc;
+import org.rspeer.runetek.api.Definitions;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.component.Bank;
 import org.rspeer.runetek.api.component.GrandExchange;
@@ -42,6 +43,10 @@ public class PurchaseItems {
 
     private PurchaseItems() {
         //Private default constructor
+    }
+
+    public static void onStart(){
+
     }
 
     public static void execute() {
