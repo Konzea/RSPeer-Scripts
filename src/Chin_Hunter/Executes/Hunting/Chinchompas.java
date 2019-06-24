@@ -17,6 +17,10 @@ public class Chinchompas {
         //Private default constructor
     }
 
+    public static void onStart(){
+
+    }
+
     public static void execute(){
         if (!haveMinimumRequiredItems()){
             Log.severe("Don't have minimum required items. Banking");
@@ -24,7 +28,7 @@ public class Chinchompas {
             return;
         }
 
-        //Hunt
+        //HuntButterflies
     }
 
     public static void populateHashMaps(){

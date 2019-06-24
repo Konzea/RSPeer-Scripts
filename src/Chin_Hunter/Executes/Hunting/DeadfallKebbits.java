@@ -1,6 +1,8 @@
 package Chin_Hunter.Executes.Hunting;
 
+import Chin_Hunter.Helpers.Hunter;
 import Chin_Hunter.Main;
+import Chin_Hunter.States.ScriptState;
 import org.rspeer.ui.Log;
 
 import java.util.HashMap;
@@ -15,14 +17,33 @@ public class DeadfallKebbits {
         //Private default constructor
     }
 
+    public static void onStart(){
+
+    }
+
     public static void execute(){
-        if (!Main.isAtPiscatoris()){
-
+        if (!Main.isAtPiscatoris()) {
+            if (!haveRequiredItems()) {
+                Main.updateScriptState(ScriptState.BANKING);
+                return;
+            }
+            Hunter.teleportToPiscatoris();
+            return;
         }
 
-        if (!haveMinimumRequiredItems()){
-            Log.severe("Don't have minimum required items");
+
+
+    }
+
+    static void HuntDeadfallKebbits(){
+        if (!haveMinimumRequiredItems()) {
+            Log.severe("Minimum required items not found");
+            Main.updateScriptState(ScriptState.BANKING);
+            return;
         }
+
+        //If don't have 1 logs, chop
+
     }
 
     public static void populateHashMaps(){

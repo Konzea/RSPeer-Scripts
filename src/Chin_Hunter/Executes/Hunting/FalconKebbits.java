@@ -15,6 +15,10 @@ public class FalconKebbits {
         //Private default constructor
     }
 
+    public static void onStart(){
+
+    }
+
     public static void execute(){
 
     }
