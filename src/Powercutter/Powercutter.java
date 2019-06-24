@@ -6,6 +6,8 @@ import org.rspeer.runetek.adapter.scene.SceneObject;
 import org.rspeer.runetek.api.Game;
 import org.rspeer.runetek.api.Worlds;
 import org.rspeer.runetek.api.commons.Time;
+import org.rspeer.runetek.api.component.GrandExchange;
+import org.rspeer.runetek.api.component.GrandExchangeSetup;
 import org.rspeer.runetek.api.component.chatter.ClanChat;
 import org.rspeer.runetek.api.component.tab.*;
 import org.rspeer.runetek.api.movement.Movement;
@@ -16,12 +18,14 @@ import org.rspeer.runetek.event.listeners.ChatMessageListener;
 import org.rspeer.runetek.event.types.ChatMessageEvent;
 import org.rspeer.runetek.event.types.ChatMessageType;
 import org.rspeer.runetek.providers.RSClanMember;
+import org.rspeer.runetek.providers.RSGrandExchangeOffer;
 import org.rspeer.script.Script;
 import org.rspeer.script.ScriptCategory;
 import org.rspeer.script.ScriptMeta;
 import org.rspeer.ui.Log;
 
 import java.text.NumberFormat;
+import java.util.Map;
 
 @ScriptMeta(desc = "Chops any tree, anywhere and drops the logs.", developer = "Shteve", name = "Powercutter", category = ScriptCategory.WOODCUTTING, version = 0.1)
 public class Powercutter extends Script implements ChatMessageListener {
@@ -46,7 +50,10 @@ public class Powercutter extends Script implements ChatMessageListener {
     public int loop() {
 
         Log.info(Worlds.getCurrent());
+
+        Log.info(Time.getDefaultThreshold());
 /*
+
         if (!initialised){
             if (attemptInitialisation())
                 initialised = true;
@@ -77,6 +84,45 @@ public class Powercutter extends Script implements ChatMessageListener {
         }
 */
         return 988;
+    }
+
+    private static void stuff(){
+        buyItems();
+    }
+
+    private static void buyItems() {
+
+
+        //TODO Timeout, wait for offers to finsih
+        if (GrandExchange.getOffers(RSGrandExchangeOffer::isEmpty).length == 0)
+            return;
+
+        if (!GrandExchangeSetup.isOpen() && GrandExchange.createOffer(RSGrandExchangeOffer.Type.SELL))
+            Time.sleepUntil(GrandExchangeSetup::isOpen, 2000);
+
+        buySingleItem("Bread", 3);
+
+    }
+
+    private static boolean buySingleItem(String name, int amount) {
+        if (name.equals("Coins"))
+            return true;
+        if (GrandExchangeSetup.setItem(name))
+            Time.sleepUntil(() -> GrandExchangeSetup.getItem() != null, 2000);
+
+        if (name.equals("Yellow dye"))
+            GrandExchangeSetup.setPrice(2000);
+        else {
+            if (GrandExchangeSetup.getPricePerItem() < 200)
+                GrandExchangeSetup.setPrice(250);
+            else
+                GrandExchangeSetup.increasePrice(5);
+        }
+        Time.sleep(500, 1000);
+
+        if (GrandExchangeSetup.confirm())
+            Time.sleepUntil(() -> !GrandExchangeSetup.isOpen(), 3000);
+        return !GrandExchangeSetup.isOpen();
     }
 
     @Override
