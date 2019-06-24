@@ -6,14 +6,11 @@ import Chin_Hunter.Executes.Hunting.FalconKebbits;
 import Chin_Hunter.Main;
 import Chin_Hunter.States.ScriptState;
 import org.rspeer.runetek.adapter.component.Item;
-import org.rspeer.runetek.api.commons.BankLocation;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.component.Bank;
 import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.runetek.api.component.tab.Magic;
 import org.rspeer.runetek.api.component.tab.Spell;
-import org.rspeer.runetek.api.movement.position.Area;
-import org.rspeer.runetek.api.scene.Players;
 import org.rspeer.ui.Log;
 
 import java.util.Map;
@@ -29,6 +26,9 @@ public class Banking {
         //Private Default Constructor
     }
 
+    public static void onStart(){
+
+    }
 
     public static void execute(){
 
