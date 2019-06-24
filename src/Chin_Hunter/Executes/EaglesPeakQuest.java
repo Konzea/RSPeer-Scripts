@@ -14,6 +14,10 @@ public class EaglesPeakQuest {
         //Private default constructor
     }
 
+    public static void onStart(){
+
+    }
+
     public static void execute(){
 
     }
