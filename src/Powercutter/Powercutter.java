@@ -1,6 +1,7 @@
 package Powercutter;
 
 import org.rspeer.runetek.adapter.component.Item;
+import org.rspeer.runetek.adapter.scene.Pickable;
 import org.rspeer.runetek.adapter.scene.Player;
 import org.rspeer.runetek.adapter.scene.SceneObject;
 import org.rspeer.runetek.api.Game;
@@ -12,6 +13,8 @@ import org.rspeer.runetek.api.component.chatter.ClanChat;
 import org.rspeer.runetek.api.component.tab.*;
 import org.rspeer.runetek.api.movement.Movement;
 import org.rspeer.runetek.api.movement.position.Area;
+import org.rspeer.runetek.api.movement.position.Position;
+import org.rspeer.runetek.api.scene.Pickables;
 import org.rspeer.runetek.api.scene.Players;
 import org.rspeer.runetek.api.scene.SceneObjects;
 import org.rspeer.runetek.event.listeners.ChatMessageListener;
@@ -37,52 +40,22 @@ public class Powercutter extends Script implements ChatMessageListener {
     private long START_TIME;
     private int START_XP;
 
-    private static boolean initialised = false;
+    private static Position tile = new Position(2313,3595,0);
 
     @Override
     public void onStart() {
         Log.fine("Running Willow Cutter by Shteve");
-
         super.onStart();
     }
 
     @Override
     public int loop() {
 
-        Log.info(Worlds.getCurrent());
-
-        Log.info(Time.getDefaultThreshold());
-/*
-
-        if (!initialised){
-            if (attemptInitialisation())
-                initialised = true;
-            else
-                setStopping(true);
-        }else {
-            Player localPlayer = Players.getLocal();
-            if (area.contains(localPlayer.getPosition())) {
-                if (!Inventory.isFull()) {
-                    if (localPlayer.getAnimation() == -1) {
-                        if (!localPlayer.isMoving())
-                            chopTree();
-                        else
-                            Time.sleepUntil(() -> !localPlayer.isMoving(), 1500);
-                    } else
-                        Time.sleepUntil(() -> localPlayer.getAnimation() == -1, 3000);
-                } else {
-                    dropLogs();
-                }
-            } else {
-                Log.severe("Not in Area!");
-                if (Movement.walkTo(area.getCenter())) {
-                    Log.info("Attempting to walk back.");
-                    Time.sleep(500);
-                    Time.sleepUntil(() -> !localPlayer.isMoving(), 2500);
-                }
-            }
+        Pickable[] bob = Pickables.getLoaded(x->x.getPosition().equals(tile));
+        if (bob.length > 0){
+            Log.info("Bob found: " + bob[0].getName());
         }
-*/
+        Log.info("Distance: " + Players.getLocal().getPosition().distance(tile));
         return 988;
     }
 
