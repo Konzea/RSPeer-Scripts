@@ -3,6 +3,8 @@ package Chin_Hunter.Executes;
 import Chin_Hunter.Executes.Hunting.*;
 import Chin_Hunter.Main;
 import org.rspeer.runetek.api.component.tab.Combat;
+import org.rspeer.runetek.api.component.tab.Skill;
+import org.rspeer.runetek.api.component.tab.Skills;
 import org.rspeer.runetek.api.movement.Movement;
 
 public class Starting {
@@ -13,7 +15,8 @@ public class Starting {
 
     public static void execute(){
         //Starting
-        //TODO Grab starting xp
+
+        Main.hunterStartXP = Skills.getExperience(Skill.HUNTER);
 
         if (Combat.isAutoRetaliateOn())
             Combat.toggleAutoRetaliate(false);
