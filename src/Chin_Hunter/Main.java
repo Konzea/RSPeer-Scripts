@@ -209,6 +209,21 @@ public class Main extends Script implements ChatMessageListener {
         return count;
     }
 
+    public static boolean inventContains(String... items) {
+        return Inventory.newQuery().names(items).results().size() > 0;
+    }
+
+    public static void handleJunkItems(String... items) {
+        Inventory.accept(x -> Arrays.asList(items).contains(x.getName()), x -> {
+            if (x.containsAction("Bury") && x.interact("Bury")) {
+                Time.sleep(500);
+                Time.sleepUntil(() -> Players.getLocal().getAnimation() != 827, 2000);
+            }
+            if (x.interact("Drop"))
+                Time.sleep(196, 513);
+        });
+    }
+
 
     /**
      * Checks for the best attack style and best target and updates if necessary.
