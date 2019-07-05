@@ -137,15 +137,25 @@ public class Main extends Script implements ChatMessageListener {
 
     //region Public Methods
 
-    public static boolean isAtFeldipHills(){
+    public static boolean isAtFeldipHills() {
         return FELDIP_HILLS_AREA.contains(Players.getLocal());
     }
-    public static boolean isAtPiscatoris(){
+
+    public static boolean isAtPiscatoris() {
         return PISCATORIS_AREA.contains(Players.getLocal());
     }
-    public static boolean isInVarrock(){return VARROCK_AREA.contains(Players.getLocal()); }
-    public static boolean isInLumbridge(){ return LUMBRIDGE_AREA.contains(Players.getLocal());  }
-    public static boolean isInCamelot(){ return CAMELOT_AREA.contains(Players.getLocal()); }
+
+    public static boolean isInVarrock() {
+        return VARROCK_AREA.contains(Players.getLocal());
+    }
+
+    public static boolean isInLumbridge() {
+        return LUMBRIDGE_AREA.contains(Players.getLocal());
+    }
+
+    public static boolean isInCamelot() {
+        return CAMELOT_AREA.contains(Players.getLocal());
+    }
 
 
     /**
