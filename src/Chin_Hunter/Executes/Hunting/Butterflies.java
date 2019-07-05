@@ -1,6 +1,6 @@
 package Chin_Hunter.Executes.Hunting;
 
-import Chin_Hunter.Helpers.Hunter;
+import Chin_Hunter.Helpers.Trapping;
 import Chin_Hunter.Main;
 import Chin_Hunter.States.ScriptState;
 import org.rspeer.runetek.adapter.component.Item;
@@ -35,6 +35,7 @@ public class Butterflies {
     }
 
     public static void onStart(){
+        Longtails.onStart();
         Longtails.setCentreTile(LONGTAIL_CENTRE_TILE);
     }
 
@@ -44,7 +45,7 @@ public class Butterflies {
                 Main.updateScriptState(ScriptState.BANKING);
                 return;
             }
-            Hunter.teleportToPiscatoris();
+            Trapping.teleportToPiscatoris();
             return;
         }
 
@@ -106,7 +107,7 @@ public class Butterflies {
         });
     }
 
-    private static boolean isChasingAButterfly(){
+    static boolean isChasingAButterfly(){
         PathingEntity target = Players.getLocal().getTarget();
         return target != null && target.getName().equalsIgnoreCase(BUTTERFLY_NAME);
     }
@@ -133,6 +134,7 @@ public class Butterflies {
             REQUIRED_ITEMS.put("Butterfly net", 1);
             REQUIRED_ITEMS.put("Butterfly jar", 4);
             REQUIRED_ITEMS.put("Piscatoris teleport", 1);
+            REQUIRED_ITEMS.put("Varrock teleport", 1);
             Longtails.getRequiredItems().forEach(REQUIRED_ITEMS::put);
         }
     }
@@ -151,8 +153,7 @@ public class Butterflies {
             Main.updateScriptState(null);
             return false;
         }
-        return Main.hasItems(MINIMUM_REQUIRED_ITEMS)
-                && Longtails.haveMinimumRequiredItems();
+        return Main.hasItems(MINIMUM_REQUIRED_ITEMS, Trapping.TrapType.BIRD_SNARE);
     }
 
     public static boolean haveRequiredItems(){
@@ -161,8 +162,7 @@ public class Butterflies {
             Main.updateScriptState(null);
             return false;
         }
-        return Main.hasItems(REQUIRED_ITEMS)
-                && Longtails.haveRequiredItems();
+        return Main.hasItems(REQUIRED_ITEMS);
     }
 
 }
