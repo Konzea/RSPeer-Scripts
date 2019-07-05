@@ -49,11 +49,21 @@ public class Main extends Script implements ChatMessageListener {
     private static final Area LUMBRIDGE_AREA = Area.rectangular(3210, 3233, 3234, 3204);
     private static final Area CAMELOT_AREA = Area.rectangular(2688, 3517, 2780, 3465);
 
-
+    private static long startTime;
+    public static int hunterStartXP;
+    private static BufferedImage paint = null;
 
     @Override
     public void onStart() {
-        Log.fine("Running Chin Hunter by Shteve");
+        startTime = System.currentTimeMillis();
+        Log.fine("Running Chin Trapping by Shteve");
+        try {
+            paint = ImageIO.read(new URL("https://i.gyazo.com/855c72b587bd410ef71f2043befc9931.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (paint == null)
+            Log.severe("Unable to load paint. Honestly your not missing much.");
         super.onStart();
     }
 
@@ -95,6 +105,33 @@ public class Main extends Script implements ChatMessageListener {
                 updateScriptState(null);
             }
         }
+    }
+
+    @Override
+    public void notify(RenderEvent e) {
+        Graphics g = e.getSource();
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        int y = 6;
+        int x = 344;
+        g2.setColor(Color.WHITE);
+        if (paint != null)
+            g2.drawImage(paint, null, x,y);
+
+        int xpGained = Skills.getExperience(Skill.HUNTER) - hunterStartXP;
+        long runTime = System.currentTimeMillis() - startTime;
+        g2.drawString("Trap Count: " + Trapping.getPlacedTrapsCount(), x + 18, y + 51);
+        g2.drawString("Kebbit Trap Placed: : " + DeadfallKebbits.deadfallIsOurs, x, y += 20);
+
+
+        g2.drawString("Run Time: " + runTime, x,y);
+        g2.drawString("XP Gained: " + xpGained, x, y);
+        g2.drawString("Current State: " + currentState.name(), x, y);
+
+        try {
+            for (Position pos : Trapping.getTrapLocations())
+                pos.outline(g2);
+        }catch (ConcurrentModificationException ignored){ }
     }
 
 
