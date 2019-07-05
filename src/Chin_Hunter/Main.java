@@ -1,9 +1,12 @@
 package Chin_Hunter;
 
-import Chin_Hunter.Executes.MuseumQuiz;
+import Chin_Hunter.Executes.Hunting.DeadfallKebbits;
+import Chin_Hunter.Executes.Hunting.FalconKebbits;
+import Chin_Hunter.Helpers.Trapping;
 import Chin_Hunter.States.ScriptState;
 import Chin_Hunter.Executes.EaglesPeakQuest;
 import org.rspeer.runetek.adapter.component.Item;
+import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.component.tab.*;
 import org.rspeer.runetek.api.movement.Movement;
@@ -11,39 +14,45 @@ import org.rspeer.runetek.api.movement.position.Area;
 import org.rspeer.runetek.api.movement.position.Position;
 import org.rspeer.runetek.api.scene.Players;
 import org.rspeer.runetek.event.listeners.ChatMessageListener;
+import org.rspeer.runetek.event.listeners.RenderListener;
 import org.rspeer.runetek.event.types.ChatMessageEvent;
 import org.rspeer.runetek.event.types.ChatMessageType;
+import org.rspeer.runetek.event.types.RenderEvent;
 import org.rspeer.script.Script;
 import org.rspeer.script.ScriptCategory;
 import org.rspeer.script.ScriptMeta;
 import org.rspeer.ui.Log;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URL;
 import java.util.Arrays;
-import java.util.Iterator;
+import java.util.ConcurrentModificationException;
 import java.util.Map;
-import java.util.stream.Stream;
 
 @ScriptMeta(desc = "Hunts your mums numerous chins", developer = "Shteve", name = "Chin Hunter", category = ScriptCategory.HUNTER, version = 0.1)
-public class Main extends Script implements ChatMessageListener {
+public class Main extends Script implements ChatMessageListener, RenderListener {
 
     private static boolean onStartCalled = false;
     private static ScriptState currentState = ScriptState.STARTING;
     private static ScriptState previousState;
 
     private static final Area PISCATORIS_AREA = Area.polygonal(
-            new Position( 2249, 3646, 0),
-            new Position( 2305, 3660, 0),
-            new Position( 2377, 3661, 0),
-            new Position( 2419, 3578, 0),
-            new Position( 2365, 3516, 0),
-            new Position( 2260, 3506, 0));
+            new Position(2249, 3646, 0),
+            new Position(2305, 3660, 0),
+            new Position(2377, 3661, 0),
+            new Position(2419, 3578, 0),
+            new Position(2365, 3516, 0),
+            new Position(2260, 3506, 0));
 
     private static final Area FELDIP_HILLS_AREA = Area.polygonal(
-                    new Position(2495, 2997, 0),
-                    new Position(2646, 2997, 0),
-                    new Position(2662, 2955, 0),
-                    new Position(2613, 2868, 0),
-                    new Position(2464, 2880, 0));
+            new Position(2495, 2997, 0),
+            new Position(2646, 2997, 0),
+            new Position(2662, 2955, 0),
+            new Position(2613, 2868, 0),
+            new Position(2464, 2880, 0));
 
     private static final Area VARROCK_AREA = Area.rectangular(3071, 3518, 3295, 3334);
     private static final Area LUMBRIDGE_AREA = Area.rectangular(3210, 3233, 3234, 3204);
@@ -71,18 +80,18 @@ public class Main extends Script implements ChatMessageListener {
     public int loop() {
         if (currentState == null) {
             Log.severe("Null script state, stopping.");
-            setStopping(true);
-        }else {
-
-            if (!onStartCalled) {
-                currentState.onStart();
-                onStartCalled = true;
-            }
-
-            currentState.execute();
-            //Log.info("Current state: " + currentState.name());
+            return -1;
         }
-        return Random.nextInt(100,350);
+
+        if (!onStartCalled) {
+            currentState.onStart();
+            onStartCalled = true;
+        }
+
+        currentState.execute();
+        //Log.info("Current state: " + currentState.name());
+
+        return Random.nextInt(100, 350);
     }
 
     @Override
@@ -160,20 +169,22 @@ public class Main extends Script implements ChatMessageListener {
 
     /**
      * Handles updating current script state and updating previousState.
+     *
      * @param inState The state you wish to set or null to stop script.
      */
-    public static void updateScriptState(ScriptState inState){
-            previousState = currentState;
-            if (inState == currentState)
-                Log.severe("Error: New script state same as previous.");
-            else {
-                currentState = inState;
-                onStartCalled = false;
+    public static void updateScriptState(ScriptState inState) {
+        previousState = currentState;
+        if (inState == currentState)
+            Log.severe("Error: New script state same as previous.");
+        else {
+            currentState = inState;
+            onStartCalled = false;
+            if (currentState != null)
                 Log.info("State Updated to: " + currentState.name());
-            }
+        }
     }
 
-    public static ScriptState getPreviousScriptState(){
+    public static ScriptState getPreviousScriptState() {
         return previousState;
     }
 
@@ -238,31 +249,27 @@ public class Main extends Script implements ChatMessageListener {
     /**
      * Checks for the best attack style and best target and updates if necessary.
      */
-    public static void onLevelUpEvent(){
-        //TODO Potentially rename method.
-
+    public static void onLevelUpEvent() {
         if (!Movement.isRunEnabled())
             Movement.toggleRun(true);
 
         ScriptState bestState = getBestHuntingState();
         //If we're level 9 hunter we've just finished the quiz
         //Leave it on the current state so it can switch to banking manually.
-        if (Skills.getLevel(Skill.HUNTER) == 9){
-            if (currentState == ScriptState.MUSEUM_QUIZ)
-                return;
-            updateScriptState(ScriptState.BANKING);
+        if (Skills.getLevel(Skill.HUNTER) == 9 && currentState == ScriptState.MUSEUM_QUIZ)
             return;
-        }
 
-        if (currentState != bestState) {
+        if (bestState.name().equalsIgnoreCase("FALCON_KEBBITS"))
+            FalconKebbits.updateTargetKebbits();
+
+        if (!currentState.name().equals(bestState.name())) {
             updateScriptState(bestState);
         }
     }
 
 
-    public static ScriptState getBestHuntingState(){
+    public static ScriptState getBestHuntingState() {
         int hunterLevel = Skills.getLevel(Skill.HUNTER);
-//TODO BUTTERFLIES
         if (hunterLevel < 9)
             return ScriptState.MUSEUM_QUIZ;
         if (hunterLevel < 15)
@@ -274,13 +281,15 @@ public class Main extends Script implements ChatMessageListener {
         if (hunterLevel < 63)
             return ScriptState.FALCON_KEBBITS;
 
+        Log.fine("Reached level 63. Stopping Script");
+        Main.updateScriptState(null);
+
         if (EaglesPeakQuest.questComplete())
             return ScriptState.CHINCHOMPAS;
         else
             return ScriptState.EAGLES_PEAK_QUEST;
 
     }
-
 
     //endregion
 }
