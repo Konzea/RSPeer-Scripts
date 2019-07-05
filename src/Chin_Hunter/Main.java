@@ -86,9 +86,13 @@ public class Main extends Script implements ChatMessageListener {
         String Message = chatMessageEvent.getMessage();
         if (chatMessageEvent.getType() == ChatMessageType.SERVER) {
             if (Message.contains("Congratulations, ")) {
+                Log.fine(Message);
                 onLevelUpEvent();
             } else if (Message.equals("Oh dear, you are dead!")) {
                 //On Death Event
+            }else if (Message.contains("You may set up only")){
+                Log.severe("Attempting to set a trap we can't put down.");
+                updateScriptState(null);
             }
         }
     }
