@@ -84,9 +84,15 @@ public class Longtails {
             return false;
         }
 
-        Position trapToCheck = Hunter.getTrapToFix(Hunter.TrapType.BIRD_SNARE);
+        if (Players.getLocal().getPosition().distance(CENTRE_TILE) > 24){
+            Movement.walkTo(CENTRE_TILE);
+            Time.sleep(200, 744);
+            return false;
+        }
+
+        Position trapToCheck = Trapping.getTrapToFix(Trapping.TrapType.BIRD_SNARE);
         if (trapToCheck != null) {
-            Hunter.checkTrap(Hunter.TrapType.BIRD_SNARE, trapToCheck);
+            Trapping.checkTrap(Trapping.TrapType.BIRD_SNARE, trapToCheck);
             return false;
         }
 
