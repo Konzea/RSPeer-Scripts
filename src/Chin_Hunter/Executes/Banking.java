@@ -27,37 +27,33 @@ public class Banking {
     }
 
     public static void onStart(){
+        ScriptState bestState = Main.getBestHuntingState();
 
+        switch (bestState) {
+            case LONGTAILS:
+            case BUTTERFLIES:
+            case DEADFALL_KEBBITS:
+                itemsRequired = DeadfallKebbits.getRequiredItems();
+                FalconKebbits.getRequiredItems().forEach(itemsRequired::put);
+                break;
+            case FALCON_KEBBITS:
+                itemsRequired = FalconKebbits.getRequiredItems();
+                break;
+            case EAGLES_PEAK_QUEST:
+                itemsRequired = EaglesPeakQuest.getRequiredItems();
+                break;
+            case CHINCHOMPAS:
+                itemsRequired = Chinchompas.getRequiredItems();
+                break;
+
+            default:
+                Log.severe("Error: Invalid banking state");
+                break;
+        }
+        return;
     }
 
     public static void execute(){
-
-        if (itemsRequired == null) {
-            ScriptState bestState = Main.getBestHuntingState();
-
-            switch (bestState) {
-                case LONGTAILS:
-                case BUTTERFLIES:
-                case DEADFALL_KEBBITS:
-                    itemsRequired = DeadfallKebbits.getRequiredItems();
-                    FalconKebbits.getRequiredItems().forEach(itemsRequired::put);
-                    break;
-                case FALCON_KEBBITS:
-                    itemsRequired = FalconKebbits.getRequiredItems();
-                    break;
-                case EAGLES_PEAK_QUEST:
-                    itemsRequired = EaglesPeakQuest.getRequiredItems();
-                    break;
-                case CHINCHOMPAS:
-                    itemsRequired = Chinchompas.getRequiredItems();
-                    break;
-
-                default:
-                    Log.severe("Error: Invalid banking state");
-                    break;
-            }
-            return;
-        }
 
         if (Main.hasItems(itemsRequired)){
             //Got all the items, close the bank and begin hunting
@@ -89,6 +85,7 @@ public class Banking {
                 return;
             }
             if (PurchaseItems.getAllItemsToBuy().size() > 0) {
+                PurchaseItems.getAllItemsToBuy().forEach((k,v)->Log.info(k + ": " + v));
                 Main.updateScriptState(ScriptState.PURCHASE_ITEMS);
                 Log.fine("Need to buy items");
                 return;
