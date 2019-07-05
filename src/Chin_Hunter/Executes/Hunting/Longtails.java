@@ -1,17 +1,18 @@
 package Chin_Hunter.Executes.Hunting;
 
-import Chin_Hunter.Helpers.Hunter;
+import Chin_Hunter.Helpers.Trapping;
 import Chin_Hunter.Main;
 import Chin_Hunter.States.ScriptState;
+import org.rspeer.runetek.adapter.scene.Pickable;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.runetek.api.movement.Movement;
 import org.rspeer.runetek.api.movement.position.Position;
+import org.rspeer.runetek.api.scene.Pickables;
 import org.rspeer.runetek.api.scene.Players;
 import org.rspeer.ui.Log;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,7 +37,7 @@ public class Longtails {
     }
 
     public static void onStart() {
-        Hunter.reset();
+
     }
 
     public static void execute() {
@@ -45,10 +46,9 @@ public class Longtails {
                 Main.updateScriptState(ScriptState.BANKING);
                 return;
             }
-            Hunter.teleportToPiscatoris();
+            Trapping.teleportToPiscatoris();
             return;
         }
-
         if (HuntLongtails()) {
             if (Players.getLocal().getPosition().distance(CENTRE_TILE) <= 2) {
                 if (Movement.walkTo(getNearbyTile(CENTRE_TILE, 3))) {
@@ -64,7 +64,7 @@ public class Longtails {
     }
 
     static boolean HuntLongtails(){
-        return HuntLongtails(Hunter.getMaxTrapCount());
+        return HuntLongtails(Trapping.getMaxTrapCount());
     }
 
     static boolean HuntLongtails(int maxTrapCount){
@@ -74,13 +74,13 @@ public class Longtails {
             return false;
         }
 
-        if (Hunter.trapLocations.size() < maxTrapCount) {
-            Hunter.layTrap(Hunter.TrapType.BIRD_SNARE, CENTRE_TILE);
+        if (Trapping.getPlacedTrapsCount() < maxTrapCount) {
+            Trapping.layTrap(Trapping.TrapType.BIRD_SNARE, CENTRE_TILE);
             return false;
         }
 
-        if (inventContainsJunk()) {
-            handleJunkItems();
+        if (Main.inventContains(JUNK_ITEMS)) {
+            Main.handleJunkItems(JUNK_ITEMS);
             return false;
         }
 
@@ -147,36 +147,15 @@ public class Longtails {
         return centreTile;
     }
 
-    /**
-     * Inventory contains any JUNK_ITEMS
-     */
-    private static boolean inventContainsJunk(){
-        return Inventory.newQuery().names(JUNK_ITEMS).results().size() > 0;
-    }
-
-    /**
-     * Buries bones and drops all other JUNK_ITEMS
-     */
-    private static void handleJunkItems(){
-        Inventory.accept(x -> Arrays.asList(JUNK_ITEMS).contains(x.getName()),x -> {
-            if (x.containsAction("Bury") && x.interact("Bury")) {
-                //TODO FIX THIS
-                Time.sleep(500);
-                Time.sleepUntil(()-> Players.getLocal().getAnimation() != 827, 2000);
-            }
-            if (x.interact("Drop"))
-                Time.sleep(196, 513);
-        });
-    }
-
 
     public static void populateHashMaps() {
         if (MINIMUM_REQUIRED_ITEMS.isEmpty()) {
-            MINIMUM_REQUIRED_ITEMS.put("Bird snare", Hunter.getMaxTrapCount());
+            MINIMUM_REQUIRED_ITEMS.put("Bird snare", Trapping.getMaxTrapCount());
         }
         if (REQUIRED_ITEMS.isEmpty()) {
             REQUIRED_ITEMS.put("Bird snare", 8);
             REQUIRED_ITEMS.put("Piscatoris teleport", 1);
+            REQUIRED_ITEMS.put("Varrock teleport", 1);
         }
     }
 
@@ -194,7 +173,7 @@ public class Longtails {
             Main.updateScriptState(null);
             return false;
         }
-        return Main.hasItems(MINIMUM_REQUIRED_ITEMS);
+        return Main.hasItems(MINIMUM_REQUIRED_ITEMS, Trapping.TrapType.BIRD_SNARE);
     }
 
     public static boolean haveRequiredItems() {
