@@ -167,34 +167,46 @@ public class Main extends Script implements ChatMessageListener {
         return previousState;
     }
 
-
-
     public static boolean hasItems(Map<String, Integer> map){
-        Item[] items;
-        for (Map.Entry<String, Integer> mapItem : map.entrySet()) {
-            Item[] invent = Inventory.getItems(x->x.getName().equalsIgnoreCase(mapItem.getKey())
-            && !x.isNoted());
-            Item[] equipped = Equipment.getItems(x->x.getName().equalsIgnoreCase(mapItem.getKey()));
+        return hasItems(map, null);
+    }
 
-            //Equipped items and items in invent.
-            items = Stream.concat(Arrays.stream(invent), Arrays.stream(equipped)).toArray(Item[]::new);
-            if (getCount(items) < mapItem.getValue())
-                return false;
+    public static boolean hasItems(Map<String, Integer> map, Trapping.TrapType trapType) {
+        for (Map.Entry<String, Integer> mapItem : map.entrySet()) {
+            String itemName = mapItem.getKey();
+            int reqAmount = mapItem.getValue();
+
+            Item[] invent = Inventory.getItems(x -> x.getName().equalsIgnoreCase(itemName)
+                    && !x.isNoted());
+
+            if (invent.length > 0){
+                int layedTrapAdjustment = trapType != null && trapType.getName().equalsIgnoreCase(itemName) ? Trapping.getPlacedTrapsCount(): 0;
+                int itemCount = getCount(invent) + layedTrapAdjustment;
+                if (itemCount >= reqAmount)
+                    continue;
+            }
+
+            Item[] equipped = Equipment.getItems(x -> x.getName().equalsIgnoreCase(itemName));
+            if (equipped.length > 0){
+                if (getCount(equipped) >= reqAmount)
+                    continue;
+            }
+            return false;
         }
         return true;
     }
 
-    public static int getCount(Item... items){
-            int count = 0;
-            if (items == null || items.length == 0)
-                return count;
-            for (Item item : items) {
-                if (item.isStackable())
-                    count = count + item.getStackSize();
-                else
-                    count = count + 1;
-            }
+    public static int getCount(Item... items) {
+        int count = 0;
+        if (items == null || items.length == 0)
             return count;
+        for (Item item : items) {
+            if (item.isStackable())
+                count = count + item.getStackSize();
+            else
+                count = count + 1;
+        }
+        return count;
     }
 
 
