@@ -38,6 +38,7 @@ public class PurchaseItems {
     private static Map<String, Integer> itemsLeftToBuy;
 
     private static boolean justOpenedGE = true;
+    private static boolean checkedBank = false;
 
     private static final Area GE_AREA = Area.rectangular(3150, 3502, 3179, 3472);
 
@@ -46,7 +47,8 @@ public class PurchaseItems {
     }
 
     public static void onStart(){
-
+        justOpenedGE = true;
+        checkedBank = false;
     }
 
     public static void execute() {
@@ -81,6 +83,11 @@ public class PurchaseItems {
             return;
         }
 
+        if (!isAtGrandExchange() && checkedBank) {
+            goToGrandExchange();
+            return;
+        }
+
         if (Bank.isOpen()) {
             handleBanking();
             return;
@@ -88,11 +95,6 @@ public class PurchaseItems {
 
         if (GrandExchange.isOpen()) {
             buyItems(itemsLeftToBuy);
-            return;
-        }
-
-        if (!isAtGrandExchange()) {
-            goToGrandExchange();
             return;
         }
 
@@ -104,6 +106,9 @@ public class PurchaseItems {
     }
 
     private static void goToGrandExchange(){
+        if (Bank.isOpen() && Bank.close())
+            Time.sleepUntil(Bank::isClosed, 2000);
+
         //Tele to varrock if we have one, otherwise walk.
         Item varrockTele = Inventory.getFirst("Varrock teleport");
         if (!Main.isInVarrock() && varrockTele != null){
@@ -112,7 +117,7 @@ public class PurchaseItems {
             return;
         }
         Movement.walkTo(GE_AREA.getCenter());
-        Time.sleep(300, 666);
+        Time.sleep(412, 777);
     }
 
     private static boolean openGE() {
@@ -138,6 +143,7 @@ public class PurchaseItems {
             if (Main.getCount(Inventory.getItems(x -> x.getName().equals("Coins"))) < (gpNeeded - bankedGP)) {
                 Log.severe("We do not have enough gp");
                 Main.updateScriptState(null);
+                return;
             } else if (Bank.deposit("Coins", gpNeeded - bankedGP))
                 Time.sleepUntil(() -> Bank.getCount("Coins") == gpNeeded, 2000);
             return;
@@ -150,8 +156,11 @@ public class PurchaseItems {
         if (!Main.isInVarrock() && Bank.contains("Varrock teleport") && !Inventory.contains("Varrock teleport")){
             if (Bank.withdraw("Varrock teleport", 1))
                 Time.sleepUntil(()->Inventory.contains("Varrock teleport"), 2000);
+            if (Inventory.contains("Varrock teleport"))
+                checkedBank = true;
             return;
         }
+        checkedBank = true;
         if (Bank.close())
             Time.sleepUntil(Bank::isClosed, 2000);
     }
@@ -185,7 +194,6 @@ public class PurchaseItems {
 
         if (buySingleItem(itemToBuy.getKey(), itemToBuy.getValue()))
             itemsLeftToBuy.remove(itemToBuy.getKey());
-
     }
 
     private static boolean buySingleItem(String name, int amount) {
@@ -211,6 +219,13 @@ public class PurchaseItems {
                 GrandExchangeSetup.increasePrice(5);
         }
         Time.sleep(500, 1000);
+
+        int cashStack = Main.getCount(Inventory.getFirst("Coins"));
+        if (GrandExchangeSetup.getPricePerItem() > cashStack){
+            Log.severe("We don't have enough GP to buy items, sorry.");
+            Main.updateScriptState(null);
+            return false;
+        }
 
         if (GrandExchangeSetup.confirm())
             Time.sleepUntil(() -> !GrandExchangeSetup.isOpen(), 3000);
