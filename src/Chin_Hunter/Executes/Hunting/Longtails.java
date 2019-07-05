@@ -96,7 +96,20 @@ public class Longtails {
             return false;
         }
 
+        Pickable[] droppedTraps = Pickables.getLoaded(x->x.getName().equalsIgnoreCase(Trapping.TrapType.BIRD_SNARE.getName()));
+        if (droppedTraps.length > 0 && canLootTrap()){
+            Log.fine("Found a random trap on the floor, might be ours? Yoinked it regardless.");
+            int inventCount = Inventory.getCount();
+            if (droppedTraps[0].interact("Take"))
+                Time.sleepUntil(()->Inventory.getCount() != inventCount, 4000);
+            return false;
+        }
+
         return true;
+    }
+
+    private static boolean canLootTrap(){
+        return (Inventory.getCount(Trapping.TrapType.BIRD_SNARE.getName()) + Trapping.getPlacedTrapsCount()) < REQUIRED_ITEMS.get(Trapping.TrapType.BIRD_SNARE.getName());
     }
 
     public static void setCentreTile(Position tile){
