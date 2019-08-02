@@ -1,5 +1,10 @@
 package Powercutter;
 
+import Chin_Hunter.Executes.Questing.Puzzle_Rooms.BronzeFeather;
+import Chin_Hunter.Executes.Questing.Puzzle_Rooms.GoldenFeather;
+import Chin_Hunter.Executes.Questing.Puzzle_Rooms.SilverFeather;
+import Chin_Hunter.Executes.Questing.QuestAreas;
+import Chin_Hunter.Executes.Questing.QuestTraveling;
 import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.adapter.scene.Pickable;
 import org.rspeer.runetek.adapter.scene.Player;
@@ -51,11 +56,7 @@ public class Powercutter extends Script implements ChatMessageListener {
     @Override
     public int loop() {
 
-        Pickable[] bob = Pickables.getLoaded(x->x.getPosition().equals(tile));
-        if (bob.length > 0){
-            Log.info("Bob found: " + bob[0].getName());
-        }
-        Log.info("Distance: " + Players.getLocal().getPosition().distance(tile));
+        BronzeFeather.attemptToSolve();
         return 988;
     }
 
