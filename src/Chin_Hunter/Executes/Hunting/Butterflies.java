@@ -7,9 +7,11 @@ import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.adapter.scene.Npc;
 import org.rspeer.runetek.adapter.scene.PathingEntity;
 import org.rspeer.runetek.api.commons.Time;
+import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.component.tab.EquipmentSlot;
 import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.runetek.api.movement.Movement;
+import org.rspeer.runetek.api.movement.position.Area;
 import org.rspeer.runetek.api.movement.position.Position;
 import org.rspeer.runetek.api.scene.Npcs;
 import org.rspeer.runetek.api.scene.Players;
@@ -26,7 +28,7 @@ public class Butterflies {
     private static final String BUTTERFLY_NAME = "Ruby harvest";
     private static final Position CENTRE_TILE = new Position(2321, 3600, 0);
 
-    private static final Position LONGTAIL_CENTRE_TILE = new Position(2312, 3595,0);
+    private static final Area SMALLER_LONGTAIL_AREA = Area.rectangular(2308, 3596, 2318, 3588);
 
     //2321,3600,0
 
@@ -36,7 +38,7 @@ public class Butterflies {
 
     public static void onStart(){
         Longtails.onStart();
-        Longtails.setCentreTile(LONGTAIL_CENTRE_TILE);
+        Longtails.setCentreTile(SMALLER_LONGTAIL_AREA.getTiles().get(Random.mid(0, SMALLER_LONGTAIL_AREA.getTiles().size())));
     }
 
     public static void execute(){
