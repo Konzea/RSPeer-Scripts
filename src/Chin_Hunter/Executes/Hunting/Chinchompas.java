@@ -2,7 +2,6 @@ package Chin_Hunter.Executes.Hunting;
 
 import Chin_Hunter.Helpers.Trapping;
 import Chin_Hunter.Main;
-import Chin_Hunter.States.ScriptState;
 import org.rspeer.ui.Log;
 
 import java.util.HashMap;
@@ -22,13 +21,17 @@ public class Chinchompas {
     }
 
     public static void execute(){
+        Log.info("Well... Yikes. This whole Chinchompa based script doesn't actually support chins yet.");
+        Log.info("Sorry about that :/");
+        Log.info("It will be added soon.");
+        Main.updateScriptState(null);
+        /*
         if (!haveMinimumRequiredItems()){
             Log.severe("Don't have minimum required items. Banking");
             Main.updateScriptState(ScriptState.BANKING);
             return;
         }
-
-        //HuntButterflies
+        */
     }
 
     public static void populateHashMaps(){
