@@ -1,10 +1,10 @@
 package Chin_Hunter;
 
-import Chin_Hunter.Executes.Hunting.DeadfallKebbits;
 import Chin_Hunter.Executes.Hunting.FalconKebbits;
+import Chin_Hunter.Helpers.Paint;
 import Chin_Hunter.Helpers.Trapping;
 import Chin_Hunter.States.ScriptState;
-import Chin_Hunter.Executes.EaglesPeakQuest;
+import Chin_Hunter.Executes.Questing.QuestMain;
 import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.commons.math.Random;
@@ -13,6 +13,7 @@ import org.rspeer.runetek.api.movement.Movement;
 import org.rspeer.runetek.api.movement.position.Area;
 import org.rspeer.runetek.api.movement.position.Position;
 import org.rspeer.runetek.api.scene.Players;
+import org.rspeer.runetek.api.scene.Projection;
 import org.rspeer.runetek.event.listeners.ChatMessageListener;
 import org.rspeer.runetek.event.listeners.RenderListener;
 import org.rspeer.runetek.event.types.ChatMessageEvent;
@@ -23,13 +24,7 @@ import org.rspeer.script.ScriptCategory;
 import org.rspeer.script.ScriptMeta;
 import org.rspeer.ui.Log;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.URL;
 import java.util.Arrays;
-import java.util.ConcurrentModificationException;
 import java.util.Map;
 
 @ScriptMeta(desc = "Hunts your mums numerous chins", developer = "Shteve", name = "Chin Hunter", category = ScriptCategory.HUNTER, version = 0.1)
@@ -58,21 +53,11 @@ public class Main extends Script implements ChatMessageListener, RenderListener 
     private static final Area LUMBRIDGE_AREA = Area.rectangular(3210, 3233, 3234, 3204);
     private static final Area CAMELOT_AREA = Area.rectangular(2688, 3517, 2780, 3465);
 
-    private static long startTime;
-    public static int hunterStartXP;
-    private static BufferedImage paint = null;
+    private static Paint paint = null;
 
     @Override
     public void onStart() {
-        startTime = System.currentTimeMillis();
         Log.fine("Running Chin Trapping by Shteve");
-        try {
-            paint = ImageIO.read(new URL("https://i.gyazo.com/855c72b587bd410ef71f2043befc9931.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (paint == null)
-            Log.severe("Unable to load paint. Honestly your not missing much.");
         super.onStart();
     }
 
@@ -89,7 +74,8 @@ public class Main extends Script implements ChatMessageListener, RenderListener 
         }
 
         currentState.execute();
-        //Log.info("Current state: " + currentState.name());
+
+        Paint.canDisplayPaint = !Projection.isLowCPUMode() && currentState != null;
 
         return Random.nextInt(100, 350);
     }
@@ -116,33 +102,15 @@ public class Main extends Script implements ChatMessageListener, RenderListener 
         }
     }
 
+    //region Paint
+
     @Override
     public void notify(RenderEvent e) {
-        Graphics g = e.getSource();
-        Graphics2D g2 = (Graphics2D) g;
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        int y = 6;
-        int x = 344;
-        g2.setColor(Color.WHITE);
-        if (paint != null)
-            g2.drawImage(paint, null, x,y);
-
-        int xpGained = Skills.getExperience(Skill.HUNTER) - hunterStartXP;
-        long runTime = System.currentTimeMillis() - startTime;
-        g2.drawString("Trap Count: " + Trapping.getPlacedTrapsCount(), x + 18, y + 51);
-        g2.drawString("Kebbit Trap Placed: : " + DeadfallKebbits.deadfallIsOurs, x, y += 20);
-
-
-        g2.drawString("Run Time: " + runTime, x,y);
-        g2.drawString("XP Gained: " + xpGained, x, y);
-        g2.drawString("Current State: " + currentState.name(), x, y);
-
-        try {
-            for (Position pos : Trapping.getTrapLocations())
-                pos.outline(g2);
-        }catch (ConcurrentModificationException ignored){ }
+        if (Paint.canDisplayPaint)
+            paint.Render(e);
     }
 
+    //endregion
 
     //region Public Methods
 
@@ -186,6 +154,14 @@ public class Main extends Script implements ChatMessageListener, RenderListener 
 
     public static ScriptState getPreviousScriptState() {
         return previousState;
+    }
+
+    public static ScriptState getCurrentState(){
+        return currentState;
+    }
+
+    public static void setPaint(Paint p){
+        paint = p;
     }
 
     public static boolean hasItems(Map<String, Integer> map){
@@ -280,11 +256,11 @@ public class Main extends Script implements ChatMessageListener, RenderListener 
             return ScriptState.DEADFALL_KEBBITS;
         if (hunterLevel < 63)
             return ScriptState.FALCON_KEBBITS;
-
+        /*
         Log.fine("Reached level 63. Stopping Script");
         Main.updateScriptState(null);
-
-        if (EaglesPeakQuest.questComplete())
+*/
+        if (QuestMain.questComplete())
             return ScriptState.CHINCHOMPAS;
         else
             return ScriptState.EAGLES_PEAK_QUEST;
