@@ -3,8 +3,7 @@ package Chin_Hunter.States;
 
 import Chin_Hunter.Executes.*;
 import Chin_Hunter.Executes.Hunting.*;
-import org.rspeer.runetek.api.commons.Time;
-import org.rspeer.runetek.api.movement.Movement;
+import Chin_Hunter.Executes.Questing.QuestMain;
 
 public enum ScriptState {
     //TODO Look at inheriting from a 'State' class instead of enums pointing to classes
@@ -12,14 +11,11 @@ public enum ScriptState {
     STARTING{
         @Override
         public void execute() {
-            //Wait for login bot to finish it's shit before accessing potentially unloaded objects
-            Time.sleep(3000);
             Starting.execute();
         }
 
         @Override
         public void onStart() {
-
         }
     },
 
@@ -105,11 +101,11 @@ public enum ScriptState {
 
     EAGLES_PEAK_QUEST{
         @Override
-        public void execute() { EaglesPeakQuest.execute(); }
+        public void execute() { QuestMain.execute(); }
 
         @Override
         public void onStart() {
-            EaglesPeakQuest.onStart();
+            QuestMain.onStart();
         }
     },
 
