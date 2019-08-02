@@ -37,6 +37,7 @@ public class FalconKebbits {
             "Bronze axe", "Knife", "Ruby harvest"};
 
     private static final Position CENTRE_TILE = new Position(2376, 3587, 0);
+    private static final Position NORTH_PEN_TILE = new Position(2370, 3618, 0);
     private static final Position STILE_TILE = new Position(2371,3620,0);
     private static final Position MATTHIAS_TILE = new Position(2375,3607,0);
 
@@ -80,10 +81,6 @@ public class FalconKebbits {
         }
 
         if (!isInPen()) {
-            if (!Main.isAtPiscatoris()){
-                Trapping.teleportToPiscatoris();
-                return;
-            }
             enterPen();
             return;
         }
@@ -254,7 +251,7 @@ public class FalconKebbits {
     }
 
     private static boolean isInPen() {
-        return CENTRE_TILE.isPositionWalkable();
+        return CENTRE_TILE.isPositionWalkable() || NORTH_PEN_TILE.isPositionWalkable();
     }
 
     private static boolean isWaitingForBird(){
