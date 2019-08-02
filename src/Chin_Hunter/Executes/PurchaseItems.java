@@ -3,13 +3,12 @@ package Chin_Hunter.Executes;
 import Chin_Hunter.Executes.Hunting.Chinchompas;
 import Chin_Hunter.Executes.Hunting.DeadfallKebbits;
 import Chin_Hunter.Executes.Hunting.FalconKebbits;
+import Chin_Hunter.Executes.Questing.QuestMain;
 import Chin_Hunter.Main;
 import Chin_Hunter.States.ScriptState;
-import jdk.nashorn.internal.runtime.Timing;
 import org.rspeer.runetek.adapter.component.InterfaceComponent;
 import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.adapter.scene.Npc;
-import org.rspeer.runetek.api.Definitions;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.component.Bank;
 import org.rspeer.runetek.api.component.GrandExchange;
@@ -236,8 +235,8 @@ public class PurchaseItems {
         REQUIRED_ITEMS.clear();
 
         int hunterLevel = Skills.getLevel(Skill.HUNTER);
-        if (!EaglesPeakQuest.questComplete())
-            EaglesPeakQuest.getRequiredItems().forEach(REQUIRED_ITEMS::put);
+        if (!QuestMain.questComplete())
+            QuestMain.getRequiredItems().forEach(REQUIRED_ITEMS::put);
         if (hunterLevel < 43)
             DeadfallKebbits.getRequiredItems().forEach(REQUIRED_ITEMS::put);
         if (hunterLevel < 63)

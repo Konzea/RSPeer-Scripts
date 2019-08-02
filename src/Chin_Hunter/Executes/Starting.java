@@ -1,10 +1,10 @@
 package Chin_Hunter.Executes;
 
 import Chin_Hunter.Executes.Hunting.*;
+import Chin_Hunter.Executes.Questing.QuestMain;
+import Chin_Hunter.Helpers.Paint;
 import Chin_Hunter.Main;
 import org.rspeer.runetek.api.component.tab.Combat;
-import org.rspeer.runetek.api.component.tab.Skill;
-import org.rspeer.runetek.api.component.tab.Skills;
 import org.rspeer.runetek.api.movement.Movement;
 
 public class Starting {
@@ -16,7 +16,7 @@ public class Starting {
     public static void execute(){
         //Starting
 
-        Main.hunterStartXP = Skills.getExperience(Skill.HUNTER);
+        Main.setPaint(new Paint());
 
         if (Combat.isAutoRetaliateOn())
             Combat.toggleAutoRetaliate(false);
@@ -38,7 +38,7 @@ public class Starting {
         DeadfallKebbits.populateHashMaps();
         FalconKebbits.populateHashMaps();
         Chinchompas.populateHashMaps();
-        EaglesPeakQuest.populateHashMap();
+        QuestMain.populateHashMap();
         PurchaseItems.populateHashMap();
     }
 

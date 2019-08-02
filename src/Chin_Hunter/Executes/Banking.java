@@ -3,6 +3,7 @@ package Chin_Hunter.Executes;
 import Chin_Hunter.Executes.Hunting.Chinchompas;
 import Chin_Hunter.Executes.Hunting.DeadfallKebbits;
 import Chin_Hunter.Executes.Hunting.FalconKebbits;
+import Chin_Hunter.Executes.Questing.QuestMain;
 import Chin_Hunter.Main;
 import Chin_Hunter.States.ScriptState;
 import org.rspeer.runetek.adapter.component.Item;
@@ -40,7 +41,7 @@ public class Banking {
                 itemsRequired = FalconKebbits.getRequiredItems();
                 break;
             case EAGLES_PEAK_QUEST:
-                itemsRequired = EaglesPeakQuest.getRequiredItems();
+                itemsRequired = QuestMain.getRequiredItems();
                 break;
             case CHINCHOMPAS:
                 itemsRequired = Chinchompas.getRequiredItems();
