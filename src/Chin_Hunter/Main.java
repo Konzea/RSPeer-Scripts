@@ -27,7 +27,7 @@ import org.rspeer.ui.Log;
 import java.util.Arrays;
 import java.util.Map;
 
-@ScriptMeta(desc = "Hunts your mums numerous chins", developer = "Shteve", name = "Chin Hunter", category = ScriptCategory.HUNTER, version = 0.1)
+@ScriptMeta(desc = "Start anywhere and it will do EVERYTHING required to hunt red chins.", developer = "Shteve", name = "AIO Chin Hunter", category = ScriptCategory.HUNTER, version = 0.1)
 public class Main extends Script implements ChatMessageListener, RenderListener {
 
     private static boolean onStartCalled = false;
