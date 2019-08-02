@@ -61,6 +61,14 @@ public class FalconKebbits {
     }
 
     public static void execute() {
+        if (!Main.isAtPiscatoris()) {
+            if (!haveRequiredItems()) {
+                Main.updateScriptState(ScriptState.BANKING);
+                return;
+            }
+            Trapping.teleportToPiscatoris();
+            return;
+        }
 
         //Having bird means you are in area ready to hunt
         if (isGloveEquipped() && !inNeedOfNewBird) {
