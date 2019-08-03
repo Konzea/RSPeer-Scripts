@@ -89,6 +89,7 @@ public class FalconKebbits {
         }
 
         if (!isInPen()) {
+            Log.info("Walking to pen.");
             enterPen();
             return;
         }
@@ -130,17 +131,21 @@ public class FalconKebbits {
     }
 
     private static void enterPen(){
-        SceneObject[] stile = SceneObjects.getLoaded(x->x.getPosition().equals(STILE_TILE) && x.getName().equalsIgnoreCase("Stile"));
+        SceneObject[] Stile = SceneObjects.getLoaded(x->x.getPosition().equals(STILE_TILE) && x.getName().equalsIgnoreCase("Stile"));
         //Climb-over
 
-        if (stile.length == 0){
+        if (Stile.length == 0){
             Log.info("Stile not found, walking to it.");
             if (Movement.walkTo(STILE_TILE))
                 Time.sleep(399, 785);
             return;
         }
-
-        if (stile[0].interact("Climb-over"))
+        if (Stile[0].distance(Players.getLocal()) > 10){
+            if (Movement.walkTo(STILE_TILE))
+                Time.sleep(399, 785);
+            return;
+        }
+        if (Stile[0].interact("Climb-over"))
             Time.sleepUntil(FalconKebbits::isInPen, 4000);
     }
 
