@@ -1,6 +1,7 @@
 package Chin_Hunter.Executes.Questing.Puzzle_Rooms;
 
 import Chin_Hunter.Executes.Questing.QuestMain;
+import Chin_Hunter.Main;
 import org.rspeer.runetek.adapter.scene.Npc;
 import org.rspeer.runetek.adapter.scene.Pickable;
 import org.rspeer.runetek.adapter.scene.SceneObject;
@@ -57,8 +58,7 @@ public class SilverFeather {
                     Log.severe("In Silver feather cave but can't opening.");
                     Position pos = Players.getLocal().getPosition();
                     //Walk north east
-                    if (Movement.walkTo(new Position(pos.getX() + 10, pos.getY() + 10, pos.getFloorLevel())))
-                        Time.sleepUntil(()->Players.getLocal().isMoving(), Random.nextInt(1500, 3000));
+                    Main.walkTo(new Position(pos.getX() + 10, pos.getY() + 10, pos.getFloorLevel()));
                     return false;
                 }
                 if (Opening.interact("Inspect"))

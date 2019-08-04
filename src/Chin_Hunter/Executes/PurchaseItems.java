@@ -115,8 +115,7 @@ public class PurchaseItems {
                 Time.sleepUntil(Main::isInVarrock, 10000);
             return;
         }
-        Movement.walkTo(GE_AREA.getCenter());
-        Time.sleep(412, 777);
+        Main.walkTo(GE_AREA.getCenter());
     }
 
     private static boolean openGE() {

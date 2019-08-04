@@ -93,13 +93,12 @@ public class Butterflies {
         Npc butterfly = Npcs.getNearest(BUTTERFLY_NAME);
         if (butterfly == null) {
             Log.severe("Could not find a butterfly, walking to butterflies.");
-            Movement.walkTo(CENTRE_TILE);
-            Time.sleep(233, 633);
+            Main.walkTo(CENTRE_TILE);
             return;
         }
 
         if (butterfly.interact("Catch"))
-            Time.sleepUntil(Butterflies::isChasingAButterfly, 2000);
+            Time.sleepUntil(Butterflies::isChasingAButterfly, 4000);
     }
 
     private static void releaseButterflies(){

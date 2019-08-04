@@ -24,7 +24,7 @@ import org.rspeer.ui.Log;
 
 import java.util.function.BooleanSupplier;
 
-public class QuestTraveling {
+class QuestTraveling {
 
     private static final Position EAGLES_PEAK_TILE = new Position(2328, 3496, 0);
     private static final Position CHARLIE_TILE = new Position(2607, 3264, 0);
@@ -60,8 +60,7 @@ public class QuestTraveling {
             new Position(2949, 3149, 0),
             new Position(2872, 3316, 0));
 
-    private static final int MIN_WALK_WAIT = 500;
-    private static final int MAX_WALK_WAIT = 1300;
+
 
     enum PuzzleRoom{
         BRONZE_FEATHER(new Position(1986, 4949,3)),
@@ -80,7 +79,7 @@ public class QuestTraveling {
 
     static void travelToCharlie(){
         if (QuestAreas.isNearArdy()){
-            walkTo(CHARLIE_TILE);
+            Main.walkTo(CHARLIE_TILE);
             return;
         }
         if (hasNecklaceOfPassage()){
@@ -120,7 +119,7 @@ public class QuestTraveling {
             return;
         }
         if (Door.distance(Players.getLocal()) > 5){
-            walkTo(Door.getPosition());
+            Main.walkTo(Door.getPosition());
             return;
         }
         if (Varps.getBitValue(3107)==0){
@@ -181,7 +180,7 @@ public class QuestTraveling {
             teleportToOutpost();
             return;
         }
-        walkTo(EAGLES_PEAK_TILE);
+        Main.walkTo(EAGLES_PEAK_TILE);
     }
 
 
@@ -213,7 +212,7 @@ public class QuestTraveling {
             teleportToOutpost();
             return;
         }
-        walkTo(BASECAMP_TILE);
+        Main.walkTo(BASECAMP_TILE);
     }
 
     static void travelToFancyDressShop(){
@@ -230,7 +229,7 @@ public class QuestTraveling {
                         }
                     }
                 }
-                walkTo(VARROCK_TILE);
+                Main.walkTo(VARROCK_TILE);
                 return;
             }
             //Use varrock tele
@@ -244,7 +243,7 @@ public class QuestTraveling {
             Position gateTile = new Position(3264, 3405,0);
             SceneObject gate = SceneObjects.getNearest(x->x.getName().equalsIgnoreCase("Gate") && x.getPosition().equals(gateTile));
             if (gate == null){
-                walkTo(gateTile);
+                Main.walkTo(gateTile);
                 return;
             }
             if (gate.interact("Open"))
@@ -257,7 +256,7 @@ public class QuestTraveling {
         Npc shopOwner = Npcs.getNearest("Asyff");
         if (shopOwner == null){
             Log.severe("Could not find Asyff.");
-            walkTo(doorTile);
+            Main.walkTo(doorTile);
             return;
         }
         if (!shopOwner.isPositionInteractable()){
@@ -282,7 +281,7 @@ public class QuestTraveling {
 
         if (Tunnel == null){
             Log.severe("Could not find tunnel entrance for cave: " + Room.name());
-            walkTo(Room.getEntranceTile());
+            Main.walkTo(Room.getEntranceTile());
             return;
         }
         Position startPos = Players.getLocal().getPosition();
@@ -378,15 +377,6 @@ public class QuestTraveling {
         }
         if (GoldenFeather.isInCave()) {
             GoldenFeather.leaveCave();
-        }
-    }
-
-    private static void walkTo(Position tile){
-        if (Movement.walkTo(tile)) {
-            if (Movement.isRunEnabled())
-                Time.sleep(Random.low(MIN_WALK_WAIT, MAX_WALK_WAIT));
-            else
-                Time.sleep(Random.low(MIN_WALK_WAIT*2, MAX_WALK_WAIT*2));
         }
     }
 

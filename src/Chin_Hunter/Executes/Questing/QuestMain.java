@@ -13,7 +13,6 @@ import org.rspeer.runetek.adapter.scene.SceneObject;
 import org.rspeer.runetek.api.Game;
 import org.rspeer.runetek.api.Varps;
 import org.rspeer.runetek.api.commons.Time;
-import org.rspeer.runetek.api.commons.math.Distance;
 import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.component.Dialog;
 import org.rspeer.runetek.api.component.Interfaces;
@@ -27,7 +26,6 @@ import org.rspeer.runetek.api.scene.Players;
 import org.rspeer.runetek.api.scene.SceneObjects;
 import org.rspeer.ui.Log;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -560,11 +558,7 @@ public class QuestMain {
             return false;
         }
         if (!Local.getPosition().equals(tileToStand)){
-            if (Movement.walkTo(tileToStand)){
-                Time.sleep(500, 1500);
-                if (Local.distance(tileToStand) < 5)
-                    Time.sleepUntil(()->!Local.isMoving(), 2000);
-            }
+            Main.walkTo(tileToStand);
             return false;
         }
         Npc Nickolaus = Npcs.getNearest("Nickolaus");
@@ -622,8 +616,7 @@ public class QuestMain {
         SceneObject featherPile = SceneObjects.getNearest(x->x.getName().equalsIgnoreCase("Giant feathers")
                 && x.getPosition().equals(feathersTile));
         if (featherPile == null){
-            Movement.walkTo(feathersTile);
-            Time.sleep(Random.high(400, 800));
+            Main.walkTo(feathersTile);
             return false;
         }
         if (Players.getLocal().distance(feathersTile.getPosition()) > 2 && Players.getLocal().isMoving()){

@@ -92,8 +92,7 @@ public class DeadfallKebbits {
         }
 
         if (Players.getLocal().getPosition().distance(DEADFALL_TRAP_TILE) > 24) {
-            Movement.walkTo(DEADFALL_TRAP_TILE);
-            Time.sleep(200, 744);
+            Main.walkTo(DEADFALL_TRAP_TILE);
             return false;
         }
 
@@ -107,8 +106,7 @@ public class DeadfallKebbits {
 
         if (deadfallTrap.length == 0) {
             Log.info("Can't find deadfall trap...");
-            Movement.walkTo(DEADFALL_TRAP_TILE);
-            Time.sleep(277, 701);
+            Main.walkTo(DEADFALL_TRAP_TILE);
             return false;
         }
 
@@ -127,8 +125,7 @@ public class DeadfallKebbits {
 
         if (deadfallTrap.length == 0) {
             Log.severe("Can't find deadfall trap...");
-            Movement.walkTo(DEADFALL_TRAP_TILE);
-            Time.sleep(277, 701);
+            Main.walkTo(DEADFALL_TRAP_TILE);
             return false;
         }
 
