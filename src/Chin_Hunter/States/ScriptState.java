@@ -2,6 +2,8 @@ package Chin_Hunter.States;
 
 
 import Chin_Hunter.Executes.*;
+import Chin_Hunter.Executes.Herblore.Druidic_Ritual;
+import Chin_Hunter.Executes.Herblore.Herblore_Training;
 import Chin_Hunter.Executes.Hunting.*;
 import Chin_Hunter.Executes.Questing.QuestMain;
 
@@ -116,6 +118,30 @@ public enum ScriptState {
         @Override
         public void onStart() {
             Chinchompas.onStart();
+        }
+    },
+
+    DRUIDIC_RITUAL_QUEST{
+        @Override
+        public void execute() {
+            Druidic_Ritual.execute();
+        }
+
+        @Override
+        public void onStart() {
+            Druidic_Ritual.onStart();
+        }
+    },
+
+    HERBLORE_TRAINING{
+        @Override
+        public void execute() {
+            Herblore_Training.execute();
+        }
+
+        @Override
+        public void onStart() {
+            Herblore_Training.onStart();
         }
     };
 
