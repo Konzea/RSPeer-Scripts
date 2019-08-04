@@ -1,6 +1,7 @@
 package Chin_Hunter;
 
 import Chin_Hunter.Executes.Hunting.FalconKebbits;
+import Chin_Hunter.Executes.MuseumQuiz;
 import Chin_Hunter.Helpers.Paint;
 import Chin_Hunter.Helpers.Trapping;
 import Chin_Hunter.States.ScriptState;
@@ -53,18 +54,20 @@ public class Main extends Script implements ChatMessageListener, RenderListener 
     private static final Area LUMBRIDGE_AREA = Area.rectangular(3210, 3233, 3234, 3204);
     private static final Area CAMELOT_AREA = Area.rectangular(2688, 3517, 2780, 3465);
 
+    private static final int MIN_WALK_WAIT = 700;
+    private static final int MAX_WALK_WAIT = 2000;
+
     private static Paint paint = null;
 
     @Override
     public void onStart() {
-        Log.fine("Running Chin Trapping by Shteve");
         super.onStart();
     }
 
     @Override
     public int loop() {
         if (currentState == null) {
-            Log.severe("Null script state, stopping.");
+            Log.severe("Null script state, stopping. Expand logger and check the above message for an explanation.");
             return -1;
         }
 
@@ -149,6 +152,10 @@ public class Main extends Script implements ChatMessageListener, RenderListener 
             onStartCalled = false;
             if (currentState != null)
                 Log.info("State Updated to: " + currentState.name());
+
+            //Clear museum data cache if not needed.
+            if (currentState != ScriptState.MUSEUM_QUIZ)
+                MuseumQuiz.clearQuizData();
         }
     }
 
@@ -166,6 +173,29 @@ public class Main extends Script implements ChatMessageListener, RenderListener 
 
     public static boolean hasItems(Map<String, Integer> map){
         return hasItems(map, null);
+    }
+
+    public static boolean walkTo(Position tile){
+        if (Movement.walkTo(tile)) {
+            int mainSleep = Movement.isRunEnabled()?Random.low(MIN_WALK_WAIT, MAX_WALK_WAIT):Random.low(MIN_WALK_WAIT*2, MAX_WALK_WAIT*2);
+
+            //Log.info("Total Walk Sleep: " + mainSleep);
+
+            //Initial sleep is used to allow for player to start moving
+            int initialSleep = Players.getLocal().isMoving()?0:MIN_WALK_WAIT;
+            Time.sleep(initialSleep);
+            mainSleep -= initialSleep;
+
+            if (Movement.getDestination() != null && Movement.getDestination().equals(tile))
+                Time.sleepUntil(()->Players.getLocal().getPosition().equals(tile), Random.nextInt(8000,12000));
+            else
+                Time.sleepUntil(()->(!Players.getLocal().isMoving() && Players.getLocal().getAnimation() == -1)|| Players.getLocal().getPosition().equals(tile), mainSleep);
+
+            if (!Players.getLocal().isMoving() && !Players.getLocal().getPosition().equals(tile))
+                    Log.severe("Slept too long when " + (Movement.isRunEnabled()?"Running":"Walking") + "Sleep time: " + (mainSleep + initialSleep));
+            return true;
+        }
+        return false;
     }
 
     public static boolean hasItems(Map<String, Integer> map, Trapping.TrapType trapType) {
