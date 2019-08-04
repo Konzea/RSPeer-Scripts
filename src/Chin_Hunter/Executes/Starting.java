@@ -5,6 +5,7 @@ import Chin_Hunter.Executes.Questing.QuestMain;
 import Chin_Hunter.Helpers.Paint;
 import Chin_Hunter.Main;
 import org.rspeer.runetek.api.commons.Time;
+import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.component.tab.Combat;
 import org.rspeer.runetek.api.movement.Movement;
 import org.rspeer.ui.Log;
@@ -19,7 +20,7 @@ public class Starting {
         //Starting
         Log.fine("Running AIO Chin Hunter by Shteve");
         Log.info("Waiting a few seconds for all the RS stuff to load.");
-        Time.sleep(5000);
+        Time.sleep(Random.nextInt(3000, 6000));
         Log.info("Ready to go.");
         Main.setPaint(new Paint());
 
