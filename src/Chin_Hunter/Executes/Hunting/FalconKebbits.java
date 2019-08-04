@@ -136,13 +136,11 @@ public class FalconKebbits {
 
         if (Stile.length == 0){
             Log.info("Stile not found, walking to it.");
-            if (Movement.walkTo(STILE_TILE))
-                Time.sleep(399, 785);
+            Main.walkTo(STILE_TILE);
             return;
         }
         if (Stile[0].distance(Players.getLocal()) > 10){
-            if (Movement.walkTo(STILE_TILE))
-                Time.sleep(399, 785);
+            Main.walkTo(STILE_TILE);
             return;
         }
         if (Stile[0].interact("Climb-over"))
@@ -167,15 +165,16 @@ public class FalconKebbits {
             if (kebbit == null){
                 Log.severe("Could not find a kebbit...");
                 if (Players.getLocal().distance(CENTRE_TILE) <= 6) {
-                    Time.sleep(1500, 4000);
+                    Time.sleep(2000, 6000);
                     return;
                 }
-                if (Movement.walkTo(CENTRE_TILE))
-                    Time.sleep(163, 644);
+                Main.walkTo(CENTRE_TILE);
                 return;
             }
-            if (kebbit.interact("Catch"))
-                Time.sleepUntil(()->HintArrow.isPresent() || isIdleWithBird(), 3000);
+            if (kebbit.interact("Catch")) {
+                Time.sleepUntil(()-> !isIdleWithBird(), 1000);
+                Time.sleepUntil(() -> HintArrow.isPresent() || isIdleWithBird(), 4000);
+            }
             return;
         }
 
@@ -203,7 +202,7 @@ public class FalconKebbits {
             return;
         }
 
-        int sleepTime = Random.low(200, 2000);
+        int sleepTime = Random.low(200, 1000);
         Time.sleep(sleepTime);
         timeWithoutBird = timeWithoutBird + sleepTime;
 
@@ -213,8 +212,7 @@ public class FalconKebbits {
         Npc matthias = Npcs.getNearest("Matthias");
         if (matthias == null){
             Log.severe("Could not find Matthias, walking to him");
-            if (Movement.walkTo(MATTHIAS_TILE))
-                Time.sleep(222, 612);
+            Main.walkTo(MATTHIAS_TILE);
             return;
         }
         if (matthias.interact("Talk-to"))
