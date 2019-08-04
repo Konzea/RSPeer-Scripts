@@ -69,7 +69,9 @@ public class Paint {
         g2.setColor(Color.CYAN);
         g2.drawString("Run Time: " + formatTime(runTime), x +=157,y -= 20);
         g2.drawString("XP Gained: " + xpGained, x, y += 16);
-        g2.drawString("State: " + Main.getCurrentState().name(), x, y += 16);
+
+        String currentState = Main.getCurrentState() == null?"null":Main.getCurrentState().name();
+        g2.drawString("State: " + currentState, x, y += 16);
 
         if (Trapping.getPlacedTrapsCount() > 0) {
             try {
