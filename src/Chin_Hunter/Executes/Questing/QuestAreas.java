@@ -4,7 +4,7 @@ import org.rspeer.runetek.api.movement.position.Area;
 import org.rspeer.runetek.api.movement.position.Position;
 import org.rspeer.runetek.api.scene.Players;
 
-public class QuestAreas {
+class QuestAreas {
 
     private static final Area FENCED_VARROCK_AREA = Area.polygonal(
             new Position(3264, 3408, 0),
