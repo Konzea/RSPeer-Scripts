@@ -23,86 +23,46 @@ public class GoldenFeather {
                 }
                 operateLever(19948, "Pull-down");
                 return false;
-                //"Take-from" 6 "Odd bird seed" from "Birdseed holder" (9574, 8914, 2)
-                //"Pull-down" "Eagle lever" (9559, 8919, 2)
-                //Varpbit 3089: 0->4: 1 Level Pulled
-                //Varpbit 3092: 0->1: ^
             }
             case 4:{
                 placeBirdseed(19939, 3200, 6000);
                 return false;
-                //"Use" "Odd bird seed" on "Bird feeder" (9582, 8898,2)
-                //Sleep 3-5 seconds
-                //Varpbit 3089: 4->260: 2 Bird seed place
-                //Varpbit 3098: 0->1: ^
             }
             case 260:{
                 placeBirdseed(19938, 3500, 5000);
                 return false;
-                //"Use" "Odd bird seed" on "Bird feeder" (9578,8902,2)
-                    //Sleep 3-5 seconds
-                //Varpbit 3089: 260->388: 3 Bird seed place
-                //Varpbit 3097: 0->1: ^
             }
             case 388:{
                 operateLever(19949, "Pull-down");
                 return false;
-                //"Pull-down" "Eagle lever" (9594,8899,2)
-                //Varpbit 3089: 388->396: 4 Level pulled
-                //Varpbit 3093: 0->1: ^
             }
             case 396:{
                 operateLever(19948, "Push-up");
                 return false;
-                //"Push-up" "Eagle lever" (9559, 8919, 2)
-                //Varpbit 3089: 396->392: 5 Level pulled
-                //Varpbit 3092: 1->0: ^
             }
             case 392:{
                 placeBirdseed(19937, 7000, 8300);
                 return false;
-                //"Use" "Odd bird seed" on "Bird feeder" (9563, 8906, 2)
-                //Sleep 7-8 seconds
-                //Varpbit 3089: 392->424: 6 Bird seed place
-                //Varpbit 3095: 0->1: ^
             }
             case 424:{
                 operateLever(19946, "Pull-down");
                 return false;
-                //"Pull-down" "Eagle lever" (9551, 8910, 2)
-                //Varpbit 3089: 424->425: 7 Level Pulled
-                //Varpbit 3090: 0->1: ^
             }
             case 425:{
                 placeBirdseed(19936, 5200, 7000);
                 return false;
-                //"Use" "Odd bird seed" on "Bird feeder" (9561, 8923, 2)
-                    //Sleep 5-7 seconds
-                //Varpbit 3089: 425->441: 8 Bird seed place
-                //Varpbit 3094: 0->1: ^
             }
             case 441:{
                 operateLever(19947, "Pull-down");
                 return false;
-                //"Pull-down" "Eagle lever" (9541, 8923, 2)
-                //Varpbit 3089: 441->443: 9 Level Pulled
-                //Varpbit 3091: 0->1: ^
             }
             case 443:{
                 placeBirdseed(19941, 5300, 7000);
                 return false;
-                //"Use" "Odd bird seed" on "Bird feeder" (9551, 8905, 2)
-                    //Sleep 5-7 seconds
-                //Varpbit 3089: 443->411: 10 Bird seed place
-                //Varpbit 3095: 0->1: ^c
             }
             case 411:{
                 placeBirdseed(19937, 4500, 6500);
                 return false;
-                //"Use" "Odd bird seed" on "Bird feeder" (9563, 8906, 2)
-                //Sleep 4-5 seconds
-                //Varpbit 3089: 411->475: 11 Bird seed place
-                //Varpbit 3096: 0->1: ^
             }
             case 475:{
                 if (isComplete()){
