@@ -50,15 +50,8 @@ public class Longtails {
             return;
         }
         if (HuntLongtails()) {
-            if (Players.getLocal().getPosition().distance(CENTRE_TILE) <= 2) {
-                if (Movement.walkTo(getNearbyTile(CENTRE_TILE, 3))) {
-                    Time.sleep(300, 666);
-                    Time.sleepUntil(() -> !Players.getLocal().isMoving(), 3000);
-                }
-                else return;
-            }
-
-            Time.sleep(2000);
+            if (Players.getLocal().getPosition().distance(CENTRE_TILE) <= 2)
+                Main.walkTo(getNearbyTile(CENTRE_TILE, 3));
         }
 
     }
@@ -85,8 +78,7 @@ public class Longtails {
         }
 
         if (Players.getLocal().getPosition().distance(CENTRE_TILE) > 24){
-            Movement.walkTo(CENTRE_TILE);
-            Time.sleep(200, 744);
+            Main.walkTo(CENTRE_TILE);
             return false;
         }
 
