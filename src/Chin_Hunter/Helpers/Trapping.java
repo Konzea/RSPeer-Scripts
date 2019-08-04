@@ -202,8 +202,7 @@ public class Trapping {
 
         //Walk to tile
         if (!Players.getLocal().getPosition().equals(trapTile)) {
-            if (Movement.walkTo(trapTile))
-                Time.sleepUntil(() -> Players.getLocal().getPosition().equals(trapTile), 4000);
+            Main.walkTo(trapTile);
             return false;
         }
         //Handle setting up a dropped trap
