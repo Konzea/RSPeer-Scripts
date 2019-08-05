@@ -14,7 +14,6 @@ import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.component.Dialog;
 import org.rspeer.runetek.api.component.tab.*;
-import org.rspeer.runetek.api.movement.Movement;
 import org.rspeer.runetek.api.movement.position.Area;
 import org.rspeer.runetek.api.movement.position.Position;
 import org.rspeer.runetek.api.scene.Npcs;
@@ -60,7 +59,7 @@ class QuestTraveling {
             new Position(2949, 3149, 0),
             new Position(2872, 3316, 0));
 
-
+    private static final Position STONE_DOOR_TILE = new Position(2001, 4948, 3);
 
     enum PuzzleRoom{
         BRONZE_FEATHER(new Position(1986, 4949,3)),
@@ -112,14 +111,14 @@ class QuestTraveling {
             travelToMainCave();
             return;
         }
-
         SceneObject Door = SceneObjects.getNearest("Stone door");
         if (Door == null){
-            Log.severe("Could not find Stone door?");
+            Log.severe("Could not find Stone door? Walking to it.");
+            Main.walkTo(STONE_DOOR_TILE);
             return;
         }
-        if (Door.distance(Players.getLocal()) > 5){
-            Main.walkTo(Door.getPosition());
+        if (STONE_DOOR_TILE.distance(Players.getLocal()) > 10){
+            Main.walkTo(STONE_DOOR_TILE);
             return;
         }
         if (Varps.getBitValue(3107)==0){
@@ -205,6 +204,7 @@ class QuestTraveling {
             return;
         }
         if (QuestAreas.isAtPeak() && Skills.getCurrentLevel(Skill.AGILITY) >= 25){
+            Log.info("Use agility shortcut");
             usePeakAgilityShortcut();
             return;
         }
@@ -256,6 +256,7 @@ class QuestTraveling {
         Npc shopOwner = Npcs.getNearest("Asyff");
         if (shopOwner == null){
             Log.severe("Could not find Asyff.");
+            Log.info("Attempting to walk to where he should be.");
             Main.walkTo(doorTile);
             return;
         }
@@ -280,7 +281,8 @@ class QuestTraveling {
                 && x.getPosition().equals(Room.getEntranceTile()));
 
         if (Tunnel == null){
-            Log.severe("Could not find tunnel entrance for cave: " + Room.name());
+            Log.info("Could not find tunnel entrance for cave: " + Room.name());
+            Log.info("Walking to where it should be.");
             Main.walkTo(Room.getEntranceTile());
             return;
         }
@@ -312,11 +314,13 @@ class QuestTraveling {
         SceneObject[] Shortcut = null;
         //Climb Down
         if (QuestAreas.isAtPeak())
-            Shortcut = SceneObjects.getAt(new Position(2324, 3498, 0));
+            Shortcut = SceneObjects.getLoaded(x->x.getPosition().equals(new Position(2324, 3498, 0))
+                    && x.containsAction("Climb"));
 
         //Climb Up
         if (QuestAreas.isAtBasecamp())
-            Shortcut = SceneObjects.getAt(new Position(2322, 3501, 0));
+            Shortcut = SceneObjects.getLoaded(x->x.getPosition().equals(new Position(2322, 3501, 0))
+                && x.containsAction("Climb"));
 
         if (Shortcut == null){
             Log.severe("Not on the mountain or basecamp and trying to use the shortcut?");
@@ -347,6 +351,7 @@ class QuestTraveling {
             if (Eagle.interact("Walk-past")){
                 Time.sleepUntil(()->Players.getLocal().getAnimation() == -1
                     && !QuestAreas.isAtEaglesNest(), 6000);
+                Time.sleep(500);
             }
             return;
         }
