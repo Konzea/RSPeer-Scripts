@@ -18,7 +18,6 @@ import org.rspeer.runetek.api.component.Dialog;
 import org.rspeer.runetek.api.component.Interfaces;
 import org.rspeer.runetek.api.component.tab.EquipmentSlot;
 import org.rspeer.runetek.api.component.tab.Inventory;
-import org.rspeer.runetek.api.movement.Movement;
 import org.rspeer.runetek.api.movement.position.Area;
 import org.rspeer.runetek.api.movement.position.Position;
 import org.rspeer.runetek.api.scene.Npcs;
@@ -499,10 +498,10 @@ public class QuestMain {
                                 return;
                             }
                             case 40:{
-                                InterfaceComponent Close = Interfaces.getComponent(277,15);
+                                InterfaceComponent Close = Interfaces.getComponent(277,16);
                                 if (Close != null){
                                     if (Close.click())
-                                        Time.sleepUntil(()->Interfaces.getComponent(277,15) == null, 2000);
+                                        Time.sleepUntil(()->Interfaces.getComponent(277,16) == null, 2000);
                                     return;
                                 }
                                 Log.fine("Eagles Peak Completed! Onto Chins.");
