@@ -67,7 +67,7 @@ public class Main extends Script implements ChatMessageListener, RenderListener 
     @Override
     public int loop() {
         if (currentState == null) {
-            Log.severe("Null script state, stopping. Expand logger and check the above message for an explanation.");
+            Log.severe("Null script state, stopping. Expand logger for an explanation.");
             return -1;
         }
 
@@ -179,6 +179,10 @@ public class Main extends Script implements ChatMessageListener, RenderListener 
         if (Movement.walkTo(tile)) {
             int mainSleep = Movement.isRunEnabled()?Random.low(MIN_WALK_WAIT, MAX_WALK_WAIT):Random.low(MIN_WALK_WAIT*2, MAX_WALK_WAIT*2);
 
+            if (!Movement.isRunEnabled()) {
+                if ((Players.getLocal().isHealthBarVisible() && Movement.getRunEnergy() > 5) || Movement.getRunEnergy() > Random.nextInt(40, 80))
+                    Movement.toggleRun(true);
+            }
             //Log.info("Total Walk Sleep: " + mainSleep);
 
             //Initial sleep is used to allow for player to start moving
