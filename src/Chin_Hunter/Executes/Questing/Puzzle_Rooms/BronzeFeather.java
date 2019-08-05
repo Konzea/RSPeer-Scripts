@@ -39,7 +39,6 @@ public class BronzeFeather {
         }
 
         if (!allWinchesComplete()){
-            Log.info("Operating Winches");
             operateAllWinches();
             return false;
         }
@@ -47,6 +46,7 @@ public class BronzeFeather {
             SceneObject Pedestal = SceneObjects.getNearest(19984);
             if (Pedestal == null){
                 Log.severe("Could not find a pedestal with the Bronze feather on.");
+                Time.sleep(1000,2500);
                 return false;
             }
             if (Pedestal.interact("Take-from"))
@@ -75,8 +75,10 @@ public class BronzeFeather {
             Log.severe("Could not find exit to Bronze feather room.");
             return;
         }
-        if (Exit.interact("Enter"))
-            Time.sleepUntil(()->!isInCave(), 4000);
+        if (Exit.interact("Enter")) {
+            Time.sleepUntil(() -> !isInCave(), 4000);
+            Time.sleep(500, 1800);
+        }
     }
 
     private static boolean allWinchesComplete(){
@@ -97,7 +99,7 @@ public class BronzeFeather {
             }
 
             if (Winch.interact("Operate"))
-                Time.sleepUntil(()->Varps.getBitValue(winchData.getValue()) != varpValue, 4000);
+                Time.sleepUntil(()->Varps.getBitValue(winchData.getValue()) != varpValue, 8000);
             break;
         }
     }
