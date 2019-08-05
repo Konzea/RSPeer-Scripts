@@ -8,7 +8,6 @@ import Chin_Hunter.Executes.Hunting.*;
 import Chin_Hunter.Executes.Questing.QuestMain;
 
 public enum ScriptState {
-    //TODO Look at inheriting from a 'State' class instead of enums pointing to classes
 
     STARTING{
         @Override
