@@ -104,8 +104,10 @@ public class SilverFeather {
             Log.severe("Could not find exit to Silver feather room.");
             return;
         }
-        if (Exit.interact("Enter"))
-            Time.sleepUntil(()->!isInCave(), 4000);
+        if (Exit.interact("Enter")) {
+            Time.sleepUntil(() -> !isInCave(), 4000);
+            Time.sleep(500, 1800);
+        }
     }
 
     public static boolean isInCave(){
