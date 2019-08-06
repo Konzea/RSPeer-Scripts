@@ -16,7 +16,9 @@ import org.rspeer.runetek.api.scene.SceneObjects;
 import org.rspeer.ui.Log;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.function.BooleanSupplier;
 
 public class Trapping {
@@ -335,9 +337,14 @@ public class Trapping {
         trapLocations.add(newTraploc);
     }
 
+    public static Queue<Position> previousTrapTiles = new LinkedList<>();
     private static void removeTrapTiles(List<Position> tilesToRemove) {
-        for (Position tileToRemove : tilesToRemove)
+        for (Position tileToRemove : tilesToRemove) {
             trapLocations.remove(tileToRemove);
+            previousTrapTiles.add(tileToRemove);
+            if (previousTrapTiles.size() > 5)
+                previousTrapTiles.poll();
+        }
     }
 
     public static int getPlacedTrapsCount() {
