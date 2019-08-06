@@ -1,5 +1,6 @@
 package Chin_Hunter.Executes;
 
+import Chin_Hunter.Executes.Herblore.Druidic_Ritual;
 import Chin_Hunter.Executes.Hunting.Chinchompas;
 import Chin_Hunter.Executes.Hunting.DeadfallKebbits;
 import Chin_Hunter.Executes.Hunting.FalconKebbits;
@@ -18,7 +19,6 @@ import org.rspeer.runetek.api.component.tab.Equipment;
 import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.runetek.api.component.tab.Skill;
 import org.rspeer.runetek.api.component.tab.Skills;
-import org.rspeer.runetek.api.movement.Movement;
 import org.rspeer.runetek.api.movement.position.Area;
 import org.rspeer.runetek.api.scene.Npcs;
 import org.rspeer.runetek.api.scene.Players;
@@ -132,7 +132,7 @@ public class PurchaseItems {
     private static void handleBanking() {
         //Deposit all and withdraw extra gp to buy stuff
         int bankedGP = Bank.getCount("Coins");
-        int gpNeeded = REQUIRED_ITEMS.get("Coins");
+        int gpNeeded = REQUIRED_ITEMS.getOrDefault("Coins", 0);
 
         if (bankedGP > gpNeeded) {
             if (Bank.withdraw("Coins", bankedGP - gpNeeded))
@@ -218,7 +218,13 @@ public class PurchaseItems {
         }
         Time.sleep(500, 1000);
 
-        int cashStack = Main.getCount(Inventory.getFirst("Coins"));
+        Item Coins = Inventory.getFirst("Coins");
+        if (Coins == null){
+            Log.severe("Could not find coins in invent to buy stuff with?");
+            Main.updateScriptState(ScriptState.BANKING);
+            return false;
+        }
+        int cashStack = Main.getCount(Coins);
         if (GrandExchangeSetup.getPricePerItem() > cashStack){
             Log.severe("We don't have enough GP to buy items, sorry.");
             Main.updateScriptState(null);
@@ -236,6 +242,10 @@ public class PurchaseItems {
         int hunterLevel = Skills.getLevel(Skill.HUNTER);
         if (!QuestMain.questComplete())
             QuestMain.getRequiredItems().forEach(REQUIRED_ITEMS::put);
+        if (!Druidic_Ritual.questComplete())
+            Druidic_Ritual.getRequiredItems().forEach(REQUIRED_ITEMS::put);
+        if (Druidic_Ritual.questComplete() && Skills.getCurrentLevel(Skill.HERBLORE) < 19)
+            Druidic_Ritual.getRequiredItems().forEach(REQUIRED_ITEMS::put);
         if (hunterLevel < 43)
             DeadfallKebbits.getRequiredItems().forEach(REQUIRED_ITEMS::put);
         if (hunterLevel < 63)
@@ -280,7 +290,7 @@ public class PurchaseItems {
         return itemsToBuy;
     }
 
-    private static boolean closeGE() {
+    static boolean closeGE() {
         InterfaceComponent closeBtn = Interfaces.getComponent(465, 2).getComponent(11);
         if (closeBtn == null) return false;
         return closeBtn.interact("Close");
