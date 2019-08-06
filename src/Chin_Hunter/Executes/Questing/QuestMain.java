@@ -629,7 +629,7 @@ public class QuestMain {
         return false;
     }
 
-    public static void selectDialogOption(String... validResponses){
+    static void selectDialogOption(String... validResponses){
         if (validResponses.length == 0){
             Log.severe("No valid responses provided.");
             return;
@@ -674,15 +674,5 @@ public class QuestMain {
             BIRD_CLOTHES_ITEMS.put("Coins", 50);
             BIRD_CLOTHES_ITEMS.put("Eagle feather", 10);
         }
-    }
-
-    public static boolean hasAllRequiredItems(){
-        if (REQUIRED_ITEMS.isEmpty()) {
-            Log.severe("Hashmap not populated.");
-            Main.updateScriptState(null);
-            return false;
-        }
-
-        return Main.hasItems(REQUIRED_ITEMS);
     }
 }
