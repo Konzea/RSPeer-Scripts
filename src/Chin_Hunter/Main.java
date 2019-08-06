@@ -1,5 +1,6 @@
 package Chin_Hunter;
 
+import Chin_Hunter.Executes.Herblore.Druidic_Ritual;
 import Chin_Hunter.Executes.Hunting.FalconKebbits;
 import Chin_Hunter.Executes.MuseumQuiz;
 import Chin_Hunter.Helpers.Paint;
@@ -7,14 +8,18 @@ import Chin_Hunter.Helpers.Trapping;
 import Chin_Hunter.States.ScriptState;
 import Chin_Hunter.Executes.Questing.QuestMain;
 import org.rspeer.runetek.adapter.component.Item;
+import org.rspeer.runetek.adapter.scene.Pickable;
+import org.rspeer.runetek.adapter.scene.SceneObject;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.component.tab.*;
 import org.rspeer.runetek.api.movement.Movement;
 import org.rspeer.runetek.api.movement.position.Area;
 import org.rspeer.runetek.api.movement.position.Position;
+import org.rspeer.runetek.api.scene.Pickables;
 import org.rspeer.runetek.api.scene.Players;
 import org.rspeer.runetek.api.scene.Projection;
+import org.rspeer.runetek.api.scene.SceneObjects;
 import org.rspeer.runetek.event.listeners.ChatMessageListener;
 import org.rspeer.runetek.event.listeners.RenderListener;
 import org.rspeer.runetek.event.types.ChatMessageEvent;
@@ -99,7 +104,46 @@ public class Main extends Script implements ChatMessageListener, RenderListener 
             } else if (Message.equals("Oh dear, you are dead!")) {
                 //On Death Event
             }else if (Message.contains("You may set up only")){
-                Log.severe("Attempting to set a trap we can't put down.");
+                Log.severe("We already heave the max number of traps put down.");
+                Log.severe("Printing debug data and stopping.");
+                Log.info("Max trap count: " + Trapping.getMaxTrapCount());
+                Log.info("Traps placed: " + Trapping.getPlacedTrapsCount());
+                for (Position activeTile : Trapping.previousTrapTiles){
+                    String output = "Active Trap on " + activeTile.toString() + " : ";
+                    SceneObject[] objectsOnTile = SceneObjects.getLoaded(x -> x.getPosition().equals(activeTile) && !x.getName().equalsIgnoreCase("null"));
+                    if (objectsOnTile.length > 0) {
+                        String objectNames = "Objects[";
+                        for (SceneObject obj : objectsOnTile)
+                            objectNames = objectNames + obj.getName() + "|";
+                        output = output + objectNames + "], ";
+                    }
+                    Pickable[] pickablesOnTile = Pickables.getLoaded(x -> x.getPosition().equals(activeTile) && x.getName().equalsIgnoreCase("Bird snare"));
+                    if (pickablesOnTile.length > 0) {
+                        String pickableNames = "GroundItems[";
+                        for (Pickable pickable : pickablesOnTile)
+                            pickableNames = pickableNames + pickable.getName() + "|";
+                        output = output + pickableNames + "], ";
+                    }
+                    Log.info(output);
+                }
+                for (Position prevTile : Trapping.previousTrapTiles){
+                    String output = "Previous Trap on " + prevTile.toString() + " : ";
+                    SceneObject[] objectsOnTile = SceneObjects.getLoaded(x -> x.getPosition().equals(prevTile) && !x.getName().equalsIgnoreCase("null"));
+                    if (objectsOnTile.length > 0) {
+                        String objectNames = "Objects[";
+                        for (SceneObject obj : objectsOnTile)
+                            objectNames = objectNames + obj.getName() + "|";
+                        output = output + objectNames + "], ";
+                    }
+                    Pickable[] pickablesOnTile = Pickables.getLoaded(x -> x.getPosition().equals(prevTile) && x.getName().equalsIgnoreCase("Bird snare"));
+                    if (pickablesOnTile.length > 0) {
+                            String pickableNames = "GroundItems[";
+                            for (Pickable pickable : pickablesOnTile)
+                                pickableNames = pickableNames + pickable.getName() + "|";
+                            output = output + pickableNames + "], ";
+                        }
+                    Log.info(output);
+                }
                 updateScriptState(null);
             }
         }
@@ -194,9 +238,6 @@ public class Main extends Script implements ChatMessageListener, RenderListener 
                 Time.sleepUntil(()->Players.getLocal().getPosition().equals(tile), Random.nextInt(8000,12000));
             else
                 Time.sleepUntil(()->(!Players.getLocal().isMoving() && Players.getLocal().getAnimation() == -1)|| Players.getLocal().getPosition().equals(tile), mainSleep);
-
-            if (!Players.getLocal().isMoving() && !Players.getLocal().getPosition().equals(tile))
-                    Log.severe("Slept too long when " + (Movement.isRunEnabled()?"Running":"Walking") + "Sleep time: " + (mainSleep + initialSleep));
             return true;
         }
         return false;
@@ -292,14 +333,14 @@ public class Main extends Script implements ChatMessageListener, RenderListener 
             return ScriptState.DEADFALL_KEBBITS;
         if (hunterLevel < 63)
             return ScriptState.FALCON_KEBBITS;
-        /*
-        Log.fine("Reached level 63. Stopping Script");
-        Main.updateScriptState(null);
-*/
-        if (QuestMain.questComplete())
-            return ScriptState.CHINCHOMPAS;
-        else
+
+        if (!QuestMain.questComplete())
             return ScriptState.EAGLES_PEAK_QUEST;
+
+        if (!Druidic_Ritual.questComplete())
+            return ScriptState.DRUIDIC_RITUAL_QUEST;
+
+        return ScriptState.CHINCHOMPAS;
 
     }
 
