@@ -1,5 +1,6 @@
 package Chin_Hunter.Executes;
 
+import Chin_Hunter.Executes.Herblore.Druidic_Ritual;
 import Chin_Hunter.Executes.Hunting.*;
 import Chin_Hunter.Executes.Questing.QuestMain;
 import Chin_Hunter.Helpers.Paint;
@@ -45,6 +46,7 @@ public class Starting {
         FalconKebbits.populateHashMaps();
         Chinchompas.populateHashMaps();
         QuestMain.populateHashMap();
+        Druidic_Ritual.populateHashMap();
         PurchaseItems.populateHashMap();
     }
 
