@@ -1,16 +1,14 @@
-package Chin_Hunter.Executes.Questing.Puzzle_Rooms;
+package Chin_Hunter.Executes.Eagles_Peak.Puzzle_Rooms;
 
-import Chin_Hunter.Executes.Questing.QuestMain;
+import Chin_Hunter.Executes.Eagles_Peak.QuestMain;
 import Chin_Hunter.Main;
 import org.rspeer.runetek.adapter.scene.Npc;
 import org.rspeer.runetek.adapter.scene.Pickable;
 import org.rspeer.runetek.adapter.scene.SceneObject;
 import org.rspeer.runetek.api.Varps;
 import org.rspeer.runetek.api.commons.Time;
-import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.component.Dialog;
 import org.rspeer.runetek.api.component.tab.Inventory;
-import org.rspeer.runetek.api.movement.Movement;
 import org.rspeer.runetek.api.movement.position.Position;
 import org.rspeer.runetek.api.scene.Npcs;
 import org.rspeer.runetek.api.scene.Pickables;

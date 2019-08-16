@@ -1,8 +1,10 @@
-package Chin_Hunter.Executes.Questing;
+package Chin_Hunter.Executes.Eagles_Peak;
 
-import Chin_Hunter.Executes.Questing.Puzzle_Rooms.BronzeFeather;
-import Chin_Hunter.Executes.Questing.Puzzle_Rooms.GoldenFeather;
-import Chin_Hunter.Executes.Questing.Puzzle_Rooms.SilverFeather;
+import Chin_Hunter.Executes.Eagles_Peak.Puzzle_Rooms.BronzeFeather;
+import Chin_Hunter.Executes.Eagles_Peak.Puzzle_Rooms.GoldenFeather;
+import Chin_Hunter.Executes.Eagles_Peak.Puzzle_Rooms.SilverFeather;
+import Chin_Hunter.Executes.Hunting.Butterflies;
+import Chin_Hunter.Helpers.RequiredItem;
 import Chin_Hunter.Main;
 import Chin_Hunter.States.ScriptState;
 import org.rspeer.runetek.adapter.component.InterfaceComponent;
