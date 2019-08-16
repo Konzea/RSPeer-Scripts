@@ -5,7 +5,8 @@ import Chin_Hunter.Executes.*;
 import Chin_Hunter.Executes.Herblore.Druidic_Ritual;
 import Chin_Hunter.Executes.Herblore.Herblore_Training;
 import Chin_Hunter.Executes.Hunting.*;
-import Chin_Hunter.Executes.Questing.QuestMain;
+import Chin_Hunter.Executes.Eagles_Peak.QuestMain;
+import Chin_Hunter.Helpers.RequiredItem;
 
 public enum ScriptState {
 
@@ -17,6 +18,11 @@ public enum ScriptState {
 
         @Override
         public void onStart() {
+        }
+
+        @Override
+        public RequiredItem[] getItemsToBuy() {
+            return null;
         }
     },
 
@@ -30,17 +36,10 @@ public enum ScriptState {
         public void onStart() {
             Banking.onStart();
         }
-    },
-
-    PURCHASE_ITEMS{
-        @Override
-        public void execute() {
-            PurchaseItems.execute();
-        }
 
         @Override
-        public void onStart() {
-            PurchaseItems.onStart();
+        public RequiredItem[] getItemsToBuy() {
+            return null;
         }
     },
 
@@ -54,6 +53,11 @@ public enum ScriptState {
         public void onStart() {
             MuseumQuiz.onStart();
         }
+
+        @Override
+        public RequiredItem[] getItemsToBuy() {
+            return null;
+        }
     },
 
     LONGTAILS{
@@ -65,6 +69,11 @@ public enum ScriptState {
         @Override
         public void onStart() {
             Longtails.onStart();
+        }
+
+        @Override
+        public RequiredItem[] getItemsToBuy() {
+            return RequiredItem.concat(DeadfallKebbits.getRequiredItems(),FalconKebbits.getRequiredItems());
         }
     },
 
@@ -78,6 +87,11 @@ public enum ScriptState {
         public void onStart() {
             Butterflies.onStart();
         }
+
+        @Override
+        public RequiredItem[] getItemsToBuy() {
+            return RequiredItem.concat(DeadfallKebbits.getRequiredItems(),FalconKebbits.getRequiredItems());
+        }
     },
 
     DEADFALL_KEBBITS {
@@ -87,6 +101,11 @@ public enum ScriptState {
         @Override
         public void onStart() {
             DeadfallKebbits.onStart();
+        }
+
+        @Override
+        public RequiredItem[] getItemsToBuy() {
+            return RequiredItem.concat(DeadfallKebbits.getRequiredItems(),FalconKebbits.getRequiredItems());
         }
     },
 
@@ -98,6 +117,11 @@ public enum ScriptState {
         public void onStart() {
             FalconKebbits.onStart();
         }
+
+        @Override
+        public RequiredItem[] getItemsToBuy() {
+            return RequiredItem.concat(DeadfallKebbits.getRequiredItems(),FalconKebbits.getRequiredItems());
+        }
     },
 
     EAGLES_PEAK_QUEST{
@@ -108,15 +132,10 @@ public enum ScriptState {
         public void onStart() {
             QuestMain.onStart();
         }
-    },
-
-    CHINCHOMPAS{
-        @Override
-        public void execute() { Chinchompas.execute(); }
 
         @Override
-        public void onStart() {
-            Chinchompas.onStart();
+        public RequiredItem[] getItemsToBuy() {
+            return QuestMain.getRequiredItems();
         }
     },
 
@@ -130,6 +149,11 @@ public enum ScriptState {
         public void onStart() {
             Druidic_Ritual.onStart();
         }
+
+        @Override
+        public RequiredItem[] getItemsToBuy() {
+            return Druidic_Ritual.getRequiredItems();
+        }
     },
 
     HERBLORE_TRAINING{
@@ -142,12 +166,33 @@ public enum ScriptState {
         public void onStart() {
             Herblore_Training.onStart();
         }
-    };
 
+        @Override
+        public RequiredItem[] getItemsToBuy() {
+            return Herblore_Training.getRequiredItems();
+        }
+    },
+
+    CHINCHOMPAS{
+        @Override
+        public void execute() { Chinchompas.execute(); }
+
+        @Override
+        public void onStart() {
+            Chinchompas.onStart();
+        }
+
+        @Override
+        public RequiredItem[] getItemsToBuy() {
+            return Chinchompas.getRequiredItems();
+        }
+    };
 
     public abstract void execute();
 
     public abstract void onStart();
+
+    public abstract RequiredItem[] getItemsToBuy();
 }
 
 
