@@ -21,7 +21,10 @@ public class Paint {
     private static long startTime;
     private static int hunterStartXP;
     private static int hunterStartLevel;
-    private static BufferedImage paint = null;
+    private static BufferedImage paintOn = null;
+    private static BufferedImage paintOff = null;
+    private static BufferedImage herbloreOff = null;
+    private static BufferedImage prayerOff = null;
 
     public static boolean canDisplayPaint = false;
 
@@ -31,11 +34,14 @@ public class Paint {
         hunterStartXP = Skills.getExperience(Skill.HUNTER);
         hunterStartLevel = Skills.getLevel(Skill.HUNTER);
         try {
-            paint = ImageIO.read(new URL("https://i.gyazo.com/855c72b587bd410ef71f2043befc9931.png"));
+            paintOn = ImageIO.read(new URL("https://i.gyazo.com/fb7231025f8c3cb4b20927cbfce57f74.png"));
+            paintOff = ImageIO.read(new URL("https://i.gyazo.com/8bd93deae5104ef7849bd172d9c6f981.png"));
+            prayerOff = ImageIO.read(new URL("https://i.gyazo.com/ed8f60478cac178d2750b0adc5eec305.png"));
+            herbloreOff = ImageIO.read(new URL("https://i.gyazo.com/74e84f9ab024158b54483cebdd71cb4d.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if (paint == null)
+        if (paintOn == null || paintOff == null || prayerOff == null || herbloreOff == null)
             Log.severe("Unable to load paint. Honestly your not missing much.");
         else
             canDisplayPaint = true;
@@ -47,9 +53,20 @@ public class Paint {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         int y = 344;
         int x = 6;
+        if (!canDisplayPaint){
+            if (paintOff != null)
+                g2.drawImage(paintOff, null, x,y);
+            return;
+        }
+
         g2.setColor(Color.WHITE);
-        if (paint != null)
-            g2.drawImage(paint, null, x,y);
+        if (paintOn != null)
+            g2.drawImage(paintOn, null, x,y);
+
+        if (!Main.canBuryBones() && prayerOff != null)
+            g2.drawImage(prayerOff, null, x,y);
+        if (!Main.canTrainHerblore() && herbloreOff != null)
+            g2.drawImage(herbloreOff, null, x,y);
 
         int xpGained = Skills.getExperience(Skill.HUNTER) - hunterStartXP;
         int levelsGained = Skills.getLevel(Skill.HUNTER) - hunterStartLevel;
