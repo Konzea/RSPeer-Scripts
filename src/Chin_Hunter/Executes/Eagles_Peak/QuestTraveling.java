@@ -1,8 +1,8 @@
-package Chin_Hunter.Executes.Questing;
+package Chin_Hunter.Executes.Eagles_Peak;
 
-import Chin_Hunter.Executes.Questing.Puzzle_Rooms.BronzeFeather;
-import Chin_Hunter.Executes.Questing.Puzzle_Rooms.GoldenFeather;
-import Chin_Hunter.Executes.Questing.Puzzle_Rooms.SilverFeather;
+import Chin_Hunter.Executes.Eagles_Peak.Puzzle_Rooms.BronzeFeather;
+import Chin_Hunter.Executes.Eagles_Peak.Puzzle_Rooms.GoldenFeather;
+import Chin_Hunter.Executes.Eagles_Peak.Puzzle_Rooms.SilverFeather;
 import Chin_Hunter.Main;
 import Chin_Hunter.States.ScriptState;
 import org.rspeer.runetek.adapter.component.InterfaceComponent;
@@ -159,13 +159,16 @@ class QuestTraveling {
                     Log.severe("Could not find Metal feather in invent?");
                     return;
                 }
-                if (Inventory.use(x->x.getName().equalsIgnoreCase("Metal feather"), Cave[0]))
-                    Time.sleepUntil(()->Inventory.getCount("Metal feather") == 0, 2544);
+                if (Inventory.use(x->x.getName().equalsIgnoreCase("Metal feather"), Cave[0])) {
+                    Time.sleepUntil(()->Players.getLocal().isMoving(), 3500);
+                    if (Players.getLocal().isMoving())
+                        Time.sleepUntil(() -> Inventory.getCount("Metal feather") == 0, Random.nextInt(8000, 12000));
+                }
                 return;
             }
             if (Cave[0].getName().equalsIgnoreCase("Cave entrance")){
                 if (Cave[0].interact("Enter"))
-                    Time.sleepUntil(QuestAreas::isInCentralCave, 4344);
+                    Time.sleepUntil(QuestAreas::isInCentralCave, 5212);
                 return;
             }
             Log.severe("Cave entrance name not recognised?");
