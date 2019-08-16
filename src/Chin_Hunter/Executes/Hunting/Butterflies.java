@@ -110,10 +110,11 @@ public class Butterflies {
     }
 
     private static void releaseButterflies(){
-        Inventory.accept(x -> x.getName().contains(BUTTERFLY_NAME), x -> {
-            if (x.interact("Release"))
-                Time.sleep(156, 513);
-        });
+        Item[] Butterflies = Inventory.getItems(x->x.getName().contains(BUTTERFLY_NAME) && x.containsAction("Release"));
+        for (Item butterfly : Butterflies){
+            if (butterfly.interact("Release"))
+                Time.sleep(156, 615);
+        }
     }
 
     static boolean isChasingAButterfly(){
