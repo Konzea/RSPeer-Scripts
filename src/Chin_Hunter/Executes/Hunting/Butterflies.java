@@ -1,5 +1,6 @@
 package Chin_Hunter.Executes.Hunting;
 
+import Chin_Hunter.Helpers.RequiredItem;
 import Chin_Hunter.Helpers.Trapping;
 import Chin_Hunter.Main;
 import Chin_Hunter.States.ScriptState;
@@ -17,13 +18,20 @@ import org.rspeer.runetek.api.scene.Npcs;
 import org.rspeer.runetek.api.scene.Players;
 import org.rspeer.ui.Log;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class Butterflies {
 
-    private static final Map<String, Integer> MINIMUM_REQUIRED_ITEMS = new HashMap<>();
-    private static final Map<String, Integer> REQUIRED_ITEMS = new HashMap<>();
+    private static final RequiredItem[] MINIMUM_REQUIRED_ITEMS = RequiredItem.concat(new RequiredItem[]{
+            new RequiredItem("Butterfly net", 1),
+            new RequiredItem("Butterfly jar", 1)
+    }, Longtails.getMinimumRequiredItems());
+
+    private static final RequiredItem[] REQUIRED_ITEMS = RequiredItem.concat(new RequiredItem[]{
+            new RequiredItem("Butterfly net", 1),
+            new RequiredItem("Butterfly jar", 4),
+            new RequiredItem("Piscatoris teleport", 1),
+            new RequiredItem("Varrock teleport", 1)
+    }, Longtails.getRequiredItems());
+
 
     private static final String BUTTERFLY_NAME = "Ruby harvest";
     private static final Position CENTRE_TILE = new Position(2321, 3600, 0);
@@ -124,45 +132,21 @@ public class Butterflies {
         return mainhandItem != null && mainhandItem.getName().equalsIgnoreCase("Butterfly net");
     }
 
-    public static void populateHashMaps(){
-        if (MINIMUM_REQUIRED_ITEMS.isEmpty()) {
-            MINIMUM_REQUIRED_ITEMS.put("Butterfly net", 1);
-            MINIMUM_REQUIRED_ITEMS.put("Butterfly jar", 1);
-            Longtails.getMinimumRequiredItems().forEach(MINIMUM_REQUIRED_ITEMS::put);
 
-        }
-        if (REQUIRED_ITEMS.isEmpty()){
-            REQUIRED_ITEMS.put("Butterfly net", 1);
-            REQUIRED_ITEMS.put("Butterfly jar", 4);
-            REQUIRED_ITEMS.put("Piscatoris teleport", 1);
-            REQUIRED_ITEMS.put("Varrock teleport", 1);
-            Longtails.getRequiredItems().forEach(REQUIRED_ITEMS::put);
-        }
-    }
 
-    public static Map<String, Integer> getMinimumRequiredItems(){
+    public static RequiredItem[] getMinimumRequiredItems() {
         return MINIMUM_REQUIRED_ITEMS;
     }
 
-    public static Map<String, Integer> getRequiredItems(){
+    public static RequiredItem[] getRequiredItems() {
         return REQUIRED_ITEMS;
     }
 
-    public static boolean haveMinimumRequiredItems(){
-        if (MINIMUM_REQUIRED_ITEMS.isEmpty()) {
-            Log.severe("Hashmap not populated.");
-            Main.updateScriptState(null);
-            return false;
-        }
+    public static boolean haveMinimumRequiredItems() {
         return Main.hasItems(MINIMUM_REQUIRED_ITEMS, Trapping.TrapType.BIRD_SNARE);
     }
 
-    public static boolean haveRequiredItems(){
-        if (REQUIRED_ITEMS.isEmpty()) {
-            Log.severe("Hashmap not populated.");
-            Main.updateScriptState(null);
-            return false;
-        }
+    public static boolean haveRequiredItems() {
         return Main.hasItems(REQUIRED_ITEMS);
     }
 

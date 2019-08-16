@@ -27,19 +27,29 @@ import org.rspeer.runetek.api.scene.Players;
 import org.rspeer.runetek.api.scene.SceneObjects;
 import org.rspeer.ui.Log;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class QuestMain {
 
-    private static final Map<String, Integer> REQUIRED_ITEMS = new HashMap<>();
-    private static final Map<String, Integer> BIRD_CLOTHES_ITEMS = new HashMap<>();
+    private static final RequiredItem[] BIRD_CLOTHES_ITEMS = new RequiredItem[]{
+            new RequiredItem("Yellow dye", 1),
+            new RequiredItem("Swamp tar", 1),
+            new RequiredItem("Coins", 50),
+            new RequiredItem("Eagle feather", 10)
+    };
+
+    private static final RequiredItem[] REQUIRED_ITEMS = new RequiredItem[]{
+            new RequiredItem("Yellow dye", 1),
+            new RequiredItem("Swamp tar", 1),
+            new RequiredItem("Coins", 5),
+            new RequiredItem("Varrock teleport", 1),
+            new RequiredItem("Necklace of passage(5)", 1),
+            new RequiredItem("Varrock teleport", 2)
+    };
+
 
     private static boolean allFeathersCollected = false;
 
-    /*
-
-     */
 
     private QuestMain(){
         //Private default constructor
@@ -653,7 +663,7 @@ public class QuestMain {
             Time.sleepUntil(Dialog::isProcessing, Random.nextInt(135, 500));
     }
 
-    public static Map<String, Integer> getRequiredItems(){
+    public static RequiredItem[] getRequiredItems(){
         return REQUIRED_ITEMS;
     }
 
@@ -661,20 +671,5 @@ public class QuestMain {
         return Varps.getBitValue(2780) == 40;
     }
 
-    public static void populateHashMap(){
-        if (REQUIRED_ITEMS.isEmpty()) {
-            REQUIRED_ITEMS.put("Yellow dye", 1);
-            REQUIRED_ITEMS.put("Swamp tar", 1);
-            REQUIRED_ITEMS.put("Coins", 50);
-            REQUIRED_ITEMS.put("Necklace of passage(5)", 1);
-            REQUIRED_ITEMS.put("Varrock teleport", 1);
-            REQUIRED_ITEMS.put("Camelot teleport", 2);
-        }
-        if (BIRD_CLOTHES_ITEMS.isEmpty()){
-            BIRD_CLOTHES_ITEMS.put("Yellow dye", 1);
-            BIRD_CLOTHES_ITEMS.put("Swamp tar", 1);
-            BIRD_CLOTHES_ITEMS.put("Coins", 50);
-            BIRD_CLOTHES_ITEMS.put("Eagle feather", 10);
-        }
-    }
+
 }

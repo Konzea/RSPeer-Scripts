@@ -2,7 +2,7 @@ package Chin_Hunter.Executes;
 
 import Chin_Hunter.Executes.Herblore.Druidic_Ritual;
 import Chin_Hunter.Executes.Hunting.*;
-import Chin_Hunter.Executes.Questing.QuestMain;
+import Chin_Hunter.Executes.Eagles_Peak.QuestMain;
 import Chin_Hunter.Helpers.Paint;
 import Chin_Hunter.Main;
 import org.rspeer.runetek.api.commons.Time;
@@ -31,23 +31,10 @@ public class Starting {
         if (!Movement.isRunEnabled())
             Movement.toggleRun(true);
 
-        populateItemHashmaps();
-
         //Sets best target
         Main.onLevelUpEvent();
 
 
-    }
-
-    private static void populateItemHashmaps(){
-        Longtails.populateHashMaps();
-        Butterflies.populateHashMaps();
-        DeadfallKebbits.populateHashMaps();
-        FalconKebbits.populateHashMaps();
-        Chinchompas.populateHashMaps();
-        QuestMain.populateHashMap();
-        Druidic_Ritual.populateHashMap();
-        PurchaseItems.populateHashMap();
     }
 
 

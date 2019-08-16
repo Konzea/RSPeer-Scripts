@@ -1,5 +1,6 @@
 package Chin_Hunter.Executes.Hunting;
 
+import Chin_Hunter.Helpers.RequiredItem;
 import Chin_Hunter.Helpers.Trapping;
 import Chin_Hunter.Main;
 import Chin_Hunter.States.ScriptState;
@@ -7,19 +8,22 @@ import org.rspeer.runetek.adapter.scene.Pickable;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.component.tab.Inventory;
-import org.rspeer.runetek.api.movement.Movement;
 import org.rspeer.runetek.api.movement.position.Position;
 import org.rspeer.runetek.api.scene.Pickables;
 import org.rspeer.runetek.api.scene.Players;
 import org.rspeer.ui.Log;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class Longtails {
 
-    private static final Map<String, Integer> MINIMUM_REQUIRED_ITEMS = new HashMap<>();
-    private static final Map<String, Integer> REQUIRED_ITEMS = new HashMap<>();
+    private static final RequiredItem[] MINIMUM_REQUIRED_ITEMS = {
+            new RequiredItem("Bird snare", Trapping.getMaxTrapCount())
+    };
+
+    private static final RequiredItem[] REQUIRED_ITEMS = {
+            new RequiredItem("Bird snare", 8),
+            new RequiredItem("Piscatoris teleport", 1),
+            new RequiredItem("Varrock teleport", 1)
+    };
 
     private static final Position[] POSSIBLE_CENTRE_TILES = {
             new Position(2310,3587,0),
@@ -101,7 +105,12 @@ public class Longtails {
     }
 
     private static boolean canLootTrap(){
-        return (Inventory.getCount(Trapping.TrapType.BIRD_SNARE.getName()) + Trapping.getPlacedTrapsCount()) < REQUIRED_ITEMS.get(Trapping.TrapType.BIRD_SNARE.getName());
+        int totalTrapsOwned = Inventory.getCount(Trapping.TrapType.BIRD_SNARE.getName()) + Trapping.getPlacedTrapsCount();
+        RequiredItem trapItem = RequiredItem.getByName(Trapping.TrapType.BIRD_SNARE.getName(), REQUIRED_ITEMS);
+        if (trapItem == null)
+            return false;
+        int requiredTraps = trapItem.getAmountRequired();
+        return totalTrapsOwned < requiredTraps;
     }
 
     public static void setCentreTile(Position tile){
@@ -140,40 +149,19 @@ public class Longtails {
     }
 
 
-    public static void populateHashMaps() {
-        if (MINIMUM_REQUIRED_ITEMS.isEmpty()) {
-            MINIMUM_REQUIRED_ITEMS.put("Bird snare", Trapping.getMaxTrapCount());
-        }
-        if (REQUIRED_ITEMS.isEmpty()) {
-            REQUIRED_ITEMS.put("Bird snare", 8);
-            REQUIRED_ITEMS.put("Piscatoris teleport", 1);
-            REQUIRED_ITEMS.put("Varrock teleport", 1);
-        }
-    }
-
-    public static Map<String, Integer> getMinimumRequiredItems() {
+    public static RequiredItem[] getMinimumRequiredItems() {
         return MINIMUM_REQUIRED_ITEMS;
     }
 
-    public static Map<String, Integer> getRequiredItems() {
+    public static RequiredItem[] getRequiredItems() {
         return REQUIRED_ITEMS;
     }
 
     public static boolean haveMinimumRequiredItems() {
-        if (MINIMUM_REQUIRED_ITEMS.isEmpty()) {
-            Log.severe("Hashmap not populated.");
-            Main.updateScriptState(null);
-            return false;
-        }
         return Main.hasItems(MINIMUM_REQUIRED_ITEMS, Trapping.TrapType.BIRD_SNARE);
     }
 
     public static boolean haveRequiredItems() {
-        if (REQUIRED_ITEMS.isEmpty()) {
-            Log.severe("Hashmap not populated.");
-            Main.updateScriptState(null);
-            return false;
-        }
         return Main.hasItems(REQUIRED_ITEMS);
     }
 }
