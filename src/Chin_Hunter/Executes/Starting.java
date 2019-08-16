@@ -21,8 +21,7 @@ public class Starting {
         //Starting
         Log.fine("Running AIO Chin Hunter by Shteve");
         Log.info("Waiting a few seconds for all the RS stuff to load.");
-        Time.sleep(Random.nextInt(3000, 6000));
-        Log.info("Ready to go.");
+        Time.sleep(Random.low(3000, 5000));
         Main.setPaint(new Paint());
 
         if (Combat.isAutoRetaliateOn())
