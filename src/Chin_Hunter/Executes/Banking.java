@@ -1,10 +1,9 @@
 package Chin_Hunter.Executes;
 
-import Chin_Hunter.Executes.Herblore.Druidic_Ritual;
-import Chin_Hunter.Executes.Hunting.Chinchompas;
-import Chin_Hunter.Executes.Hunting.DeadfallKebbits;
-import Chin_Hunter.Executes.Hunting.FalconKebbits;
-import Chin_Hunter.Executes.Questing.QuestMain;
+import Chin_Hunter.Executes.Eagles_Peak.QuestMain;
+import Chin_Hunter.Executes.Herblore.Herblore_Training;
+import Chin_Hunter.Helpers.ItemBuying;
+import Chin_Hunter.Helpers.RequiredItem;
 import Chin_Hunter.Main;
 import Chin_Hunter.States.ScriptState;
 import org.rspeer.runetek.adapter.component.InterfaceComponent;
@@ -23,49 +22,35 @@ import org.rspeer.runetek.api.scene.Players;
 import org.rspeer.ui.Log;
 
 import java.awt.event.KeyEvent;
-import java.util.Map;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 
 public class Banking {
 
-    private static Map<String, Integer> itemsRequired = null;
-    private static boolean doneBankCheck = false;
+    private static RequiredItem[] itemsRequired;
+    private static RequiredItem[] itemsToBuy ;
+    private static boolean initialBankCheckComplete;
+    private static boolean finalBankCheckComplete;
+
+    private static ItemBuying itemBuyer = null;
 
     private Banking(){
         //Private Default Constructor
     }
 
     public static void onStart(){
-        ScriptState bestState = Main.getBestHuntingState();
+        itemBuyer = new ItemBuying();
 
-        switch (bestState) {
-            case LONGTAILS:
-            case BUTTERFLIES:
-            case DEADFALL_KEBBITS:
-                itemsRequired = DeadfallKebbits.getRequiredItems();
-                FalconKebbits.getRequiredItems().forEach(itemsRequired::put);
-                break;
-            case FALCON_KEBBITS:
-                itemsRequired = FalconKebbits.getRequiredItems();
-                break;
-            case EAGLES_PEAK_QUEST:
-                itemsRequired = QuestMain.getRequiredItems();
-                break;
-            case CHINCHOMPAS:
-                itemsRequired = Chinchompas.getRequiredItems();
-                break;
-            case DRUIDIC_RITUAL_QUEST:
-                itemsRequired = Druidic_Ritual.getRequiredItems();
-                break;
-            default:
-                Log.severe("Error: Invalid banking state");
-                break;
-        }
+        ScriptState bestState = Main.getBestHuntingState();
+        itemsRequired = bestState.getItemsToBuy();
+
+        itemsToBuy = null;
+        initialBankCheckComplete = false;
+        finalBankCheckComplete = false;
     }
 
     public static void execute(){
-        if (Main.hasItems(itemsRequired)){
+        if (Main.hasItems(itemsRequired) && finalBankCheckComplete){
             //Got all the items, close the bank and begin hunting
             if (Bank.isOpen()){
                 if (Bank.close())
@@ -77,25 +62,27 @@ public class Banking {
             return;
         }
 
+        if (itemBuyer.isFinishedBuying()){
+            //If we're training herb, herb banking is handled in it's class so leave now
+            if (Main.getBestHuntingState() == ScriptState.HERBLORE_TRAINING){
+                Log.fine("Finished buying all herblore training supplies");
+                Herblore_Training.setHasAllItems(true);
+                Main.updateScriptState(ScriptState.HERBLORE_TRAINING);
+                return;
+            }
+            //Otherwise continue to handle withdrawing correct items
+        }else if (itemsToBuy != null){
+            itemBuyer.BuyItems(itemsToBuy);
+            return;
+        }
+
         if (Main.isAtFeldipHills() || Main.isAtPiscatoris() || !isInGielinor()){
             teleportToBank();
             return;
         }
 
         if (!Bank.isOpen()){
-            if (GrandExchange.isOpen()){
-                if (PurchaseItems.closeGE())
-                    Time.sleepUntil(()->!GrandExchange.isOpen(), 3000);
-                return;
-            }
-            Position nearestBank = BankLocation.getNearest().getPosition();
-            if (Players.getLocal().distance(nearestBank) < 15) {
-                if (Bank.open())
-                    Time.sleepUntil(Bank::isOpen, 5000);
-                return;
-            }
-
-            Main.walkTo(nearestBank);
+            openNearestBank();
             return;
         }
 
@@ -104,22 +91,51 @@ public class Banking {
             return;
         }
 
-        if (!doneBankCheck){
+        if (!initialBankCheckComplete){
             if (Inventory.getCount() > 0){
+                //Deposit all to avoid walking across RS with your cash stack...
                 if (Bank.depositInventory())
                     Time.sleepUntil(()->Inventory.getCount() == 0, 2000);
                 return;
             }
-            if (PurchaseItems.getAllItemsToBuy().size() > 0) {
+            //Find all item we need to buy
+            itemsToBuy = ItemBuying.getAllItemsToBuy(QuestMain.questComplete()?itemsRequired:RequiredItem.concat(itemsRequired, QuestMain.getRequiredItems()));
+            initialBankCheckComplete = true;
+            if (itemsToBuy.length > 0) {
                 Log.fine("Need to buy items");
-                PurchaseItems.getAllItemsToBuy().forEach((k,v)->Log.info(k + ": " + v));
-                Main.updateScriptState(ScriptState.PURCHASE_ITEMS);
+                RequiredItem.logAll(itemsToBuy);
+                return;
+            }else
+                finalBankCheckComplete = true;
+
+            //Let herblore training handle banking
+            if (Main.getBestHuntingState() == ScriptState.HERBLORE_TRAINING){
+                Herblore_Training.setHasAllItems(true);
+                Log.fine("Found all the items we need in the bank.");
+                Main.updateScriptState(ScriptState.HERBLORE_TRAINING);
                 return;
             }
-            doneBankCheck = true;
         }
-        handleBanking();
+        withdrawRequiredItems();
+    }
 
+    private static void openNearestBank(){
+        Position nearestBank = BankLocation.getNearest().getPosition();
+        if (Players.getLocal().distance(nearestBank) < 15) {
+            if (GrandExchange.isOpen()){
+                closeGrandExchange();
+                return;
+            }
+            if (Bank.open())
+                Time.sleepUntil(Bank::isOpen, 5000, 10000);
+            return;
+        }
+        if (Inventory.contains("Varrock teleport") && !Main.isInVarrock()
+                && BankLocation.getNearest().getPosition().distance(Players.getLocal()) > 30){
+            teleportToBank();
+            return;
+        }
+        Main.walkTo(nearestBank);
     }
 
     private static boolean isInGielinor(){
@@ -136,29 +152,49 @@ public class Banking {
         return true;
     }
 
-    private static void handleBanking(){
-        for (Map.Entry<String, Integer> reqItem : itemsRequired.entrySet()) {
-            Predicate<Item> pred = x->x.getName().toLowerCase().equals(reqItem.getKey().toLowerCase());
+    private static void withdrawRequiredItems(){
+        //Deposit all items once, then withdraw the ones we want.
+        if (!finalBankCheckComplete){
+            if (Inventory.getCount() == 0) {
+                finalBankCheckComplete = true;
+            }else {
+                if (Bank.depositInventory())
+                    Time.sleepUntil(() -> Inventory.getCount() == 0, 2500);
+            }
+            return;
+        }
+        for (RequiredItem requiredItem : itemsRequired){
+            Predicate<Item> pred = x->x.getName().equalsIgnoreCase(requiredItem.getName());
             Item[] inventItem = Inventory.getItems(pred);
             int withdrawnAmount = Main.getCount(inventItem);
 
-            if (withdrawnAmount == reqItem.getValue())
+            if (inventItem.length > 0){
+                if (inventItem[0].isNoted()) {
+                    if (Bank.depositAll(inventItem[0].getName()))
+                        Time.sleepUntil(() -> Main.getCount(inventItem) != withdrawnAmount, 2000);
+                    return;
+                }
+            }
+
+            if (withdrawnAmount == requiredItem.getAmountRequired())
                 continue;
 
+
+            final BooleanSupplier correctAmountInInvent = () -> Main.getCount(Inventory.getItems(pred)) == requiredItem.getAmountRequired();
             if (withdrawnAmount == 0){
-                if (Bank.withdraw(reqItem.getKey(), reqItem.getValue()))
-                    Time.sleepUntil(()->Inventory.contains(reqItem.getKey()), 2000);
+                if (Bank.withdraw(requiredItem.getName(), requiredItem.getAmountRequired()))
+                    Time.sleepUntil(correctAmountInInvent, 2000);
                 continue;
             }
 
-            if (withdrawnAmount < reqItem.getValue()){
-                if (Bank.withdraw(reqItem.getKey(), reqItem.getValue() - withdrawnAmount))
-                    Time.sleepUntil(()->Main.getCount(Inventory.getItems(pred)) == reqItem.getValue(), 2000);
+            if (withdrawnAmount < requiredItem.getAmountRequired()){
+                if (Bank.withdraw(requiredItem.getName(), requiredItem.getAmountRequired() - withdrawnAmount))
+                    Time.sleepUntil(correctAmountInInvent, 2000);
                 continue;
             }
 
-            if (Bank.deposit(reqItem.getKey(), reqItem.getValue() - withdrawnAmount))
-                Time.sleepUntil(()->Main.getCount(Inventory.getItems(pred)) == reqItem.getValue(), 2000);
+            if (Bank.deposit(requiredItem.getName(), -(requiredItem.getAmountRequired() - withdrawnAmount)))
+                Time.sleepUntil(correctAmountInInvent, 2000);
 
         }
     }
@@ -185,7 +221,14 @@ public class Banking {
             return;
         }
         if (Magic.interact(Spell.Modern.HOME_TELEPORT, "Cast"))
-            Time.sleepUntil(teleportSuccessful, 15000);
+            Time.sleepUntil(teleportSuccessful,  15000);
+    }
+
+    private static void closeGrandExchange() {
+        InterfaceComponent closeBtn = Interfaces.getComponent(465, 2).getComponent(11);
+        if (closeBtn == null) return;
+        if (closeBtn.interact("Close"))
+            Time.sleepUntil(()->!GrandExchange.isOpen(), 3000);
     }
 
     private static boolean isGeBuyWindowOpen(){
@@ -200,5 +243,6 @@ public class Banking {
         Keyboard.pressEventKey(KeyEvent.VK_ESCAPE);
         Time.sleepUntil(()->!isGeBuyWindowOpen(), 2500);
     }
+
 
 }
