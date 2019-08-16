@@ -1,5 +1,6 @@
 package Chin_Hunter.Executes.Herblore;
 
+import Chin_Hunter.Helpers.RequiredItem;
 import Chin_Hunter.Main;
 import Chin_Hunter.States.ScriptState;
 import com.sun.org.apache.regexp.internal.RE;
@@ -26,7 +27,14 @@ import java.util.Map;
 
 public class Druidic_Ritual {
 
-    private static final Map<String, Integer> REQUIRED_ITEMS = new HashMap<>();
+    private static final RequiredItem[] REQUIRED_ITEMS = {
+            new RequiredItem("Falador teleport", 2),
+            new RequiredItem("Raw bear meat", 1),
+            new RequiredItem("Raw rat meat", 1),
+            new RequiredItem("Raw beef", 1),
+            new RequiredItem("Raw chicken", 1),
+            new RequiredItem("Varrock teleport", 1)
+    };
 
     public static Area QUEST_AREA = Area.polygonal(
             new Position(2862, 3572, 0),
@@ -337,31 +345,16 @@ public class Druidic_Ritual {
 
     //endregion
 
-    public static Map<String, Integer> getRequiredItems(){
+    public static RequiredItem[] getRequiredItems(){
         return REQUIRED_ITEMS;
     }
 
     public static boolean questComplete(){
-        return Varps.getBitValue(80) == 40;
+        return Varps.get(80) == 4;
     }
 
-    public static void populateHashMap(){
-        if (REQUIRED_ITEMS.isEmpty()) {
-            REQUIRED_ITEMS.put("Falador teleport", 2);
-            REQUIRED_ITEMS.put("Raw bear meat", 1);
-            REQUIRED_ITEMS.put("Raw rat meat", 1);
-            REQUIRED_ITEMS.put("Raw beef", 1);
-            REQUIRED_ITEMS.put("Raw chicken", 1);
-            REQUIRED_ITEMS.put("Varrock teleport", 1);
-        }
-    }
 
     public static boolean hasAllRequiredItems(){
-        if (REQUIRED_ITEMS.isEmpty()) {
-            Log.severe("Hashmap not populated.");
-            Main.updateScriptState(null);
-            return false;
-        }
         return Main.hasItems(REQUIRED_ITEMS);
     }
 
