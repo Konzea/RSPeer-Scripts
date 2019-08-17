@@ -98,8 +98,11 @@ public class ItemBuying {
         if (!GrandExchangeSetup.isOpen()){
             checkAndCancelTimedOutOffers(requiredItems);
             //If there is a problem return and try again. Otherwise continue.
-            if (!canCreateNewOffer())
+            if (!canCreateNewOffer()) {
+                if (areOffersToBeCollected())
+                    collectAllOffers();
                 return;
+            }
         }
         buySingleItem(itemToBuy);
     }
