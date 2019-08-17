@@ -160,9 +160,9 @@ class QuestTraveling {
                     return;
                 }
                 if (Inventory.use(x->x.getName().equalsIgnoreCase("Metal feather"), Cave[0])) {
-                    Time.sleepUntil(()->Players.getLocal().isMoving(), 3500);
+                    Time.sleepUntil(()->Players.getLocal().isMoving() || Dialog.isOpen(), 3500);
                     if (Players.getLocal().isMoving())
-                        Time.sleepUntil(() -> Inventory.getCount("Metal feather") == 0, Random.nextInt(8000, 12000));
+                        Time.sleepUntil(() -> Inventory.getCount("Metal feather") == 0 || Dialog.isOpen(), Random.nextInt(8000, 12000));
                 }
                 return;
             }
