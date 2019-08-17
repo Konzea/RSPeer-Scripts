@@ -1,4 +1,4 @@
-package Chin_Hunter.Executes.Questing;
+package Chin_Hunter.Executes.Eagles_Peak;
 
 import org.rspeer.runetek.api.movement.position.Area;
 import org.rspeer.runetek.api.movement.position.Position;

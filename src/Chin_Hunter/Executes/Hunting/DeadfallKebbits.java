@@ -1,5 +1,6 @@
 package Chin_Hunter.Executes.Hunting;
 
+import Chin_Hunter.Helpers.RequiredItem;
 import Chin_Hunter.Helpers.Trapping;
 import Chin_Hunter.Main;
 import Chin_Hunter.States.ScriptState;
@@ -18,8 +19,18 @@ import java.util.function.Predicate;
 
 public class DeadfallKebbits {
 
-    private static final Map<String, Integer> MINIMUM_REQUIRED_ITEMS = new HashMap<>();
-    private static final Map<String, Integer> REQUIRED_ITEMS = new HashMap<>();
+    private static final RequiredItem[] MINIMUM_REQUIRED_ITEMS = RequiredItem.concat(new RequiredItem[]{
+            new RequiredItem("Knife", 1),
+            new RequiredItem("Bronze Axe", 1)
+    }, Butterflies.getMinimumRequiredItems());
+
+    private static final RequiredItem[] REQUIRED_ITEMS = RequiredItem.concat(new RequiredItem[]{
+            new RequiredItem("Knife", 1),
+            new RequiredItem("Bronze Axe", 1),
+            new RequiredItem("Piscatoris teleport", 1),
+            new RequiredItem("Varrock teleport", 1)
+    }, Butterflies.getRequiredItems());
+
 
     private static final Position DEADFALL_TRAP_TILE = new Position(2319, 3594, 0);
     private static final Predicate<SceneObject> DEADFALL_TRAP_PREDICATE = x -> (x.getName().equalsIgnoreCase("Boulder") || x.getName().equalsIgnoreCase("Deadfall")) && x.getPosition().equals(DEADFALL_TRAP_TILE);
@@ -186,50 +197,20 @@ public class DeadfallKebbits {
         return false;
     }
 
-    /**
-     * Buries bones and drops all other JUNK_ITEMS
-     */
 
-
-
-    public static void populateHashMaps() {
-        if (MINIMUM_REQUIRED_ITEMS.isEmpty()) {
-            MINIMUM_REQUIRED_ITEMS.put("Knife", 1);
-            MINIMUM_REQUIRED_ITEMS.put("Bronze Axe", 1);
-            Butterflies.getMinimumRequiredItems().forEach(MINIMUM_REQUIRED_ITEMS::put);
-        }
-        if (REQUIRED_ITEMS.isEmpty()) {
-            REQUIRED_ITEMS.put("Knife", 1);
-            REQUIRED_ITEMS.put("Bronze Axe", 1);
-            REQUIRED_ITEMS.put("Piscatoris teleport", 1);
-            REQUIRED_ITEMS.put("Varrock teleport", 1);
-            Butterflies.getRequiredItems().forEach(REQUIRED_ITEMS::put);
-        }
-    }
-
-    public static Map<String, Integer> getMinimumRequiredItems() {
+    public static RequiredItem[] getMinimumRequiredItems() {
         return MINIMUM_REQUIRED_ITEMS;
     }
 
-    public static Map<String, Integer> getRequiredItems() {
+    public static RequiredItem[] getRequiredItems() {
         return REQUIRED_ITEMS;
     }
 
     public static boolean haveMinimumRequiredItems() {
-        if (MINIMUM_REQUIRED_ITEMS.isEmpty()) {
-            Log.severe("Hashmap not populated.");
-            Main.updateScriptState(null);
-            return false;
-        }
         return Main.hasItems(MINIMUM_REQUIRED_ITEMS, Trapping.TrapType.BIRD_SNARE);
     }
 
     public static boolean haveRequiredItems() {
-        if (REQUIRED_ITEMS.isEmpty()) {
-            Log.severe("Hashmap not populated.");
-            Main.updateScriptState(null);
-            return false;
-        }
         return Main.hasItems(REQUIRED_ITEMS);
     }
 

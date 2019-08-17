@@ -1,5 +1,6 @@
 package Chin_Hunter.Executes.Herblore;
 
+import Chin_Hunter.Helpers.RequiredItem;
 import Chin_Hunter.Main;
 import Chin_Hunter.States.ScriptState;
 import com.sun.org.apache.regexp.internal.RE;
@@ -26,7 +27,14 @@ import java.util.Map;
 
 public class Druidic_Ritual {
 
-    private static final Map<String, Integer> REQUIRED_ITEMS = new HashMap<>();
+    private static final RequiredItem[] REQUIRED_ITEMS = {
+            new RequiredItem("Falador teleport", 2),
+            new RequiredItem("Raw bear meat", 1),
+            new RequiredItem("Raw rat meat", 1),
+            new RequiredItem("Raw beef", 1),
+            new RequiredItem("Raw chicken", 1),
+            new RequiredItem("Varrock teleport", 1)
+    };
 
     public static Area QUEST_AREA = Area.polygonal(
             new Position(2862, 3572, 0),
@@ -48,6 +56,7 @@ public class Druidic_Ritual {
 
     private static Position DUNGEON_LADDER_TILE = new Position(2884, 3397, 0);
     private static Position PRIZON_DOOR_TILE = new Position(2889, 9830, 0);
+    private static Position NEAR_DOOR_TILE =  new Position(2887, 9830, 0);
     private static Area CAULDRON_AREA = Area.rectangular(2889, 9838, 2897, 9826);
 
     private static Position ARMOUR_TILE_1 = new Position(2887, 9832, 0);
@@ -199,7 +208,7 @@ public class Druidic_Ritual {
 
     //region Quest Travelling
 
-    private static void walkToCauldron(){
+    public static void walkToCauldron(){
         if (isInCauldronArea())
             return;
 
@@ -214,8 +223,8 @@ public class Druidic_Ritual {
         if (!Movement.isRunEnabled() && Movement.getRunEnergy() > 10)
             Movement.toggleRun(true);
 
-        if (Players.getLocal().distance(PRIZON_DOOR_TILE) > 3){
-            Main.walkTo(PRIZON_DOOR_TILE);
+        if (Players.getLocal().distance(NEAR_DOOR_TILE) > 4){
+            Main.walkTo(NEAR_DOOR_TILE);
             return;
         }
         SceneObject Door = SceneObjects.getNearest(x->x.getPosition().equals(PRIZON_DOOR_TILE)
@@ -337,31 +346,16 @@ public class Druidic_Ritual {
 
     //endregion
 
-    public static Map<String, Integer> getRequiredItems(){
+    public static RequiredItem[] getRequiredItems(){
         return REQUIRED_ITEMS;
     }
 
     public static boolean questComplete(){
-        return Varps.getBitValue(80) == 40;
+        return Varps.get(80) == 4;
     }
 
-    public static void populateHashMap(){
-        if (REQUIRED_ITEMS.isEmpty()) {
-            REQUIRED_ITEMS.put("Falador teleport", 2);
-            REQUIRED_ITEMS.put("Raw bear meat", 1);
-            REQUIRED_ITEMS.put("Raw rat meat", 1);
-            REQUIRED_ITEMS.put("Raw beef", 1);
-            REQUIRED_ITEMS.put("Raw chicken", 1);
-            REQUIRED_ITEMS.put("Varrock teleport", 1);
-        }
-    }
 
     public static boolean hasAllRequiredItems(){
-        if (REQUIRED_ITEMS.isEmpty()) {
-            Log.severe("Hashmap not populated.");
-            Main.updateScriptState(null);
-            return false;
-        }
         return Main.hasItems(REQUIRED_ITEMS);
     }
 

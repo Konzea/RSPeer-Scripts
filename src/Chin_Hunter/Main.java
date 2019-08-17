@@ -3,10 +3,12 @@ package Chin_Hunter;
 import Chin_Hunter.Executes.Herblore.Druidic_Ritual;
 import Chin_Hunter.Executes.Hunting.FalconKebbits;
 import Chin_Hunter.Executes.MuseumQuiz;
+import Chin_Hunter.Helpers.ItemBuying;
 import Chin_Hunter.Helpers.Paint;
+import Chin_Hunter.Helpers.RequiredItem;
 import Chin_Hunter.Helpers.Trapping;
 import Chin_Hunter.States.ScriptState;
-import Chin_Hunter.Executes.Questing.QuestMain;
+import Chin_Hunter.Executes.Eagles_Peak.QuestMain;
 import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.adapter.scene.Pickable;
 import org.rspeer.runetek.adapter.scene.SceneObject;
@@ -21,6 +23,7 @@ import org.rspeer.runetek.api.scene.Players;
 import org.rspeer.runetek.api.scene.Projection;
 import org.rspeer.runetek.api.scene.SceneObjects;
 import org.rspeer.runetek.event.listeners.ChatMessageListener;
+import org.rspeer.runetek.event.listeners.MouseInputListener;
 import org.rspeer.runetek.event.listeners.RenderListener;
 import org.rspeer.runetek.event.types.ChatMessageEvent;
 import org.rspeer.runetek.event.types.ChatMessageType;
@@ -30,15 +33,18 @@ import org.rspeer.script.ScriptCategory;
 import org.rspeer.script.ScriptMeta;
 import org.rspeer.ui.Log;
 
+import java.awt.event.MouseEvent;
 import java.util.Arrays;
-import java.util.Map;
 
 @ScriptMeta(desc = "Start anywhere and it will do EVERYTHING required to hunt red chins.", developer = "Shteve", name = "AIO Chin Hunter", category = ScriptCategory.HUNTER, version = 0.1)
-public class Main extends Script implements ChatMessageListener, RenderListener {
+public class Main extends Script implements ChatMessageListener, RenderListener, MouseInputListener {
 
     private static boolean onStartCalled = false;
     private static ScriptState currentState = ScriptState.STARTING;
     private static ScriptState previousState;
+
+    private static boolean buryBones = true;
+    private static boolean trainHerblore = true;
 
     private static final Area PISCATORIS_AREA = Area.polygonal(
             new Position(2249, 3646, 0),
@@ -56,8 +62,6 @@ public class Main extends Script implements ChatMessageListener, RenderListener 
             new Position(2464, 2880, 0));
 
     private static final Area VARROCK_AREA = Area.rectangular(3071, 3518, 3295, 3334);
-    private static final Area LUMBRIDGE_AREA = Area.rectangular(3210, 3233, 3234, 3204);
-    private static final Area CAMELOT_AREA = Area.rectangular(2688, 3517, 2780, 3465);
 
     private static final int MIN_WALK_WAIT = 700;
     private static final int MAX_WALK_WAIT = 2000;
@@ -83,8 +87,6 @@ public class Main extends Script implements ChatMessageListener, RenderListener 
 
         currentState.execute();
 
-        Paint.canDisplayPaint = !Projection.isLowCPUMode() && currentState != null;
-
         return Random.nextInt(100, 350);
     }
 
@@ -93,6 +95,13 @@ public class Main extends Script implements ChatMessageListener, RenderListener 
         super.onStop();
     }
 
+    public static boolean canBuryBones(){
+        return buryBones;
+    }
+
+    public static boolean canTrainHerblore(){
+        return trainHerblore;
+    }
 
     @Override
     public void notify(ChatMessageEvent chatMessageEvent) {
@@ -153,7 +162,7 @@ public class Main extends Script implements ChatMessageListener, RenderListener 
 
     @Override
     public void notify(RenderEvent e) {
-        if (Paint.canDisplayPaint)
+        if (paint != null)
             paint.Render(e);
     }
 
@@ -173,15 +182,6 @@ public class Main extends Script implements ChatMessageListener, RenderListener 
         return VARROCK_AREA.contains(Players.getLocal());
     }
 
-    public static boolean isInLumbridge() {
-        return LUMBRIDGE_AREA.contains(Players.getLocal());
-    }
-
-    public static boolean isInCamelot() {
-        return CAMELOT_AREA.contains(Players.getLocal());
-    }
-
-
     /**
      * Handles updating current script state and updating previousState.
      *
@@ -189,18 +189,19 @@ public class Main extends Script implements ChatMessageListener, RenderListener 
      */
     public static void updateScriptState(ScriptState inState) {
         previousState = currentState;
-        if (inState == currentState)
+        if (inState == currentState) {
             Log.severe("Error: New script state same as previous.");
-        else {
-            currentState = inState;
-            onStartCalled = false;
-            if (currentState != null)
-                Log.info("State Updated to: " + currentState.name());
-
-            //Clear museum data cache if not needed.
-            if (currentState != ScriptState.MUSEUM_QUIZ)
-                MuseumQuiz.clearQuizData();
+            return;
         }
+        currentState = inState;
+        onStartCalled = false;
+        if (currentState != null)
+            Log.info("State Updated to: " + currentState.name());
+
+        //Clear museum data cache if not needed.
+        if (currentState != ScriptState.MUSEUM_QUIZ)
+            MuseumQuiz.clearQuizData();
+
     }
 
     public static ScriptState getPreviousScriptState() {
@@ -213,10 +214,6 @@ public class Main extends Script implements ChatMessageListener, RenderListener 
 
     public static void setPaint(Paint p){
         paint = p;
-    }
-
-    public static boolean hasItems(Map<String, Integer> map){
-        return hasItems(map, null);
     }
 
     public static boolean walkTo(Position tile){
@@ -237,16 +234,22 @@ public class Main extends Script implements ChatMessageListener, RenderListener 
             if (Movement.getDestination() != null && Movement.getDestination().equals(tile))
                 Time.sleepUntil(()->Players.getLocal().getPosition().equals(tile), Random.nextInt(8000,12000));
             else
-                Time.sleepUntil(()->(!Players.getLocal().isMoving() && Players.getLocal().getAnimation() == -1)|| Players.getLocal().getPosition().equals(tile), mainSleep);
+                Time.sleepUntil(()->(!Players.getLocal().isMoving() && Players.getLocal().getAnimation() == -1)
+                        || Players.getLocal().getPosition().equals(tile)
+                        || (Players.getLocal().isHealthBarVisible() && !Movement.isRunEnabled() && Movement.getRunEnergy() > 5), mainSleep);
             return true;
         }
         return false;
     }
 
-    public static boolean hasItems(Map<String, Integer> map, Trapping.TrapType trapType) {
-        for (Map.Entry<String, Integer> mapItem : map.entrySet()) {
-            String itemName = mapItem.getKey();
-            int reqAmount = mapItem.getValue();
+    public static boolean hasItems(RequiredItem[] requiredItems){
+        return hasItems(requiredItems, null);
+    }
+
+    public static boolean hasItems(RequiredItem[] requiredItems, Trapping.TrapType trapType) {
+        for (RequiredItem requiredItem : requiredItems) {
+            String itemName = requiredItem.getName();
+            int reqAmount = requiredItem.getAmountRequired();
 
             Item[] invent = Inventory.getItems(x -> x.getName().equalsIgnoreCase(itemName)
                     && !x.isNoted());
@@ -286,16 +289,16 @@ public class Main extends Script implements ChatMessageListener, RenderListener 
     }
 
     public static void handleJunkItems(String... items) {
-        Inventory.accept(x -> Arrays.asList(items).contains(x.getName()), x -> {
-            /*
-            if (x.containsAction("Bury") && x.interact("Bury")) {
+        Item[] itemsToDrop = Inventory.getItems(x->Arrays.asList(items).contains(x.getName()));
+        for (Item item : itemsToDrop){
+            if (item.containsAction("Bury") && canBuryBones() && item.interact("Bury")) {
                 Time.sleep(500);
                 Time.sleepUntil(() -> Players.getLocal().getAnimation() != 827, 2000);
+                continue;
             }
-            */
-            if (x.interact("Drop"))
-                Time.sleep(196, 513);
-        });
+            if (item.interact("Drop"))
+                Time.sleep(196, 641);
+        }
     }
 
 
@@ -337,11 +340,54 @@ public class Main extends Script implements ChatMessageListener, RenderListener 
         if (!QuestMain.questComplete())
             return ScriptState.EAGLES_PEAK_QUEST;
 
-        if (!Druidic_Ritual.questComplete())
-            return ScriptState.DRUIDIC_RITUAL_QUEST;
+        if (canTrainHerblore()) {
+            if (!Druidic_Ritual.questComplete())
+                return ScriptState.DRUIDIC_RITUAL_QUEST;
+
+            if (Skills.getLevel(Skill.HERBLORE) < 19)
+                return ScriptState.HERBLORE_TRAINING;
+        }
 
         return ScriptState.CHINCHOMPAS;
 
+    }
+
+    private static boolean toggleButtonClicked(MouseEvent mouseEvent, int lowX, int lowY, int highX, int highY){
+        if (mouseEvent.getX() < lowX || mouseEvent.getX() > highX)
+            return false;
+        if (mouseEvent.getY() < lowY || mouseEvent.getY() > highY)
+            return false;
+        return true;
+    }
+
+    @Override
+    public void notify(MouseEvent mouseEvent) {
+        if (mouseEvent.getID() != MouseEvent.MOUSE_CLICKED)
+            return;
+        //Log.info("Mouse Clicked: " + mouseEvent.getX() + ", " + mouseEvent.getY());
+
+        //Toggle Paint
+        if (toggleButtonClicked(mouseEvent, 460, 349, 508, 369)){
+            Paint.canDisplayPaint = !Paint.canDisplayPaint;
+            return;
+        }
+
+        //Paint not being displayed, don't allow clicks to change settings.
+        if (!Paint.canDisplayPaint)
+            return;
+
+        //Toggle Prayer
+        if (toggleButtonClicked(mouseEvent, 10, 346, 39, 375)){
+            buryBones = !buryBones;
+            Log.fine(buryBones?"We will now bury bones.":"We will no longer bury bones.");
+            return;
+        }
+
+        //Toggle Herb
+        if (toggleButtonClicked(mouseEvent, 44, 345, 73, 375)) {
+            trainHerblore = !trainHerblore;
+            Log.fine(trainHerblore?"We will now train herblore to 19.":"We will no longer train herblore to 19.");
+        }
     }
 
     //endregion

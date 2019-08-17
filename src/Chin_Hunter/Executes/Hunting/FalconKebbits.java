@@ -1,5 +1,6 @@
 package Chin_Hunter.Executes.Hunting;
 
+import Chin_Hunter.Helpers.RequiredItem;
 import Chin_Hunter.Helpers.Trapping;
 import Chin_Hunter.Main;
 import Chin_Hunter.States.ScriptState;
@@ -29,8 +30,15 @@ import java.util.Map;
 
 public class FalconKebbits {
 
-    private static final Map<String, Integer> MINIMUM_REQUIRED_ITEMS = new HashMap<>();
-    private static final Map<String, Integer> REQUIRED_ITEMS = new HashMap<>();
+    private static final RequiredItem[] MINIMUM_REQUIRED_ITEMS = {
+            new RequiredItem("Coins", 500)
+    };
+
+    private static final RequiredItem[] REQUIRED_ITEMS = {
+            new RequiredItem("Coins", 2000),
+            new RequiredItem("Piscatoris teleport", 1),
+            new RequiredItem("Varrock teleport", 1)
+    };
 
     private static final String[] JUNK_ITEMS = {"Spotted kebbit fur", "Bones", "Dark kebbit fur", "Logs",
             "Kebbit spike", "Bird snare", "Butterfly jar","Raw bird meat", "Orange feather", "Butterfly net",
@@ -89,7 +97,6 @@ public class FalconKebbits {
         }
 
         if (!isInPen()) {
-            Log.info("Walking to pen.");
             enterPen();
             return;
         }
@@ -135,7 +142,6 @@ public class FalconKebbits {
         //Climb-over
 
         if (Stile.length == 0){
-            Log.info("Stile not found, walking to it.");
             Main.walkTo(STILE_TILE);
             return;
         }
@@ -279,42 +285,22 @@ public class FalconKebbits {
         return mainhandItemID == FALCON_GLOVE_ID;
     }
 
-    public static void populateHashMaps() {
-        if (MINIMUM_REQUIRED_ITEMS.isEmpty()) {
-            MINIMUM_REQUIRED_ITEMS.put("Coins", 500);
-        }
-        if (REQUIRED_ITEMS.isEmpty()) {
-            REQUIRED_ITEMS.put("Coins", 2000);
-            REQUIRED_ITEMS.put("Piscatoris teleport", 1);
-            REQUIRED_ITEMS.put("Varrock teleport", 1);
-        }
-    }
 
     //endregion
 
-    public static Map<String, Integer> getMinimumRequiredItems() {
+    public static RequiredItem[] getMinimumRequiredItems() {
         return MINIMUM_REQUIRED_ITEMS;
     }
 
-    public static Map<String, Integer> getRequiredItems() {
+    public static RequiredItem[] getRequiredItems() {
         return REQUIRED_ITEMS;
     }
 
     public static boolean haveMinimumRequiredItems() {
-        if (MINIMUM_REQUIRED_ITEMS.isEmpty()) {
-            Log.severe("Hashmap not populated.");
-            Main.updateScriptState(null);
-            return false;
-        }
-        return Main.hasItems(MINIMUM_REQUIRED_ITEMS);
+        return Main.hasItems(MINIMUM_REQUIRED_ITEMS, Trapping.TrapType.BIRD_SNARE);
     }
 
     public static boolean haveRequiredItems() {
-        if (REQUIRED_ITEMS.isEmpty()) {
-            Log.severe("Hashmap not populated.");
-            Main.updateScriptState(null);
-            return false;
-        }
         return Main.hasItems(REQUIRED_ITEMS);
     }
 }

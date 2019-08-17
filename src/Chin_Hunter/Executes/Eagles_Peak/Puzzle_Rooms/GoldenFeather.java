@@ -1,7 +1,5 @@
-package Chin_Hunter.Executes.Questing.Puzzle_Rooms;
+package Chin_Hunter.Executes.Eagles_Peak.Puzzle_Rooms;
 
-import org.rspeer.runetek.adapter.component.Item;
-import org.rspeer.runetek.adapter.scene.Player;
 import org.rspeer.runetek.adapter.scene.SceneObject;
 import org.rspeer.runetek.api.Varps;
 import org.rspeer.runetek.api.commons.Time;
