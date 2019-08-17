@@ -27,8 +27,6 @@ import org.rspeer.runetek.api.scene.Players;
 import org.rspeer.runetek.api.scene.SceneObjects;
 import org.rspeer.ui.Log;
 
-import java.util.Map;
-
 public class QuestMain {
 
     private static final RequiredItem[] BIRD_CLOTHES_ITEMS = new RequiredItem[]{
@@ -41,7 +39,7 @@ public class QuestMain {
     private static final RequiredItem[] REQUIRED_ITEMS = new RequiredItem[]{
             new RequiredItem("Yellow dye", 1),
             new RequiredItem("Swamp tar", 1),
-            new RequiredItem("Coins", 5),
+            new RequiredItem("Coins", 50),
             new RequiredItem("Varrock teleport", 1),
             new RequiredItem("Necklace of passage(5)", 1),
             new RequiredItem("Varrock teleport", 2)
@@ -516,8 +514,9 @@ public class QuestMain {
                                         Time.sleepUntil(()->Interfaces.getComponent(277,16) == null, 2000);
                                     return;
                                 }
-                                Log.fine("Eagles Peak Completed! Onto Chins.");
-                                Main.updateScriptState(ScriptState.CHINCHOMPAS);
+                                Log.fine("Eagles Peak Completed!");
+                                Main.updateScriptState(Main.getBestHuntingState());
+                                return;
                             }
                             default:{
                                 Log.severe("Unknown 2780 Varpbit Value: " + Varps.getBitValue(2780));
@@ -620,6 +619,7 @@ public class QuestMain {
 
         if (!QuestAreas.isInCentralCave()){
             Log.severe("Trying to pick up feathers when not in the main cave?");
+            Main.updateScriptState(null);
             return false;
         }
 
