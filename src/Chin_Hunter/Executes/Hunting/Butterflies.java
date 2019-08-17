@@ -9,6 +9,7 @@ import org.rspeer.runetek.adapter.scene.Npc;
 import org.rspeer.runetek.adapter.scene.PathingEntity;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.commons.math.Random;
+import org.rspeer.runetek.api.component.Dialog;
 import org.rspeer.runetek.api.component.tab.EquipmentSlot;
 import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.runetek.api.movement.Movement;
@@ -73,6 +74,16 @@ public class Butterflies {
         if (!haveMinimumRequiredItems()) {
             Log.severe("Minimum required items not found");
             Main.updateScriptState(ScriptState.BANKING);
+            return;
+        }
+
+        if (Dialog.isOpen()){
+            if (Dialog.isProcessing()){
+                Time.sleep(50, 200);
+                return;
+            }
+            if (Dialog.processContinue())
+                Time.sleep(100, 300);
             return;
         }
 
