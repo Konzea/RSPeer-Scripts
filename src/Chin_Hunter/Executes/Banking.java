@@ -56,7 +56,7 @@ public class Banking {
                 if (Bank.close())
                     Time.sleepUntil(Bank::isClosed,2000);
             }else {
-                Log.fine("Got all items, lets hunt!");
+                Log.fine("Got all items, lets go!");
                 Main.updateScriptState(Main.getBestHuntingState());
             }
             return;
