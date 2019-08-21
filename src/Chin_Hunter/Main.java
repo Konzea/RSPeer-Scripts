@@ -117,7 +117,7 @@ public class Main extends Script implements ChatMessageListener, RenderListener,
                 Log.severe("Printing debug data and stopping.");
                 Log.info("Max trap count: " + Trapping.getMaxTrapCount());
                 Log.info("Traps placed: " + Trapping.getPlacedTrapsCount());
-                for (Position activeTile : Trapping.previousTrapTiles){
+                for (Position activeTile : Trapping.getTrapLocations()){
                     String output = "Active Trap on " + activeTile.toString() + " : ";
                     SceneObject[] objectsOnTile = SceneObjects.getLoaded(x -> x.getPosition().equals(activeTile) && !x.getName().equalsIgnoreCase("null"));
                     if (objectsOnTile.length > 0) {
