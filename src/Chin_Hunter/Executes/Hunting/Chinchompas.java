@@ -1,17 +1,15 @@
 package Chin_Hunter.Executes.Hunting;
 
 import Chin_Hunter.Helpers.RequiredItem;
-import Chin_Hunter.Helpers.Trapping;
+import Chin_Hunter.Hunter.Hunting;
+import Chin_Hunter.Hunter.Trap_Admin.TrapType;
 import Chin_Hunter.Main;
 import org.rspeer.ui.Log;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class Chinchompas {
 
     private static final RequiredItem[] MINIMUM_REQUIRED_ITEMS = {
-            new RequiredItem("Box trap", Trapping.getMaxTrapCount())
+            new RequiredItem("Box trap", Hunting.getMaxTrapCount())
     };
 
     private static final RequiredItem[] REQUIRED_ITEMS = {
@@ -53,7 +51,7 @@ public class Chinchompas {
     }
 
     public static boolean haveMinimumRequiredItems() {
-        return Main.hasItems(MINIMUM_REQUIRED_ITEMS, Trapping.TrapType.BIRD_SNARE);
+        return Main.hasItems(MINIMUM_REQUIRED_ITEMS, TrapType.BOX_TRAP);
     }
 
     public static boolean haveRequiredItems() {

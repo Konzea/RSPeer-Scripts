@@ -1,7 +1,6 @@
 package Chin_Hunter.Executes.Hunting;
 
 import Chin_Hunter.Helpers.RequiredItem;
-import Chin_Hunter.Helpers.Trapping;
 import Chin_Hunter.Main;
 import Chin_Hunter.States.ScriptState;
 import org.rspeer.runetek.adapter.component.InterfaceComponent;
@@ -14,9 +13,6 @@ import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.component.Dialog;
 import org.rspeer.runetek.api.component.tab.EquipmentSlot;
 import org.rspeer.runetek.api.component.tab.Inventory;
-import org.rspeer.runetek.api.component.tab.Skill;
-import org.rspeer.runetek.api.component.tab.Skills;
-import org.rspeer.runetek.api.movement.Movement;
 import org.rspeer.runetek.api.movement.position.Position;
 import org.rspeer.runetek.api.scene.HintArrow;
 import org.rspeer.runetek.api.scene.Npcs;
@@ -25,8 +21,6 @@ import org.rspeer.runetek.api.scene.SceneObjects;
 import org.rspeer.ui.Log;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 public class FalconKebbits {
 
@@ -65,7 +59,7 @@ public class FalconKebbits {
     }
 
     public static void onStart() {
-        Trapping.reset();
+
     }
 
     public static void execute() {
@@ -74,7 +68,7 @@ public class FalconKebbits {
                 Main.updateScriptState(ScriptState.BANKING);
                 return;
             }
-            Trapping.teleportToPiscatoris();
+            Main.teleportToPiscatoris();
             return;
         }
 
@@ -116,7 +110,7 @@ public class FalconKebbits {
 
     public static void updateTargetKebbits(){
         //57
-        int hunterLevel = Skills.getLevel(Skill.HUNTER);
+        int hunterLevel = Main.getHunterLevel();
         if (hunterLevel >= 57)
             targetKebbitNames = new String[]{"Spotted kebbit", "Dark kebbit"};
         else
@@ -297,7 +291,7 @@ public class FalconKebbits {
     }
 
     public static boolean haveMinimumRequiredItems() {
-        return Main.hasItems(MINIMUM_REQUIRED_ITEMS, Trapping.TrapType.BIRD_SNARE);
+        return Main.hasItems(MINIMUM_REQUIRED_ITEMS);
     }
 
     public static boolean haveRequiredItems() {

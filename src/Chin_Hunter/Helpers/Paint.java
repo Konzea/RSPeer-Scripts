@@ -1,10 +1,11 @@
 package Chin_Hunter.Helpers;
 
-import Chin_Hunter.Executes.Hunting.DeadfallKebbits;
+import Chin_Hunter.Hunter.Hunting;
+import Chin_Hunter.Hunter.Trap_Admin.LaidTrap;
 import Chin_Hunter.Main;
 import org.rspeer.runetek.api.component.tab.Skill;
 import org.rspeer.runetek.api.component.tab.Skills;
-import org.rspeer.runetek.api.movement.position.Position;
+import org.rspeer.runetek.api.movement.position.ScreenPosition;
 import org.rspeer.runetek.event.types.RenderEvent;
 import org.rspeer.ui.Log;
 
@@ -53,6 +54,20 @@ public class Paint {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         int y = 344;
         int x = 6;
+
+        g2.setColor(Color.GREEN);
+        if (Hunting.getActiveTrapCount() > 0) {
+            try {
+                for (LaidTrap trap : Hunting.getActiveTraps()) {
+                    trap.getLocation().outline(g2);
+                    ScreenPosition trapOnScreen = trap.getLocation().toScreen();
+                    if (trapOnScreen != null)
+                        trapOnScreen.draw(g2, formatTime(trap.getActiveTimeMs()));
+                }
+            } catch (ConcurrentModificationException ignored) {
+            }
+        }
+
         if (!canDisplayPaint){
             if (paintOff != null)
                 g2.drawImage(paintOff, null, x,y);
@@ -72,8 +87,8 @@ public class Paint {
         int levelsGained = Skills.getLevel(Skill.HUNTER) - hunterStartLevel;
         long runTime = System.currentTimeMillis() - startTime;
 
-        g2.drawString("Traps Placed: " + Trapping.getPlacedTrapsCount(), x += 13, y += 52);
-        g2.drawString("Our Deadfall: " + DeadfallKebbits.deadfallIsOurs, x, y += 15);
+        g2.drawString("Traps Placed: " + Hunting.getActiveTrapCount(), x += 13, y += 52);
+        y += 15;
         g2.setColor(Color.YELLOW);
         g2.drawString("Chins Caught: 0", x, y += 15);
         g2.drawString("Chins Per Hour: 0", x, y += 15);
@@ -89,14 +104,6 @@ public class Paint {
 
         String currentState = Main.getCurrentState() == null?"null":Main.getCurrentState().name();
         g2.drawString("State: " + currentState, x, y += 16);
-
-        if (Trapping.getPlacedTrapsCount() > 0) {
-            try {
-                for (Position pos : Trapping.getTrapLocations())
-                    pos.outline(g2);
-            } catch (ConcurrentModificationException ignored) {
-            }
-        }
     }
 
     private String getXPPerHour(int inXPGained, long inMillisecondsRan){
@@ -108,7 +115,8 @@ public class Paint {
         long second = (inMilliseconds / 1000) % 60;
         long minute = (inMilliseconds / (1000 * 60)) % 60;
         long hour = (inMilliseconds / (1000 * 60 * 60)) % 24;
-
+        if (hour == 0)
+            return String.format("%02d:%02d", minute, second);
         return String.format("%02d:%02d:%02d", hour, minute, second);
     }
 

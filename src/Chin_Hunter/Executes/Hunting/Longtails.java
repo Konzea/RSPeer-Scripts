@@ -1,7 +1,9 @@
 package Chin_Hunter.Executes.Hunting;
 
 import Chin_Hunter.Helpers.RequiredItem;
-import Chin_Hunter.Helpers.Trapping;
+import Chin_Hunter.Hunter.Hunting;
+import Chin_Hunter.Hunter.Trap_Admin.LaidTrap;
+import Chin_Hunter.Hunter.Trap_Admin.TrapType;
 import Chin_Hunter.Main;
 import Chin_Hunter.States.ScriptState;
 import org.rspeer.runetek.adapter.scene.Pickable;
@@ -16,7 +18,7 @@ import org.rspeer.ui.Log;
 public class Longtails {
 
     private static final RequiredItem[] MINIMUM_REQUIRED_ITEMS = {
-            new RequiredItem("Bird snare", Trapping.getMaxTrapCount())
+            new RequiredItem("Bird snare", Hunting.getMaxTrapCount())
     };
 
     private static final RequiredItem[] REQUIRED_ITEMS = {
@@ -50,29 +52,28 @@ public class Longtails {
                 Main.updateScriptState(ScriptState.BANKING);
                 return;
             }
-            Trapping.teleportToPiscatoris();
+            Main.teleportToPiscatoris();
             return;
         }
         if (HuntLongtails()) {
-            if (Players.getLocal().getPosition().distance(CENTRE_TILE) <= 2)
-                Main.walkTo(getNearbyTile(CENTRE_TILE, 3));
+            if (Players.getLocal().getPosition().distance(CENTRE_TILE) <= 2) {
+                Position nearbyTile = getNearbyTile(CENTRE_TILE, 3);
+                if (Main.walkTo(nearbyTile))
+                    Time.sleepUntil(()->Players.getLocal().getPosition().equals(nearbyTile), 6000);
+            }
         }
 
     }
 
     static boolean HuntLongtails(){
-        return HuntLongtails(Trapping.getMaxTrapCount());
-    }
-
-    static boolean HuntLongtails(int maxTrapCount){
         if (!haveMinimumRequiredItems()) {
             Log.severe("Minimum required items not found");
             Main.updateScriptState(ScriptState.BANKING);
             return false;
         }
 
-        if (Trapping.getPlacedTrapsCount() < maxTrapCount) {
-            Trapping.layTrap(Trapping.TrapType.BIRD_SNARE, CENTRE_TILE);
+        if (Hunting.canPlaceTrap()) {
+            Hunting.Lay_Trap(TrapType.BIRD_SNARE, CENTRE_TILE, true);
             return false;
         }
 
@@ -86,13 +87,13 @@ public class Longtails {
             return false;
         }
 
-        Position trapToCheck = Trapping.getTrapToFix(Trapping.TrapType.BIRD_SNARE);
+        LaidTrap trapToCheck = Hunting.getTrapToFix(TrapType.BIRD_SNARE);
         if (trapToCheck != null) {
-            Trapping.checkTrap(Trapping.TrapType.BIRD_SNARE, trapToCheck);
+            trapToCheck.fixTrap();
             return false;
         }
 
-        Pickable[] droppedTraps = Pickables.getLoaded(x->x.getName().equalsIgnoreCase(Trapping.TrapType.BIRD_SNARE.getName()));
+        Pickable[] droppedTraps = Pickables.getLoaded(x->x.getName().equalsIgnoreCase(TrapType.BIRD_SNARE.getName()));
         if (droppedTraps.length > 0 && canLootTrap()){
             Log.fine("Found a random trap on the floor, might be ours? Yoinked it regardless.");
             int inventCount = Inventory.getCount();
@@ -105,8 +106,8 @@ public class Longtails {
     }
 
     private static boolean canLootTrap(){
-        int totalTrapsOwned = Inventory.getCount(Trapping.TrapType.BIRD_SNARE.getName()) + Trapping.getPlacedTrapsCount();
-        RequiredItem trapItem = RequiredItem.getByName(Trapping.TrapType.BIRD_SNARE.getName(), REQUIRED_ITEMS);
+        int totalTrapsOwned = Inventory.getCount(TrapType.BIRD_SNARE.getName()) + Hunting.getActiveTrapCount();
+        RequiredItem trapItem = RequiredItem.getByName(TrapType.BIRD_SNARE.getName(), REQUIRED_ITEMS);
         if (trapItem == null)
             return false;
         int requiredTraps = trapItem.getAmountRequired();
@@ -158,7 +159,7 @@ public class Longtails {
     }
 
     public static boolean haveMinimumRequiredItems() {
-        return Main.hasItems(MINIMUM_REQUIRED_ITEMS, Trapping.TrapType.BIRD_SNARE);
+        return Main.hasItems(MINIMUM_REQUIRED_ITEMS, TrapType.BIRD_SNARE);
     }
 
     public static boolean haveRequiredItems() {

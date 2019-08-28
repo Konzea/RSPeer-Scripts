@@ -3,25 +3,22 @@ package Chin_Hunter;
 import Chin_Hunter.Executes.Herblore.Druidic_Ritual;
 import Chin_Hunter.Executes.Hunting.FalconKebbits;
 import Chin_Hunter.Executes.MuseumQuiz;
-import Chin_Hunter.Helpers.ItemBuying;
 import Chin_Hunter.Helpers.Paint;
 import Chin_Hunter.Helpers.RequiredItem;
-import Chin_Hunter.Helpers.Trapping;
+import Chin_Hunter.Hunter.Hunting;
+import Chin_Hunter.Hunter.Trap_Admin.TrapError;
+import Chin_Hunter.Hunter.Trap_Admin.TrapType;
 import Chin_Hunter.States.ScriptState;
 import Chin_Hunter.Executes.Eagles_Peak.QuestMain;
+import org.jetbrains.annotations.Nullable;
 import org.rspeer.runetek.adapter.component.Item;
-import org.rspeer.runetek.adapter.scene.Pickable;
-import org.rspeer.runetek.adapter.scene.SceneObject;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.component.tab.*;
 import org.rspeer.runetek.api.movement.Movement;
 import org.rspeer.runetek.api.movement.position.Area;
 import org.rspeer.runetek.api.movement.position.Position;
-import org.rspeer.runetek.api.scene.Pickables;
 import org.rspeer.runetek.api.scene.Players;
-import org.rspeer.runetek.api.scene.Projection;
-import org.rspeer.runetek.api.scene.SceneObjects;
 import org.rspeer.runetek.event.listeners.ChatMessageListener;
 import org.rspeer.runetek.event.listeners.MouseInputListener;
 import org.rspeer.runetek.event.listeners.RenderListener;
@@ -66,6 +63,8 @@ public class Main extends Script implements ChatMessageListener, RenderListener,
     private static final int MIN_WALK_WAIT = 700;
     private static final int MAX_WALK_WAIT = 2000;
 
+    private static final int TURN_RUN_ON_LIMIT = Random.high(50, 100);
+
     private static Paint paint = null;
 
     @Override
@@ -85,7 +84,15 @@ public class Main extends Script implements ChatMessageListener, RenderListener,
             onStartCalled = true;
         }
 
-        currentState.execute();
+        if (!Movement.isRunEnabled() && Movement.getRunEnergy() > TURN_RUN_ON_LIMIT) {
+            Movement.toggleRun(true);
+            Time.sleepUntil(Movement::isRunEnabled, 1500);
+        }
+
+        if (TrapError.isActive())
+            TrapError.solveActiveError();
+        else
+            currentState.execute();
 
         return Random.nextInt(100, 350);
     }
@@ -110,50 +117,19 @@ public class Main extends Script implements ChatMessageListener, RenderListener,
             if (Message.contains("Congratulations, ")) {
                 Log.fine(Message);
                 onLevelUpEvent();
-            } else if (Message.equals("Oh dear, you are dead!")) {
+                return;
+            }
+            if (Message.equals("Oh dear, you are dead!")) {
                 //On Death Event
-            }else if (Message.contains("You may set up only")){
-                Log.severe("We already heave the max number of traps put down.");
-                Log.severe("Printing debug data and stopping.");
-                Log.info("Max trap count: " + Trapping.getMaxTrapCount());
-                Log.info("Traps placed: " + Trapping.getPlacedTrapsCount());
-                for (Position activeTile : Trapping.previousTrapTiles){
-                    String output = "Active Trap on " + activeTile.toString() + " : ";
-                    SceneObject[] objectsOnTile = SceneObjects.getLoaded(x -> x.getPosition().equals(activeTile) && !x.getName().equalsIgnoreCase("null"));
-                    if (objectsOnTile.length > 0) {
-                        String objectNames = "Objects[";
-                        for (SceneObject obj : objectsOnTile)
-                            objectNames = objectNames + obj.getName() + "|";
-                        output = output + objectNames + "], ";
-                    }
-                    Pickable[] pickablesOnTile = Pickables.getLoaded(x -> x.getPosition().equals(activeTile) && x.getName().equalsIgnoreCase("Bird snare"));
-                    if (pickablesOnTile.length > 0) {
-                        String pickableNames = "GroundItems[";
-                        for (Pickable pickable : pickablesOnTile)
-                            pickableNames = pickableNames + pickable.getName() + "|";
-                        output = output + pickableNames + "], ";
-                    }
-                    Log.info(output);
-                }
-                for (Position prevTile : Trapping.previousTrapTiles){
-                    String output = "Previous Trap on " + prevTile.toString() + " : ";
-                    SceneObject[] objectsOnTile = SceneObjects.getLoaded(x -> x.getPosition().equals(prevTile) && !x.getName().equalsIgnoreCase("null"));
-                    if (objectsOnTile.length > 0) {
-                        String objectNames = "Objects[";
-                        for (SceneObject obj : objectsOnTile)
-                            objectNames = objectNames + obj.getName() + "|";
-                        output = output + objectNames + "], ";
-                    }
-                    Pickable[] pickablesOnTile = Pickables.getLoaded(x -> x.getPosition().equals(prevTile) && x.getName().equalsIgnoreCase("Bird snare"));
-                    if (pickablesOnTile.length > 0) {
-                            String pickableNames = "GroundItems[";
-                            for (Pickable pickable : pickablesOnTile)
-                                pickableNames = pickableNames + pickable.getName() + "|";
-                            output = output + pickableNames + "], ";
-                        }
-                    Log.info(output);
-                }
-                updateScriptState(null);
+                return;
+            }
+            if (Message.contains("You may set up only")){
+                TrapError.setActiveError(new TrapError(TrapError.ErrorType.TRAP_LIMIT_REACHED, null));
+                return;
+            }
+            if (Message.equals("This isn't your trap.")){
+                TrapError.setActiveError(new TrapError(TrapError.ErrorType.TRAP_NOT_OURS, Hunting.getCurrentFocusedTrap().getLocation()));
+                //return;
             }
         }
     }
@@ -183,11 +159,21 @@ public class Main extends Script implements ChatMessageListener, RenderListener,
     }
 
     /**
+     * Teleports a player to piscatoris, must have teleport
+     */
+    public static void teleportToPiscatoris() {
+        Item piscTele = Inventory.getFirst("Piscatoris teleport");
+        if (piscTele != null && piscTele.interact("Teleport")) {
+            Time.sleepUntil(Main::isAtPiscatoris, 8000);
+        }
+    }
+
+    /**
      * Handles updating current script state and updating previousState.
      *
      * @param inState The state you wish to set or null to stop script.
      */
-    public static void updateScriptState(ScriptState inState) {
+    public static void updateScriptState(@Nullable ScriptState inState) {
         previousState = currentState;
         if (inState == currentState) {
             Log.severe("Error: New script state same as previous.");
@@ -202,6 +188,11 @@ public class Main extends Script implements ChatMessageListener, RenderListener,
         if (currentState != ScriptState.MUSEUM_QUIZ)
             MuseumQuiz.clearQuizData();
 
+    }
+
+    public static int getHunterLevel(){
+        //return 40;
+        return Skills.getLevel(Skill.HUNTER);
     }
 
     public static ScriptState getPreviousScriptState() {
@@ -246,7 +237,7 @@ public class Main extends Script implements ChatMessageListener, RenderListener,
         return hasItems(requiredItems, null);
     }
 
-    public static boolean hasItems(RequiredItem[] requiredItems, Trapping.TrapType trapType) {
+    public static boolean hasItems(RequiredItem[] requiredItems, TrapType trapType) {
         for (RequiredItem requiredItem : requiredItems) {
             String itemName = requiredItem.getName();
             int reqAmount = requiredItem.getAmountRequired();
@@ -255,7 +246,7 @@ public class Main extends Script implements ChatMessageListener, RenderListener,
                     && !x.isNoted());
 
             if (invent.length > 0){
-                int layedTrapAdjustment = trapType != null && trapType.getName().equalsIgnoreCase(itemName) ? Trapping.getPlacedTrapsCount(): 0;
+                int layedTrapAdjustment = trapType != null && trapType.getName().equalsIgnoreCase(itemName) ? Hunting.getActiveTrapCount(): 0;
                 int itemCount = getCount(invent) + layedTrapAdjustment;
                 if (itemCount >= reqAmount)
                     continue;
@@ -291,41 +282,36 @@ public class Main extends Script implements ChatMessageListener, RenderListener,
     public static void handleJunkItems(String... items) {
         Item[] itemsToDrop = Inventory.getItems(x->Arrays.asList(items).contains(x.getName()));
         for (Item item : itemsToDrop){
-            if (item.containsAction("Bury") && canBuryBones() && item.interact("Bury")) {
+            Time.sleep(Random.low(196, 1200));
+            if (canBuryBones() && item.containsAction("Bury") && item.interact("Bury")) {
                 Time.sleep(500);
                 Time.sleepUntil(() -> Players.getLocal().getAnimation() != 827, 2000);
                 continue;
             }
-            if (item.interact("Drop"))
-                Time.sleep(196, 641);
+            item.interact("Drop");
         }
     }
 
 
-    /**
-     * Checks for the best attack style and best target and updates if necessary.
-     */
     public static void onLevelUpEvent() {
-        if (!Movement.isRunEnabled())
-            Movement.toggleRun(true);
+        Hunting.updateMaxTrapCount();
 
         ScriptState bestState = getBestHuntingState();
         //If we're level 9 hunter we've just finished the quiz
         //Leave it on the current state so it can switch to banking manually.
-        if (Skills.getLevel(Skill.HUNTER) == 9 && currentState == ScriptState.MUSEUM_QUIZ)
+        if (getHunterLevel() == 9 && currentState == ScriptState.MUSEUM_QUIZ)
             return;
 
         if (bestState.name().equalsIgnoreCase("FALCON_KEBBITS"))
             FalconKebbits.updateTargetKebbits();
 
-        if (!currentState.name().equals(bestState.name())) {
+        if (!currentState.name().equals(bestState.name()))
             updateScriptState(bestState);
-        }
     }
 
 
     public static ScriptState getBestHuntingState() {
-        int hunterLevel = Skills.getLevel(Skill.HUNTER);
+        int hunterLevel = getHunterLevel();
         if (hunterLevel < 9)
             return ScriptState.MUSEUM_QUIZ;
         if (hunterLevel < 15)
