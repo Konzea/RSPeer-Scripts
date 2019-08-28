@@ -103,7 +103,7 @@ class QuestTraveling {
             }
             if (Eagle.interact("Walk-past")){
                 Time.sleepUntil(()->Players.getLocal().getAnimation() == -1
-                        && QuestAreas.isAtEaglesNest(), 6000);
+                        && QuestAreas.isAtEaglesNest(), Random.nextInt(5000, 8000));
             }
             return;
         }
@@ -132,7 +132,7 @@ class QuestTraveling {
             return;
         }
         if (Door.interact("Open"))
-            Time.sleepUntil(QuestAreas::isPassedStoneDoor, 3500);
+            Time.sleepUntil(QuestAreas::isPassedStoneDoor, Random.nextInt(3000, 5000));
 
     }
 
@@ -160,7 +160,7 @@ class QuestTraveling {
                     return;
                 }
                 if (Inventory.use(x->x.getName().equalsIgnoreCase("Metal feather"), Cave[0])) {
-                    Time.sleepUntil(()->Players.getLocal().isMoving() || Dialog.isOpen(), 3500);
+                    Time.sleepUntil(()->Players.getLocal().isMoving() || Dialog.isOpen(), Random.nextInt(3000, 4000));
                     if (Players.getLocal().isMoving())
                         Time.sleepUntil(() -> Inventory.getCount("Metal feather") == 0 || Dialog.isOpen(), Random.nextInt(8000, 12000));
                 }
@@ -168,7 +168,7 @@ class QuestTraveling {
             }
             if (Cave[0].getName().equalsIgnoreCase("Cave entrance")){
                 if (Cave[0].interact("Enter"))
-                    Time.sleepUntil(QuestAreas::isInCentralCave, 5212);
+                    Time.sleepUntil(QuestAreas::isInCentralCave, Random.nextInt(4500, 6000));
                 return;
             }
             Log.severe("Cave entrance name not recognised?");
@@ -227,7 +227,7 @@ class QuestTraveling {
                 if (!isNearVarrock()){
                     if (Magic.getBook() == Magic.Book.MODERN || Magic.getBook() == Magic.Book.ANCIENT) {
                         if (Magic.cast(Spell.Modern.HOME_TELEPORT)) {
-                            Time.sleepUntil(QuestTraveling::isNearVarrock, 15000);
+                            Time.sleepUntil(QuestTraveling::isNearVarrock, Random.nextInt(14000, 18000));
                             return;
                         }
                     }
@@ -237,7 +237,7 @@ class QuestTraveling {
             }
             //Use varrock tele
             if (varrockTele.interact("Break"))
-                Time.sleepUntil(QuestAreas::isInVarrock, 10000);
+                Time.sleepUntil(QuestAreas::isInVarrock, Random.nextInt(9000, 12000));
             return;
         }
 
@@ -250,7 +250,7 @@ class QuestTraveling {
                 return;
             }
             if (gate.interact("Open"))
-                Time.sleepUntil(QuestAreas::isInFencedVarrockArea, 5000);
+                Time.sleepUntil(QuestAreas::isInFencedVarrockArea, Random.nextInt(4000, 7000));
             return;
         }
 
@@ -270,7 +270,7 @@ class QuestTraveling {
                 return;
             }
             if (door.interact("Open"))
-                Time.sleepUntil(shopOwner::isPositionInteractable, 3500);
+                Time.sleepUntil(shopOwner::isPositionInteractable, Random.nextInt(2500, 4000));
         }
     }
 
@@ -292,12 +292,12 @@ class QuestTraveling {
         Position startPos = Players.getLocal().getPosition();
         if (Tunnel.interact("Enter")){
             final BooleanSupplier enteredNewCave = () -> Players.getLocal().getPosition().distance(startPos) > 100;
-            Time.sleepUntil(enteredNewCave, 5000);
+            Time.sleepUntil(enteredNewCave, Random.nextInt(4000, 6000));
             if (Players.getLocal().isMoving()) {
                 //It can sometimes be a long ass walk so here is some janky ass sleeping.
-                Time.sleepUntil(() -> !Players.getLocal().isMoving(), 5000);
+                Time.sleepUntil(() -> !Players.getLocal().isMoving(), Random.nextInt(4000, 8000));
                 if (!Players.getLocal().isMoving())
-                    Time.sleepUntil(enteredNewCave, 1200);
+                    Time.sleepUntil(enteredNewCave, Random.nextInt(1000, 2000));
             }
         }
 
@@ -308,7 +308,7 @@ class QuestTraveling {
             return true;
 
         if (Inventory.use(x->x.getName().equalsIgnoreCase(featherName), Door))
-            Time.sleepUntil(()->!Inventory.contains(featherName), 3000);
+            Time.sleepUntil(()->!Inventory.contains(featherName), Random.nextInt(3000, 5000));
 
         return !Inventory.contains(featherName);
     }
@@ -336,9 +336,9 @@ class QuestTraveling {
         }
 
         if (Shortcut[0].interact("Climb")){
-            Time.sleepUntil(()->Players.getLocal().getAnimation() != -1, 5000);
+            Time.sleepUntil(()->Players.getLocal().getAnimation() != -1, Random.nextInt(4000, 6000));
             if (Players.getLocal().getAnimation() != -1){
-                Time.sleepUntil(()->Players.getLocal().getAnimation() == -1, 5000);
+                Time.sleepUntil(()->Players.getLocal().getAnimation() == -1, Random.nextInt(4000, 6000));
             }
         }
     }
@@ -353,7 +353,7 @@ class QuestTraveling {
             }
             if (Eagle.interact("Walk-past")){
                 Time.sleepUntil(()->Players.getLocal().getAnimation() == -1
-                    && !QuestAreas.isAtEaglesNest(), 6000);
+                    && !QuestAreas.isAtEaglesNest(), Random.nextInt(5000, 8000));
                 Time.sleep(500);
             }
             return;
@@ -366,7 +366,7 @@ class QuestTraveling {
                 return;
             }
             if (Door.interact("Open"))
-                Time.sleepUntil(()->!QuestAreas.isPassedStoneDoor(), 5256);
+                Time.sleepUntil(()->!QuestAreas.isPassedStoneDoor(), Random.nextInt(4500, 6000));
         }
     }
 
@@ -406,7 +406,7 @@ class QuestTraveling {
             InterfaceComponent teleOption = Dialog.getChatOption(x->x.contains("The Outpost"));
             if (teleOption != null){
                 if (teleOption.interact("Continue")){
-                    Time.sleepUntil(QuestAreas::isAtOutpost, 8000);
+                    Time.sleepUntil(QuestAreas::isAtOutpost, Random.nextInt(8000, 10000));
                     return QuestAreas.isAtOutpost();
                 }
                 return false;
@@ -417,14 +417,14 @@ class QuestTraveling {
         Item necklace = Inventory.getFirst(x->x.getName().contains("Necklace of passage("));
         if (necklace != null){
             if (necklace.interact("Rub"))
-                Time.sleepUntil(Dialog::isOpen, 2000);
+                Time.sleepUntil(Dialog::isOpen, Random.nextInt(1500, 3000));
             return false;
         }
 
         Item equippedNeck = EquipmentSlot.NECK.getItem();
         if (equippedNeck != null && equippedNeck.getName().contains("Necklace of passage(")){
             if (EquipmentSlot.NECK.interact("The Outpost")){
-                Time.sleepUntil(QuestAreas::isAtOutpost, 8000);
+                Time.sleepUntil(QuestAreas::isAtOutpost, Random.nextInt(8000, 10000));
                 return QuestAreas.isAtOutpost();
             }
         }

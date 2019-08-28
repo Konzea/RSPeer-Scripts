@@ -86,7 +86,7 @@ public class Main extends Script implements ChatMessageListener, RenderListener,
 
         if (!Movement.isRunEnabled() && Movement.getRunEnergy() > TURN_RUN_ON_LIMIT) {
             Movement.toggleRun(true);
-            Time.sleepUntil(Movement::isRunEnabled, 1500);
+            Time.sleepUntil(Movement::isRunEnabled, Random.nextInt(1500, 3000));
         }
 
         if (TrapError.isActive())
@@ -164,7 +164,7 @@ public class Main extends Script implements ChatMessageListener, RenderListener,
     public static void teleportToPiscatoris() {
         Item piscTele = Inventory.getFirst("Piscatoris teleport");
         if (piscTele != null && piscTele.interact("Teleport")) {
-            Time.sleepUntil(Main::isAtPiscatoris, 8000);
+            Time.sleepUntil(Main::isAtPiscatoris, Random.nextInt(8000, 12000));
         }
     }
 
@@ -285,7 +285,7 @@ public class Main extends Script implements ChatMessageListener, RenderListener,
             Time.sleep(Random.low(196, 1200));
             if (canBuryBones() && item.containsAction("Bury") && item.interact("Bury")) {
                 Time.sleep(500);
-                Time.sleepUntil(() -> Players.getLocal().getAnimation() != 827, 2000);
+                Time.sleepUntil(() -> Players.getLocal().getAnimation() != 827, Random.nextInt(1500, 3000));
                 continue;
             }
             item.interact("Drop");

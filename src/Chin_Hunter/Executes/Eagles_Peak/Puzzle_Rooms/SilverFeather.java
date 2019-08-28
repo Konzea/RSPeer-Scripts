@@ -7,6 +7,7 @@ import org.rspeer.runetek.adapter.scene.Pickable;
 import org.rspeer.runetek.adapter.scene.SceneObject;
 import org.rspeer.runetek.api.Varps;
 import org.rspeer.runetek.api.commons.Time;
+import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.component.Dialog;
 import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.runetek.api.movement.position.Position;
@@ -27,7 +28,7 @@ public class SilverFeather {
                     return false;
                 }
                 if (Pedestal.interact("Inspect"))
-                    Time.sleepUntil(()->Varps.getBitValue(3099) != 0, 4000);
+                    Time.sleepUntil(()->Varps.getBitValue(3099) != 0, Random.nextInt(3500, 5000));
                 return false;
             }
             case 1:{
@@ -37,7 +38,7 @@ public class SilverFeather {
                     return false;
                 }
                 if (Rock1.interact("Inspect"))
-                    Time.sleepUntil(()->Varps.getBitValue(3099) != 1, 4000);
+                    Time.sleepUntil(()->Varps.getBitValue(3099) != 1, Random.nextInt(3500, 5000));
                 return false;
             }
             case 2:{
@@ -47,7 +48,7 @@ public class SilverFeather {
                     return false;
                 }
                 if (Rock2.interact("Inspect"))
-                    Time.sleepUntil(()->Varps.getBitValue(3099) != 2, 4000);
+                    Time.sleepUntil(()->Varps.getBitValue(3099) != 2, Random.nextInt(3500, 5000));
                 return false;
             }
             case 3:{
@@ -75,7 +76,7 @@ public class SilverFeather {
                     return false;
                 }
                 if (Kebbit.interact("Threaten")){
-                    Time.sleepUntil(Dialog::isOpen,4000);
+                    Time.sleepUntil(Dialog::isOpen,Random.nextInt(3500, 6000));
                     return false;
                 }
             }
@@ -90,7 +91,7 @@ public class SilverFeather {
                     return false;
                 }
                 if (Feather.interact("Take"))
-                    Time.sleepUntil(SilverFeather::isComplete, 4000);
+                    Time.sleepUntil(SilverFeather::isComplete, Random.nextInt(3500, 5000));
             }
         }
         return true;
@@ -103,7 +104,7 @@ public class SilverFeather {
             return;
         }
         if (Exit.interact("Enter")) {
-            Time.sleepUntil(() -> !isInCave(), 4000);
+            Time.sleepUntil(() -> !isInCave(), Random.nextInt(3500, 5000));
             Time.sleep(500, 1800);
         }
     }

@@ -128,7 +128,7 @@ public class FalconKebbits {
             if (slot.unequip())
                 Time.sleep(Random.low(150, 500));
         }
-        Time.sleepUntil(FalconKebbits::canEquipBird, 2000);
+        Time.sleepUntil(FalconKebbits::canEquipBird, Random.nextInt(1500, 4000));
     }
 
     private static void enterPen(){
@@ -144,7 +144,7 @@ public class FalconKebbits {
             return;
         }
         if (Stile[0].interact("Climb-over"))
-            Time.sleepUntil(FalconKebbits::isInPen, 4000);
+            Time.sleepUntil(FalconKebbits::isInPen, Random.nextInt(3500, 5000));
     }
 
     private static void huntKebbits() {
@@ -173,7 +173,7 @@ public class FalconKebbits {
             }
             if (kebbit.interact("Catch")) {
                 Time.sleepUntil(()-> !isIdleWithBird(), 1000);
-                Time.sleepUntil(() -> HintArrow.isPresent() || isIdleWithBird(), 4000);
+                Time.sleepUntil(() -> HintArrow.isPresent() || isIdleWithBird(), Random.nextInt(3500, 5000));
             }
             return;
         }
@@ -190,7 +190,7 @@ public class FalconKebbits {
                 return;
             }
             if (targetNpc.interact("Retrieve"))
-                Time.sleepUntil(FalconKebbits::isIdleWithBird, 4000);
+                Time.sleepUntil(FalconKebbits::isIdleWithBird, Random.nextInt(3500, 5000));
             return;
         }
 
@@ -216,7 +216,7 @@ public class FalconKebbits {
             return;
         }
         if (matthias.interact("Talk-to"))
-            Time.sleepUntil(Dialog::isOpen, 4000);
+            Time.sleepUntil(Dialog::isOpen, Random.nextInt(3500, 5000));
     }
 
     private static void handleTalking() {
@@ -229,7 +229,7 @@ public class FalconKebbits {
         if (Dialog.canContinue()) {
             Dialog.processContinue();
             Time.sleep(50, 400);
-            Time.sleepUntil(() -> !Dialog.isProcessing(), 2000);
+            Time.sleepUntil(() -> !Dialog.isProcessing(), Random.nextInt(1500, 3000));
             return;
         }
 
@@ -238,7 +238,7 @@ public class FalconKebbits {
         if (option == null) return;
         if (option.interact("Continue")) {
             Time.sleep(50, 400);
-            Time.sleepUntil(Dialog::canContinue, 2000);
+            Time.sleepUntil(Dialog::canContinue, Random.nextInt(1500, 3000));
         }
     }
 
