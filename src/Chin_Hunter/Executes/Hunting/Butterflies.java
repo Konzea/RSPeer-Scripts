@@ -1,7 +1,7 @@
 package Chin_Hunter.Executes.Hunting;
 
 import Chin_Hunter.Helpers.RequiredItem;
-import Chin_Hunter.Helpers.Trapping;
+import Chin_Hunter.Hunter.Trap_Admin.TrapType;
 import Chin_Hunter.Main;
 import Chin_Hunter.States.ScriptState;
 import org.rspeer.runetek.adapter.component.Item;
@@ -155,7 +155,7 @@ public class Butterflies {
     }
 
     public static boolean haveMinimumRequiredItems() {
-        return Main.hasItems(MINIMUM_REQUIRED_ITEMS, Trapping.TrapType.BIRD_SNARE);
+        return Main.hasItems(MINIMUM_REQUIRED_ITEMS, TrapType.BIRD_SNARE);
     }
 
     public static boolean haveRequiredItems() {
