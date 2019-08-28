@@ -10,6 +10,7 @@ import org.rspeer.runetek.adapter.component.InterfaceComponent;
 import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.api.commons.BankLocation;
 import org.rspeer.runetek.api.commons.Time;
+import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.component.Bank;
 import org.rspeer.runetek.api.component.GrandExchange;
 import org.rspeer.runetek.api.component.Interfaces;
@@ -54,7 +55,7 @@ public class Banking {
             //Got all the items, close the bank and begin hunting
             if (Bank.isOpen()){
                 if (Bank.close())
-                    Time.sleepUntil(Bank::isClosed,2000);
+                    Time.sleepUntil(Bank::isClosed, Random.nextInt(1500, 2500));
             }else {
                 Log.fine("Got all items, lets go!");
                 Main.updateScriptState(Main.getBestHuntingState());
@@ -95,7 +96,7 @@ public class Banking {
             if (Inventory.getCount() > 0){
                 //Deposit all to avoid walking across RS with your cash stack...
                 if (Bank.depositInventory())
-                    Time.sleepUntil(()->Inventory.getCount() == 0, 2000);
+                    Time.sleepUntil(()->Inventory.getCount() == 0, Random.nextInt(1500, 2000));
                 return;
             }
             //Find all item we need to buy
@@ -127,7 +128,7 @@ public class Banking {
                 return;
             }
             if (Bank.open())
-                Time.sleepUntil(Bank::isOpen, 5000, 10000);
+                Time.sleepUntil(Bank::isOpen, Random.nextInt(5000, 10000));
             return;
         }
         if (Inventory.contains("Varrock teleport") && !Main.isInVarrock()
@@ -159,7 +160,7 @@ public class Banking {
                 finalBankCheckComplete = true;
             }else {
                 if (Bank.depositInventory())
-                    Time.sleepUntil(() -> Inventory.getCount() == 0, 2500);
+                    Time.sleepUntil(() -> Inventory.getCount() == 0, Random.nextInt(1500, 3000));
             }
             return;
         }
@@ -171,7 +172,7 @@ public class Banking {
             if (inventItem.length > 0){
                 if (inventItem[0].isNoted()) {
                     if (Bank.depositAll(inventItem[0].getName()))
-                        Time.sleepUntil(() -> Main.getCount(inventItem) != withdrawnAmount, 2000);
+                        Time.sleepUntil(() -> Main.getCount(inventItem) != withdrawnAmount, Random.nextInt(1500, 2500));
                     return;
                 }
             }
@@ -183,18 +184,18 @@ public class Banking {
             final BooleanSupplier correctAmountInInvent = () -> Main.getCount(Inventory.getItems(pred)) == requiredItem.getAmountRequired();
             if (withdrawnAmount == 0){
                 if (Bank.withdraw(requiredItem.getName(), requiredItem.getAmountRequired()))
-                    Time.sleepUntil(correctAmountInInvent, 2000);
+                    Time.sleepUntil(correctAmountInInvent, Random.nextInt(1500, 3000));
                 continue;
             }
 
             if (withdrawnAmount < requiredItem.getAmountRequired()){
                 if (Bank.withdraw(requiredItem.getName(), requiredItem.getAmountRequired() - withdrawnAmount))
-                    Time.sleepUntil(correctAmountInInvent, 2000);
+                    Time.sleepUntil(correctAmountInInvent, Random.nextInt(1500, 3000));
                 continue;
             }
 
             if (Bank.deposit(requiredItem.getName(), -(requiredItem.getAmountRequired() - withdrawnAmount)))
-                Time.sleepUntil(correctAmountInInvent, 2000);
+                Time.sleepUntil(correctAmountInInvent, Random.nextInt(1500, 3000));
 
         }
     }
@@ -205,30 +206,30 @@ public class Banking {
         final BooleanSupplier teleportSuccessful = () -> startPosition.distance(Players.getLocal()) > 30;
         if (varrockTele != null){
             if (varrockTele.interact("Break"))
-                Time.sleepUntil(teleportSuccessful, 10000);
+                Time.sleepUntil(teleportSuccessful, Random.nextInt(10000, 13000));
             return;
         }
         Item camelotTele = Inventory.getFirst("Camelot teleport");
         if (camelotTele != null){
             if (camelotTele.interact("Break"))
-                Time.sleepUntil(teleportSuccessful, 10000);
+                Time.sleepUntil(teleportSuccessful, Random.nextInt(10000, 13000));
             return;
         }
         Item faladorTele = Inventory.getFirst("Falador teleport");
         if (faladorTele != null){
             if (faladorTele.interact("Break"))
-                Time.sleepUntil(teleportSuccessful, 10000);
+                Time.sleepUntil(teleportSuccessful, Random.nextInt(10000, 13000));
             return;
         }
         if (Magic.interact(Spell.Modern.HOME_TELEPORT, "Cast"))
-            Time.sleepUntil(teleportSuccessful,  15000);
+            Time.sleepUntil(teleportSuccessful,  Random.nextInt(14000, 17000));
     }
 
     private static void closeGrandExchange() {
         InterfaceComponent closeBtn = Interfaces.getComponent(465, 2).getComponent(11);
         if (closeBtn == null) return;
         if (closeBtn.interact("Close"))
-            Time.sleepUntil(()->!GrandExchange.isOpen(), 3000);
+            Time.sleepUntil(()->!GrandExchange.isOpen(), Random.nextInt(1500, 3000));
     }
 
     private static boolean isGeBuyWindowOpen(){
@@ -241,7 +242,7 @@ public class Banking {
         if (!isGeBuyWindowOpen())
             return;
         Keyboard.pressEventKey(KeyEvent.VK_ESCAPE);
-        Time.sleepUntil(()->!isGeBuyWindowOpen(), 2500);
+        Time.sleepUntil(()->!isGeBuyWindowOpen(), Random.nextInt(1500, 3000));
     }
 
 

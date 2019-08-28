@@ -74,7 +74,7 @@ public class GoldenFeather {
                     return false;
                 }
                 if (Pedestal.interact("Take-from"))
-                    Time.sleepUntil(GoldenFeather::isComplete, 4000);
+                    Time.sleepUntil(GoldenFeather::isComplete, Random.nextInt(4000, 6000));
                 return false;
 
                 //Complete?
@@ -137,10 +137,10 @@ public class GoldenFeather {
         }
         int varpBit = Varps.getBitValue(3089);
         if (Lever.interact(Action)) {
-            Time.sleepUntil(()-> Players.getLocal().isMoving(), 1500);
+            Time.sleepUntil(()-> Players.getLocal().isMoving(), Random.nextInt(1300, 2000));
             if (Players.getLocal().isMoving()) {
                 Time.sleepUntil(() -> !Players.getLocal().isMoving(), Random.nextInt(20000,30000));
-                Time.sleepUntil(() -> Varps.getBitValue(3089) != varpBit, 6000);
+                Time.sleepUntil(() -> Varps.getBitValue(3089) != varpBit, Random.nextInt(5000, 8000));
             }
         }
     }
@@ -156,7 +156,7 @@ public class GoldenFeather {
             return;
         }
         if (Inventory.use(x->x.getName().equalsIgnoreCase("Odd bird seed"), birdFeeder)) {
-            Time.sleepUntil(() -> Players.getLocal().isMoving(), 1500);
+            Time.sleepUntil(() -> Players.getLocal().isMoving(), Random.nextInt(1300, 2000));
             if (Players.getLocal().isMoving()) {
                 Time.sleepUntil(() -> !Players.getLocal().isMoving(), Random.nextInt(20000,30000));
                 Time.sleep(sleepMin, sleepMax);
@@ -172,7 +172,7 @@ public class GoldenFeather {
         }
         int birdseedCount = Inventory.getCount(true,"Odd bird seed");
         if (birdseedHolder.interact("Take-from"))
-            Time.sleepUntil(()->Inventory.getCount(true,"Odd bird seed") != birdseedCount, 4000);
+            Time.sleepUntil(()->Inventory.getCount(true,"Odd bird seed") != birdseedCount, Random.nextInt(2500, 5000));
     }
 
     public static void leaveCave() {
@@ -182,7 +182,7 @@ public class GoldenFeather {
             return;
         }
         if (Exit.interact("Enter")) {
-            Time.sleepUntil(() -> !isInCave(), 4000);
+            Time.sleepUntil(() -> !isInCave(), Random.nextInt(3500, 5000));
             Time.sleep(500, 1800);
         }
     }

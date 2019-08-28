@@ -68,13 +68,13 @@ public class ItemBuying {
                 return;
             }
             if (Bank.close())
-                Time.sleepUntil(()->!Bank.isOpen(), 2500);
+                Time.sleepUntil(()->!Bank.isOpen(), Random.nextInt(2000, 3500));
             return;
         }
 
         if (!GrandExchange.isOpen()){
             if (GrandExchange.open())
-                Time.sleepUntil(GrandExchange::isOpen, 4000);
+                Time.sleepUntil(GrandExchange::isOpen, Random.nextInt(4000, 6000));
             return;
         }
 
@@ -187,20 +187,20 @@ public class ItemBuying {
     private void buySingleItem(RequiredItem item){
         if (!GrandExchangeSetup.isOpen()) {
             if (GrandExchange.createOffer(RSGrandExchangeOffer.Type.BUY))
-                Time.sleepUntil(GrandExchangeSetup::isOpen, 2000);
+                Time.sleepUntil(GrandExchangeSetup::isOpen, Random.nextInt(1800, 3200));
             return;
         }
         //Select the item we want to buy
         Item currentSelectedItem = GrandExchangeSetup.getItem();
         if (currentSelectedItem == null || !currentSelectedItem.getName().equalsIgnoreCase(item.getName())){
             if (GrandExchangeSetup.setItem(item.getName()))
-                Time.sleepUntil(() -> GrandExchangeSetup.getItem() != null, 2000);
+                Time.sleepUntil(() -> GrandExchangeSetup.getItem() != null, Random.nextInt(1800, 3500));
             return;
         }
         //Set Quantity
         if (GrandExchangeSetup.getQuantity() != item.getAmountToBuy()) {
             if (GrandExchangeSetup.setQuantity(item.getAmountToBuy()))
-                Time.sleepUntil(() -> GrandExchangeSetup.getQuantity() == item.getAmountToBuy(), 2500);
+                Time.sleepUntil(() -> GrandExchangeSetup.getQuantity() == item.getAmountToBuy(), Random.nextInt(2000, 4500));
             return;
         }
         //Set price
@@ -210,7 +210,7 @@ public class ItemBuying {
         }else{
             if (GrandExchangeSetup.getPricePerItem() != item.getPrice()) {
                 if (GrandExchangeSetup.setPrice(item.getPrice()))
-                    Time.sleepUntil(() -> GrandExchangeSetup.getPricePerItem() == item.getPrice(), 3000);
+                    Time.sleepUntil(() -> GrandExchangeSetup.getPricePerItem() == item.getPrice(), Random.nextInt(2500, 5000));
                 return;
             }
         }
@@ -227,7 +227,7 @@ public class ItemBuying {
 
         //Confirm the offer
         if (GrandExchangeSetup.confirm()) {
-            Time.sleepUntil(() -> !GrandExchangeSetup.isOpen(), 3000);
+            Time.sleepUntil(() -> !GrandExchangeSetup.isOpen(), Random.nextInt(2500, 5000));
             if (!GrandExchangeSetup.isOpen())
                 item.setOfferPlacedTime();
         }
@@ -275,7 +275,7 @@ public class ItemBuying {
         }
         if (offer.abort())
             Time.sleepUntil(() -> GrandExchange.getOffers(x->x.getProgress()== RSGrandExchangeOffer.Progress.FINISHED
-                    && x.getItemName().equalsIgnoreCase(offer.getItemName())).length > 0, 3000);
+                    && x.getItemName().equalsIgnoreCase(offer.getItemName())).length > 0, Random.nextInt(2300, 4222));
 
         return GrandExchange.getOffers(x->x.getProgress()== RSGrandExchangeOffer.Progress.FINISHED
                 && x.getItemName().equalsIgnoreCase(offer.getItemName())).length > 0;
@@ -285,11 +285,11 @@ public class ItemBuying {
         if (!GrandExchange.isOpen()){
             if (Bank.isOpen()) {
                 if (Bank.close())
-                    Time.sleepUntil(Bank::isClosed, 2000);
+                    Time.sleepUntil(Bank::isClosed, Random.nextInt(1600, 2900));
                 return;
             }
             if (GrandExchange.open()){
-                Time.sleepUntil(GrandExchange::isOpen, 2500);
+                Time.sleepUntil(GrandExchange::isOpen, Random.nextInt(2500, 5500));
                 return;
             }
         }
@@ -325,11 +325,11 @@ public class ItemBuying {
         if (!GrandExchange.isOpen()){
             if (Bank.isOpen()) {
                 if (Bank.close())
-                    Time.sleepUntil(Bank::isClosed, 2000);
+                    Time.sleepUntil(Bank::isClosed, Random.nextInt(1500, 3900));
                 return;
             }
             if (GrandExchange.open()){
-                Time.sleepUntil(GrandExchange::isOpen, 2500);
+                Time.sleepUntil(GrandExchange::isOpen, Random.nextInt(2000, 4500));
                 return;
             }
         }
@@ -353,7 +353,7 @@ public class ItemBuying {
         }
         if (!Bank.isOpen()){
             if (Bank.open())
-                Time.sleepUntil(Bank::isOpen, 2500);
+                Time.sleepUntil(Bank::isOpen, Random.nextInt(2500, 5222));
             return;
         }
         if (Bank.getCount("Coins") == 0){
@@ -361,7 +361,7 @@ public class ItemBuying {
             return;
         }
         if (Bank.withdrawAll("Coins"))
-            Time.sleepUntil(()->Bank.getCount("Coins") == 0, 2000);
+            Time.sleepUntil(()->Bank.getCount("Coins") == 0, Random.nextInt(1800, 3200));
     }
 
     //endregion

@@ -235,7 +235,7 @@ public class QuestMain {
     public static void execute(){
         if (isValidDialogOpen()){
             if (Dialog.isProcessing()) {
-                Time.sleepUntil(() -> !Dialog.isProcessing(), 2000);
+                Time.sleepUntil(() -> !Dialog.isProcessing(), Random.nextInt(1500, 2500));
                 return;
             }
             if (Dialog.canContinue()){
@@ -245,7 +245,7 @@ public class QuestMain {
             }
         }else if (Game.isInCutscene()) {
             //Else is here so we can handle dialog within cut scenes
-            Time.sleepUntil(() -> !Game.isInCutscene(), 5000);
+            Time.sleepUntil(() -> !Game.isInCutscene(), Random.nextInt(4500, 6000));
             return;
         }
 
@@ -271,7 +271,7 @@ public class QuestMain {
                 Item Book = Inventory.getFirst("Bird book");
                 if (Book != null){
                     if (Book.interact("Read"))
-                        Time.sleepUntil(()->Inventory.contains("Metal feather"), 3000);
+                        Time.sleepUntil(()->Inventory.contains("Metal feather"), Random.nextInt(2500, 5000));
                     return;
                 }
 
@@ -283,7 +283,7 @@ public class QuestMain {
                 }
                 int inventCount = Inventory.getCount();
                 if (Books.interact("Inspect")){
-                    Time.sleepUntil(()-> Inventory.getCount() != inventCount, 4000);
+                    Time.sleepUntil(()-> Inventory.getCount() != inventCount, Random.nextInt(2500, 5000));
                     return;
                 }
                 return;
@@ -293,7 +293,7 @@ public class QuestMain {
                 InterfaceComponent CloseBookInterface = Interfaces.getComponent(27, 162);
                 if (CloseBookInterface != null){
                     if (CloseBookInterface.click()){
-                        Time.sleepUntil(()->Interfaces.getComponent(27, 162) == null, 2500);
+                        Time.sleepUntil(()->Interfaces.getComponent(27, 162) == null, Random.nextInt(2000, 3500));
                     }
                     return;
                 }
@@ -466,7 +466,7 @@ public class QuestMain {
                                     return;
                                 }
                                 if (Nickolaus.interact("Talk-to"))
-                                    Time.sleepUntil(Dialog::isOpen, 2500);
+                                    Time.sleepUntil(Dialog::isOpen, Random.nextInt(2500, 5000));
                                 return;
                             }
                             case 25:{
@@ -488,7 +488,7 @@ public class QuestMain {
                                         return;
                                     }
                                     if (Nickolaus.interact("Talk-to"))
-                                        Time.sleepUntil(Dialog::isOpen, 2500);
+                                        Time.sleepUntil(Dialog::isOpen, Random.nextInt(2500, 5000));
                                 }
 
                                 selectDialogOption(1);
@@ -510,7 +510,7 @@ public class QuestMain {
                                 InterfaceComponent Close = Interfaces.getComponent(277,16);
                                 if (Close != null){
                                     if (Close.click())
-                                        Time.sleepUntil(()->Interfaces.getComponent(277,16) == null, 2000);
+                                        Time.sleepUntil(()->Interfaces.getComponent(277,16) == null, Random.nextInt(1500, 3000));
                                     return;
                                 }
                                 Log.fine("Eagles Peak Completed!");
@@ -533,11 +533,11 @@ public class QuestMain {
     private static void equipEagleGear() {
         Item Cape = Inventory.getFirst("Eagle cape");
         if (Cape != null && Cape.interact("Wear"))
-            Time.sleepUntil(() -> Inventory.getCount("Eagle cape") < 2, 2000);
+            Time.sleepUntil(() -> Inventory.getCount("Eagle cape") < 2, Random.nextInt(2000, 3200));
 
         Item Beak = Inventory.getFirst("Fake beak");
         if (Beak != null && Beak.interact("Wear"))
-            Time.sleepUntil(() -> Inventory.getCount("Fake beak") < 2, 2000);
+            Time.sleepUntil(() -> Inventory.getCount("Fake beak") < 2, Random.nextInt(1800, 3000));
     }
 
     private static boolean eagleGearEquipped() {
@@ -576,7 +576,7 @@ public class QuestMain {
             return false;
         }
         if (Nickolaus.interact("Shout-to")) {
-            Time.sleepUntil(Dialog::isOpen, 5000);
+            Time.sleepUntil(Dialog::isOpen, Random.nextInt(4500, 6000));
             return true;
         }
         return false;
@@ -593,7 +593,7 @@ public class QuestMain {
             return false;
         }
         if (shopOwner.interact("Talk-to"))
-            Time.sleepUntil(Dialog::isOpen, 4000);
+            Time.sleepUntil(Dialog::isOpen, Random.nextInt(3500, 5500));
         return isValidDialogOpen();
     }
 
@@ -607,7 +607,7 @@ public class QuestMain {
             return false;
         }
         if (Charlie.interact("Talk-to"))
-            Time.sleepUntil(Dialog::isOpen, 4000);
+            Time.sleepUntil(Dialog::isOpen, Random.nextInt(3500, 6000));
         return isValidDialogOpen();
     }
 
@@ -630,7 +630,7 @@ public class QuestMain {
             return false;
         }
         if (Players.getLocal().distance(feathersTile.getPosition()) > 2 && Players.getLocal().isMoving()){
-            Time.sleepUntil(()->Players.getLocal().isMoving(), 5360);
+            Time.sleepUntil(()->Players.getLocal().isMoving(), Random.nextInt(4500, 6222));
             return false;
         }
         //Little antiban thing here, almost spam clicks the feathers instead of waiting for each one in invent.

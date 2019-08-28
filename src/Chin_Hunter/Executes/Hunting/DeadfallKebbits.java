@@ -8,6 +8,7 @@ import Chin_Hunter.Main;
 import Chin_Hunter.States.ScriptState;
 import org.rspeer.runetek.adapter.scene.SceneObject;
 import org.rspeer.runetek.api.commons.Time;
+import org.rspeer.runetek.api.commons.math.Random;
 import org.rspeer.runetek.api.component.tab.Inventory;
 import org.rspeer.runetek.api.movement.position.Position;
 import org.rspeer.runetek.api.scene.Players;
@@ -52,7 +53,7 @@ public class DeadfallKebbits {
         }
 
         if (playerIsAnimating()) {
-            Time.sleepUntil(() -> !playerIsAnimating(), 5000);
+            Time.sleepUntil(() -> !playerIsAnimating(), Random.nextInt(4000, 6000));
             return;
         }
 
@@ -128,7 +129,7 @@ public class DeadfallKebbits {
         //Get nearest Willow tree and if not null chop it and wait
         SceneObject tree = SceneObjects.getNearest("Evergreen");
         if (tree != null && tree.interact("Chop down")) {
-            Time.sleepUntil(() -> Players.getLocal().getAnimation() != -1, 4000);
+            Time.sleepUntil(() -> Players.getLocal().getAnimation() != -1, Random.nextInt(3500, 5000));
             return Players.getLocal().getAnimation() != -1;
         }
         return false;

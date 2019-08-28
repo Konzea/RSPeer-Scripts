@@ -104,7 +104,7 @@ public class Butterflies {
             catchButterfly();
             return;
         }
-        Time.sleepUntil(()->!isChasingAButterfly(), 4000);
+        Time.sleepUntil(()->!isChasingAButterfly(), Random.nextInt(2000, 5000));
 
     }
 
@@ -117,7 +117,7 @@ public class Butterflies {
         }
 
         if (butterfly.interact("Catch"))
-            Time.sleepUntil(Butterflies::isChasingAButterfly, 4000);
+            Time.sleepUntil(Butterflies::isChasingAButterfly, Random.nextInt(3500, 5000));
     }
 
     private static void releaseButterflies(){
@@ -136,7 +136,7 @@ public class Butterflies {
     private static void equipButterflyNet(){
         Item butterflyNet = Inventory.getFirst("Butterfly net");
         if (butterflyNet != null && butterflyNet.interact("Wield"))
-            Time.sleepUntil(Butterflies::butterflyNetEquipped, 2000);
+            Time.sleepUntil(Butterflies::butterflyNetEquipped, Random.nextInt(1500, 3000));
     }
 
     private static boolean butterflyNetEquipped(){
