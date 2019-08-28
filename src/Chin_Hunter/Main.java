@@ -214,6 +214,11 @@ public class Main extends Script implements ChatMessageListener, RenderListener,
 
     }
 
+    public static int getHunterLevel(){
+        //return 40;
+        return Skills.getLevel(Skill.HUNTER);
+    }
+
     public static ScriptState getPreviousScriptState() {
         return previousState;
     }
