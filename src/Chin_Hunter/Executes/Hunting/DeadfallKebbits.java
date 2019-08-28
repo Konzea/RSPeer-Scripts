@@ -1,21 +1,18 @@
 package Chin_Hunter.Executes.Hunting;
 
 import Chin_Hunter.Helpers.RequiredItem;
-import Chin_Hunter.Helpers.Trapping;
+import Chin_Hunter.Hunter.Hunting;
+import Chin_Hunter.Hunter.Trap_Admin.LaidTrap;
+import Chin_Hunter.Hunter.Trap_Admin.TrapType;
 import Chin_Hunter.Main;
 import Chin_Hunter.States.ScriptState;
 import org.rspeer.runetek.adapter.scene.SceneObject;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.component.tab.Inventory;
-import org.rspeer.runetek.api.movement.Movement;
 import org.rspeer.runetek.api.movement.position.Position;
 import org.rspeer.runetek.api.scene.Players;
 import org.rspeer.runetek.api.scene.SceneObjects;
 import org.rspeer.ui.Log;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Predicate;
 
 public class DeadfallKebbits {
 
@@ -33,11 +30,8 @@ public class DeadfallKebbits {
 
 
     private static final Position DEADFALL_TRAP_TILE = new Position(2319, 3594, 0);
-    private static final Predicate<SceneObject> DEADFALL_TRAP_PREDICATE = x -> (x.getName().equalsIgnoreCase("Boulder") || x.getName().equalsIgnoreCase("Deadfall")) && x.getPosition().equals(DEADFALL_TRAP_TILE);
     private static final String[] JUNK_ITEMS = {"Bones", "Kebbit spike"};
     private static final int SETTING_DEADFALL_ANIMATION = 5212;
-
-    public static boolean deadfallIsOurs = false;
 
     private DeadfallKebbits() {
         //Private default constructor
@@ -70,7 +64,7 @@ public class DeadfallKebbits {
         if (!HuntDeadfallKebbits())
             return;
 
-        if (!Longtails.HuntLongtails(Trapping.getMaxTrapCount() - 1))
+        if (!Longtails.HuntLongtails())
             return;
 
         //Kebbits and Longtails taken care of, got some spare time to chop some logs.
@@ -92,13 +86,8 @@ public class DeadfallKebbits {
 
         if (Inventory.getCount("Logs") == 0) {
             //If we have no logs, sort out longtails then go chop some.
-            if (Longtails.HuntLongtails(Trapping.getMaxTrapCount() - 1))
+            if (Longtails.HuntLongtails())
                 chopLogs();
-            return false;
-        }
-
-        if (Main.inventContains(JUNK_ITEMS)) {
-            Main.handleJunkItems(JUNK_ITEMS);
             return false;
         }
 
@@ -107,87 +96,35 @@ public class DeadfallKebbits {
             return false;
         }
 
-        if (deadfallNeedsAttention() && deadfallIsOurs)
-            return fixDeadfallTrap();
+        LaidTrap trapToCheck = Hunting.getTrapToFix(TrapType.DEADFALL);
+        if (trapToCheck != null) {
+            trapToCheck.fixTrap();
+            return false;
+        }
+
+        if (Hunting.canPlaceTrap() && Hunting.canPlaceTrapOnTile(TrapType.DEADFALL, DEADFALL_TRAP_TILE)){
+            Hunting.Lay_Trap(TrapType.DEADFALL, DEADFALL_TRAP_TILE);
+            return false;
+        }
+
+        if (Main.inventContains(JUNK_ITEMS)) {
+            Main.handleJunkItems(JUNK_ITEMS);
+            return false;
+        }
+
         return true;
-    }
-
-    private static boolean deadfallNeedsAttention() {
-        SceneObject[] deadfallTrap = SceneObjects.getLoaded(DEADFALL_TRAP_PREDICATE);
-
-        if (deadfallTrap.length == 0) {
-            Log.info("Can't find deadfall trap...");
-            Main.walkTo(DEADFALL_TRAP_TILE);
-            return false;
-        }
-
-        if (deadfallTrap[0].getActions().length == 0)
-            return false;
-
-        if (deadfallTrap[0].containsAction("Set-trap"))
-            deadfallIsOurs = true;
-
-        return !deadfallTrap[0].containsAction("Dismantle");
-
-    }
-
-    private static boolean fixDeadfallTrap() {
-        SceneObject[] deadfallTrap = SceneObjects.getLoaded(DEADFALL_TRAP_PREDICATE);
-
-        if (deadfallTrap.length == 0) {
-            Log.severe("Can't find deadfall trap...");
-            Main.walkTo(DEADFALL_TRAP_TILE);
-            return false;
-        }
-
-        if (deadfallTrap[0].getActions().length == 0){
-            Log.severe("Fucking Deadfall has no actions?! WTF");
-            long startTime = System.currentTimeMillis();
-            Time.sleepUntil(()->deadfallTrap[0].getActions().length > 0, 1500);
-            Log.info("Time taken for actions to appear: " + (System.currentTimeMillis() - startTime));
-            return false;
-        }
-
-        if (deadfallTrap[0].containsAction("Check")) {
-            int inventCount = Inventory.getCount();
-            if (deadfallTrap[0].interact("Check"))
-                Time.sleepUntil(() -> Inventory.getCount() != inventCount, 4000);
-            return false;
-        }
-
-        if (Trapping.getPlacedTrapsCount() > Trapping.getMaxTrapCount() - 1){
-            Log.severe("Attempting to set deadfall with max trap count already reached.");
-            Trapping.pickUpAllTrapsExcept(Trapping.TrapType.BIRD_SNARE, Trapping.getMaxTrapCount() - 1);
-            return false;
-        }
-
-        if (deadfallTrap[0].containsAction("Set-trap") && deadfallTrap[0].interact("Set-trap")){
-            Time.sleepUntil(() -> Players.getLocal().getAnimation() == SETTING_DEADFALL_ANIMATION, 5000);
-            if (Players.getLocal().getAnimation() == SETTING_DEADFALL_ANIMATION) {
-                deadfallIsOurs = true;
-                Time.sleepUntil(() -> Players.getLocal().getAnimation() == -1, 3000);
-                return true;
-            }
-        }
-
-        deadfallIsOurs = false;
-        return false;
-
-    }
-
-    private static boolean isDeadfallSet() {
-        SceneObject[] deadfallTrap = SceneObjects.getLoaded(DEADFALL_TRAP_PREDICATE);
-        return deadfallTrap.length > 0 && !deadfallTrap[0].containsAction("Set-trap");
     }
 
     private static boolean playerIsAnimating() {
         int anim = Players.getLocal().getAnimation();
-        if (!deadfallIsOurs && anim == SETTING_DEADFALL_ANIMATION)
-            deadfallIsOurs = true;
         return anim == 879 || anim == SETTING_DEADFALL_ANIMATION;
     }
 
     private static boolean chopLogs() {
+        //Make room for logs first
+        if (Main.inventContains(JUNK_ITEMS))
+            Main.handleJunkItems(JUNK_ITEMS);
+
         //Get nearest Willow tree and if not null chop it and wait
         SceneObject tree = SceneObjects.getNearest("Evergreen");
         if (tree != null && tree.interact("Chop down")) {
@@ -207,7 +144,7 @@ public class DeadfallKebbits {
     }
 
     public static boolean haveMinimumRequiredItems() {
-        return Main.hasItems(MINIMUM_REQUIRED_ITEMS, Trapping.TrapType.BIRD_SNARE);
+        return Main.hasItems(MINIMUM_REQUIRED_ITEMS, TrapType.BIRD_SNARE);
     }
 
     public static boolean haveRequiredItems() {
