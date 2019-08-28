@@ -183,6 +183,16 @@ public class Main extends Script implements ChatMessageListener, RenderListener,
     }
 
     /**
+     * Teleports a player to piscatoris, must have teleport
+     */
+    public static void teleportToPiscatoris() {
+        Item piscTele = Inventory.getFirst("Piscatoris teleport");
+        if (piscTele != null && piscTele.interact("Teleport")) {
+            Time.sleepUntil(Main::isAtPiscatoris, 8000);
+        }
+    }
+
+    /**
      * Handles updating current script state and updating previousState.
      *
      * @param inState The state you wish to set or null to stop script.

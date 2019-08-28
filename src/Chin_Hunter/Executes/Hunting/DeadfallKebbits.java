@@ -53,7 +53,7 @@ public class DeadfallKebbits {
                 Main.updateScriptState(ScriptState.BANKING);
                 return;
             }
-            Trapping.teleportToPiscatoris();
+            Main.teleportToPiscatoris();
             return;
         }
 

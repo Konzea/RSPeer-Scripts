@@ -56,7 +56,7 @@ public class Butterflies {
                 Main.updateScriptState(ScriptState.BANKING);
                 return;
             }
-            Trapping.teleportToPiscatoris();
+            Main.teleportToPiscatoris();
             return;
         }
 

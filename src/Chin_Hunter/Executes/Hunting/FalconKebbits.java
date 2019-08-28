@@ -74,7 +74,7 @@ public class FalconKebbits {
                 Main.updateScriptState(ScriptState.BANKING);
                 return;
             }
-            Trapping.teleportToPiscatoris();
+            Main.teleportToPiscatoris();
             return;
         }
 

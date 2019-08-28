@@ -50,7 +50,7 @@ public class Longtails {
                 Main.updateScriptState(ScriptState.BANKING);
                 return;
             }
-            Trapping.teleportToPiscatoris();
+            Main.teleportToPiscatoris();
             return;
         }
         if (HuntLongtails()) {
