@@ -120,7 +120,7 @@ public enum ScriptState {
 
         @Override
         public RequiredItem[] getItemsToBuy() {
-            return RequiredItem.concat(DeadfallKebbits.getRequiredItems(),FalconKebbits.getRequiredItems());
+            return FalconKebbits.getRequiredItems();
         }
     },
 
