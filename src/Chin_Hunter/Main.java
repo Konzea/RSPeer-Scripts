@@ -119,10 +119,6 @@ public class Main extends Script implements ChatMessageListener, RenderListener,
                 onLevelUpEvent();
                 return;
             }
-            if (Message.equals("Oh dear, you are dead!")) {
-                //On Death Event
-                return;
-            }
             if (Message.contains("You may set up only")){
                 TrapError.setActiveError(new TrapError(TrapError.ErrorType.TRAP_LIMIT_REACHED, null));
                 return;
@@ -245,15 +241,15 @@ public class Main extends Script implements ChatMessageListener, RenderListener,
             Item[] invent = Inventory.getItems(x -> x.getName().equalsIgnoreCase(itemName)
                     && !x.isNoted());
 
-            if (invent.length > 0){
-                int layedTrapAdjustment = trapType != null && trapType.getName().equalsIgnoreCase(itemName) ? Hunting.getActiveTrapCount(): 0;
+            if (invent.length > 0) {
+                int layedTrapAdjustment = trapType != null && trapType.getName().equalsIgnoreCase(itemName) ? Hunting.getActiveTrapCount() : 0;
                 int itemCount = getCount(invent) + layedTrapAdjustment;
                 if (itemCount >= reqAmount)
                     continue;
             }
 
             Item[] equipped = Equipment.getItems(x -> x.getName().equalsIgnoreCase(itemName));
-            if (equipped.length > 0){
+            if (equipped.length > 0) {
                 if (getCount(equipped) >= reqAmount)
                     continue;
             }
@@ -312,6 +308,7 @@ public class Main extends Script implements ChatMessageListener, RenderListener,
 
     public static ScriptState getBestHuntingState() {
         int hunterLevel = getHunterLevel();
+
         if (hunterLevel < 9)
             return ScriptState.MUSEUM_QUIZ;
         if (hunterLevel < 15)
