@@ -2,7 +2,6 @@ package Chin_Hunter.Hunter.Trap_Admin;
 
 import Chin_Hunter.Hunter.Hunting;
 import Chin_Hunter.Main;
-import org.jetbrains.annotations.Nullable;
 import org.rspeer.runetek.api.movement.position.Position;
 import org.rspeer.ui.Log;
 
@@ -24,7 +23,7 @@ public class TrapError {
         //Private default constructor
     }
 
-    public TrapError(ErrorType errorType, @Nullable Position errorTile){
+    public TrapError(ErrorType errorType, Position errorTile){
         Type = errorType;
         Tile = errorTile;
     }
@@ -86,7 +85,7 @@ public class TrapError {
         return true;
     }
 
-    public static void setActiveError(@Nullable TrapError error){
+    public static void setActiveError(TrapError error){
         activeError = error;
     }
 

@@ -4,7 +4,6 @@ import Chin_Hunter.Hunter.Hunting;
 import Chin_Hunter.Hunter.Trap_Admin.LaidTrap;
 import Chin_Hunter.Hunter.Trap_Admin.TrapType;
 import Chin_Hunter.Main;
-import org.jetbrains.annotations.Nullable;
 import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.adapter.scene.Pickable;
 import org.rspeer.runetek.adapter.scene.SceneObject;
@@ -234,8 +233,6 @@ public class StandardTrap {
     }
 
     //endregion
-
-    @Nullable
     private static SceneObject getTrapOnTile(TrapType trapType, Position trapTile){
         SceneObject[] trap = SceneObjects.getLoaded(x -> x.getPosition().equals(trapTile)
                 && x.getName().equalsIgnoreCase(trapType.getName()));

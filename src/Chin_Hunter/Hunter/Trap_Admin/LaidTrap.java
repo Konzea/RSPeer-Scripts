@@ -3,7 +3,6 @@ package Chin_Hunter.Hunter.Trap_Admin;
 import Chin_Hunter.Hunter.Hunting;
 import Chin_Hunter.Hunter.Trap_Laying.DeadfallTrap;
 import Chin_Hunter.Hunter.Trap_Laying.StandardTrap;
-import org.jetbrains.annotations.Nullable;
 import org.rspeer.runetek.api.movement.position.Position;
 import org.rspeer.ui.Log;
 
@@ -78,7 +77,6 @@ public class LaidTrap {
         return getActiveTimeMs() > (getType().getTimeoutMs() - 5000);
     }
 
-    @Nullable
     public static LaidTrap getByLocation(Position tile){
         for (LaidTrap activeTrap : Hunting.getActiveTraps()){
             if (activeTrap.getLocation().equals(tile))

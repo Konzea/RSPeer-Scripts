@@ -10,7 +10,6 @@ import Chin_Hunter.Hunter.Trap_Admin.TrapError;
 import Chin_Hunter.Hunter.Trap_Admin.TrapType;
 import Chin_Hunter.States.ScriptState;
 import Chin_Hunter.Executes.Eagles_Peak.QuestMain;
-import org.jetbrains.annotations.Nullable;
 import org.rspeer.runetek.adapter.component.Item;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.commons.math.Random;
@@ -169,7 +168,7 @@ public class Main extends Script implements ChatMessageListener, RenderListener,
      *
      * @param inState The state you wish to set or null to stop script.
      */
-    public static void updateScriptState(@Nullable ScriptState inState) {
+    public static void updateScriptState(ScriptState inState) {
         previousState = currentState;
         if (inState == currentState) {
             Log.severe("Error: New script state same as previous.");

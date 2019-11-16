@@ -4,7 +4,6 @@ import Chin_Hunter.Hunter.Hunting;
 import Chin_Hunter.Hunter.Trap_Admin.LaidTrap;
 import Chin_Hunter.Hunter.Trap_Admin.TrapType;
 import Chin_Hunter.Main;
-import org.jetbrains.annotations.Nullable;
 import org.rspeer.runetek.adapter.scene.SceneObject;
 import org.rspeer.runetek.api.commons.Time;
 import org.rspeer.runetek.api.component.Dialog;
@@ -146,7 +145,6 @@ public class DeadfallTrap {
     }
     //endregion
 
-    @Nullable
     private static SceneObject getTrapOnTile(Position trapTile){
         SceneObject[] deadfallTrap = SceneObjects.getLoaded(x-> x.getPosition().equals(trapTile)
                 && (x.getName().equalsIgnoreCase("Boulder")

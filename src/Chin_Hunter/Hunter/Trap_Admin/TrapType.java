@@ -1,6 +1,5 @@
 package Chin_Hunter.Hunter.Trap_Admin;
 
-import org.jetbrains.annotations.Nullable;
 
 public enum TrapType {
 
@@ -30,7 +29,6 @@ public enum TrapType {
     }
 
 
-    @Nullable
     public static TrapType getTypeFromName(String trapName){
         for (TrapType type : TrapType.values()){
             if (type.getName().equalsIgnoreCase(trapName))
